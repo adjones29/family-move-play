@@ -1,14 +1,57 @@
+import { useState } from "react"
 import { FamilyMemberCard } from "@/components/FamilyMemberCard"
 import { ChallengeCard } from "@/components/ChallengeCard"
 import { ActivityStats } from "@/components/ActivityStats"
 import { MiniGameCard } from "@/components/MiniGameCard"
+import { RewardStore } from "@/components/RewardStore"
+import { EarnedRewards } from "@/components/EarnedRewards"
+import { RewardRedemptionModal } from "@/components/RewardRedemptionModal"
 import { Button } from "@/components/ui/enhanced-button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Bell, Settings, Plus, Dumbbell, Target, Gamepad2, Users, Zap } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
+import { Bell, Settings, Plus, Dumbbell, Target, Gamepad2, Users, Zap, Gift, Star } from "lucide-react"
 import heroImage from "@/assets/hero-family-fitness.jpg"
 
 const Index = () => {
+  const { toast } = useToast()
+  const [totalPoints, setTotalPoints] = useState(125) // Mock starting points
+  const [selectedReward, setSelectedReward] = useState<any>(null)
+  const [showRedemptionModal, setShowRedemptionModal] = useState(false)
+  type EarnedReward = {
+    id: string
+    title: string
+    description: string
+    redeemedAt: Date
+    expiresAt?: Date
+    status: "active" | "used" | "expired"
+    category: "family" | "individual" | "special"
+    rarity: "common" | "rare" | "epic" | "legendary"
+    icon?: React.ReactNode
+  }
+
+  const [earnedRewards, setEarnedRewards] = useState<EarnedReward[]>([
+    {
+      id: "movie-night-1",
+      title: "Family Movie Night",
+      description: "Choose any movie for tonight's family viewing with snacks included!",
+      redeemedAt: new Date(2024, 11, 15),
+      expiresAt: new Date(2024, 11, 22),
+      status: "active",
+      category: "family",
+      rarity: "common"
+    },
+    {
+      id: "extra-screen-time-1", 
+      title: "Extra Screen Time",
+      description: "Earn 30 minutes of bonus screen time for games or videos",
+      redeemedAt: new Date(2024, 11, 10),
+      status: "used",
+      category: "individual",
+      rarity: "common"
+    }
+  ])
+
   // Mock family data
   const familyMembers = [
     {
@@ -114,6 +157,54 @@ const Index = () => {
       icon: <Zap className="h-6 w-6" />
     }
   ]
+
+  const handleRewardRedeem = (rewardId: string, cost: number) => {
+    // Find the reward details (in a real app, this would come from an API)
+    const rewardDetails = {
+      "movie-night": { title: "Family Movie Night", description: "Choose any movie for tonight's family viewing with snacks included!", rarity: "common" as const, category: "family" as const },
+      "ice-cream-trip": { title: "Ice Cream Shop Visit", description: "Family trip to your favorite ice cream parlor - everyone gets two scoops!", rarity: "rare" as const, category: "family" as const },
+      "extra-screen-time": { title: "Extra Screen Time", description: "Earn 30 minutes of bonus screen time for games or videos", rarity: "common" as const, category: "individual" as const },
+      "skip-chore": { title: "Skip One Chore", description: "Get out of doing one assigned household chore this week", rarity: "common" as const, category: "special" as const }
+    }
+
+    const reward = rewardDetails[rewardId as keyof typeof rewardDetails]
+    if (!reward) return
+
+    // Add to earned rewards
+    const newReward: EarnedReward = {
+      id: `${rewardId}-${Date.now()}`,
+      title: reward.title,
+      description: reward.description,
+      redeemedAt: new Date(),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      status: "active",
+      category: reward.category,
+      rarity: reward.rarity
+    }
+
+    setEarnedRewards(prev => [newReward, ...prev])
+    setTotalPoints(prev => prev - cost)
+    
+    toast({
+      title: "Reward Redeemed! 🎉",
+      description: `You've successfully redeemed "${reward.title}"`,
+    })
+  }
+
+  const handleUseReward = (rewardId: string) => {
+    setEarnedRewards(prev => 
+      prev.map(reward => 
+        reward.id === rewardId 
+          ? { ...reward, status: "used" as const }
+          : reward
+      )
+    )
+    
+    toast({
+      title: "Reward Used! ✅",
+      description: "Hope you enjoyed your reward!",
+    })
+  }
 
   return (
     <div className="min-h-screen bg-gradient-soft">
@@ -230,7 +321,32 @@ const Index = () => {
             ))}
           </div>
         </section>
+
+        {/* Reward Store */}
+        <section>
+          <RewardStore 
+            totalPoints={totalPoints}
+            onRewardRedeem={handleRewardRedeem}
+          />
+        </section>
+
+        {/* Earned Rewards */}
+        <section>
+          <EarnedRewards 
+            rewards={earnedRewards}
+            onUseReward={handleUseReward}
+          />
+        </section>
       </div>
+
+      {/* Reward Redemption Modal */}
+      <RewardRedemptionModal
+        isOpen={showRedemptionModal}
+        onClose={() => setShowRedemptionModal(false)}
+        reward={selectedReward}
+        currentPoints={totalPoints}
+        onConfirmRedeem={handleRewardRedeem}
+      />
     </div>
   );
 };
