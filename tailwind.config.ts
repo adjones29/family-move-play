@@ -61,7 +61,29 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				/* FitFam Custom Colors */
+				'member-1': 'hsl(var(--member-1))',
+				'member-2': 'hsl(var(--member-2))',
+				'member-3': 'hsl(var(--member-3))',
+				'member-4': 'hsl(var(--member-4))',
+				'badge-gold': 'hsl(var(--badge-gold))',
+				'badge-silver': 'hsl(var(--badge-silver))',
+				'badge-bronze': 'hsl(var(--badge-bronze))'
+			},
+			backgroundImage: {
+				'gradient-energy': 'var(--gradient-energy)',
+				'gradient-success': 'var(--gradient-success)', 
+				'gradient-warm': 'var(--gradient-warm)',
+				'gradient-soft': 'var(--gradient-soft)'
+			},
+			boxShadow: {
+				'card': 'var(--shadow-card)',
+				'button': 'var(--shadow-button)',
+				'float': 'var(--shadow-float)'
+			},
+			transitionTimingFunction: {
+				'bouncy': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

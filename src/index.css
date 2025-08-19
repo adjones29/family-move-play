@@ -2,41 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* FitFam Design System - Family Fitness Gamification */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* FitFam Brand Colors */
+    --background: 240 100% 98%;
+    --foreground: 225 71% 25%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 225 71% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 225 71% 25%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Energetic Primary - Vibrant Blue */
+    --primary: 217 91% 60%;
+    --primary-foreground: 0 0% 100%;
+    
+    /* Playful Secondary - Soft Purple */
+    --secondary: 255 90% 95%;
+    --secondary-foreground: 280 100% 40%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 240 20% 96%;
+    --muted-foreground: 225 20% 55%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Fun Accent - Orange Energy */
+    --accent: 25 100% 65%;
+    --accent-foreground: 0 0% 100%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --border: 240 20% 90%;
+    --input: 240 20% 94%;
+    --ring: 217 91% 60%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --radius: 1rem;
 
-    --radius: 0.5rem;
+    /* FitFam Custom Design Tokens */
+    --gradient-energy: linear-gradient(135deg, hsl(217 91% 60%) 0%, hsl(280 100% 70%) 100%);
+    --gradient-success: linear-gradient(135deg, hsl(142 76% 55%) 0%, hsl(158 64% 52%) 100%);
+    --gradient-warm: linear-gradient(135deg, hsl(25 100% 65%) 0%, hsl(45 100% 70%) 100%);
+    --gradient-soft: linear-gradient(135deg, hsl(255 90% 95%) 0%, hsl(240 100% 98%) 100%);
+    
+    /* Achievement Colors */
+    --badge-gold: 45 100% 60%;
+    --badge-silver: 0 0% 75%;
+    --badge-bronze: 25 70% 50%;
+    
+    /* Family Member Colors */
+    --member-1: 217 91% 60%; /* Blue */
+    --member-2: 280 100% 70%; /* Purple */
+    --member-3: 142 76% 55%; /* Green */
+    --member-4: 25 100% 65%; /* Orange */
+    
+    /* Animations */
+    --transition-bouncy: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-smooth: all 0.3s ease-out;
+    
+    /* Shadows */
+    --shadow-card: 0 4px 20px -4px hsl(217 91% 60% / 0.15);
+    --shadow-button: 0 2px 8px -2px hsl(217 91% 60% / 0.3);
+    --shadow-float: 0 8px 32px -8px hsl(217 91% 60% / 0.25);
 
     --sidebar-background: 0 0% 98%;
 
