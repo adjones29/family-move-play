@@ -1,12 +1,11 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Trophy, Target, Zap } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { User, Zap } from "lucide-react"
 
 interface FamilyMemberCardProps {
   name: string
-  avatar?: string
+  avatar: string
   dailySteps: number
   stepGoal: number
   weeklyScore: number
@@ -14,7 +13,7 @@ interface FamilyMemberCardProps {
   memberColor: "member-1" | "member-2" | "member-3" | "member-4"
 }
 
-export function FamilyMemberCard({
+export const FamilyMemberCard = ({
   name,
   avatar,
   dailySteps,
@@ -22,52 +21,52 @@ export function FamilyMemberCard({
   weeklyScore,
   badges,
   memberColor
-}: FamilyMemberCardProps) {
+}: FamilyMemberCardProps) => {
   const progressPercentage = Math.min((dailySteps / stepGoal) * 100, 100)
   
   return (
-    <Card className="shadow-card hover:shadow-float transition-all duration-300 hover:scale-105 bg-gradient-to-br from-card to-secondary/20">
+    <Card className="min-w-[280px] shadow-card hover:shadow-hover hover:scale-105 transition-all duration-300 bg-card border-border/30">
       <CardContent className="p-6">
-        <div className="flex items-center space-x-4 mb-4">
-          <div className={`relative`}>
-            <Avatar className="h-16 w-16 border-4 border-${memberColor} shadow-lg">
-              <AvatarImage src={avatar} alt={name} />
-              <AvatarFallback className={`bg-${memberColor} text-white text-lg font-bold`}>
-                {name.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
-            {progressPercentage === 100 && (
-              <div className="absolute -top-2 -right-2 bg-gradient-success rounded-full p-1">
-                <Target className="h-4 w-4 text-white" />
-              </div>
+        <div className="flex items-center space-x-4">
+          <div className={`w-12 h-12 rounded-full bg-${memberColor} flex items-center justify-center`}>
+            {avatar ? (
+              <img src={avatar} alt={name} className="w-full h-full rounded-full object-cover" />
+            ) : (
+              <User className="h-6 w-6 text-white" />
             )}
           </div>
           <div className="flex-1">
-            <h3 className="text-lg font-bold text-foreground">{name}</h3>
-            <div className="flex items-center space-x-2">
-              <Badge variant="secondary" className="text-xs">
-                <Trophy className="h-3 w-3 mr-1" />
-                {badges} badges
-              </Badge>
-              <Badge variant="outline" className="text-xs">
+            <h3 className="font-bold text-white">{name}</h3>
+            <div className="flex items-center space-x-2 text-sm text-gray-400">
+              <span>{dailySteps.toLocaleString()} steps</span>
+              <span>•</span>
+              <span className="flex items-center">
                 <Zap className="h-3 w-3 mr-1" />
-                {weeklyScore} pts
-              </Badge>
+                {badges} badges
+              </span>
             </div>
           </div>
         </div>
         
-        <div className="space-y-3">
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-muted-foreground">Daily Steps</span>
-            <span className="font-semibold">
+        <div className="mt-4 space-y-2">
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-400">Daily Goal</span>
+            <span className={`font-medium ${progressPercentage >= 100 ? 'text-green-400' : 'text-white'}`}>
               {dailySteps.toLocaleString()} / {stepGoal.toLocaleString()}
             </span>
           </div>
-          <Progress 
-            value={progressPercentage} 
-            className="h-3 bg-muted"
-          />
+          <Progress value={progressPercentage} className="h-2" />
+        </div>
+        
+        <div className="mt-4 flex justify-between items-center">
+          <Badge variant="secondary" className="bg-secondary/50 text-gray-300">
+            Weekly: {weeklyScore} pts
+          </Badge>
+          {progressPercentage >= 100 && (
+            <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
+              Goal Complete!
+            </Badge>
+          )}
         </div>
       </CardContent>
     </Card>

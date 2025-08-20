@@ -1,13 +1,13 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Button } from "@/components/ui/enhanced-button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Users, Trophy, Star } from "lucide-react"
+import { Button } from "@/components/ui/enhanced-button"
+import { Calendar, Users, Trophy, ChevronRight } from "lucide-react"
 
 interface ChallengeCardProps {
   title: string
   description: string
-  type: "weekly" | "daily" | "special"
+  type: "daily" | "weekly" | "special"
   participants: number
   progress: number
   totalGoal: number
@@ -16,7 +16,7 @@ interface ChallengeCardProps {
   difficulty: "easy" | "medium" | "hard"
 }
 
-export function ChallengeCard({
+export const ChallengeCard = ({
   title,
   description,
   type,
@@ -26,82 +26,68 @@ export function ChallengeCard({
   daysLeft,
   reward,
   difficulty
-}: ChallengeCardProps) {
-  const progressPercentage = Math.min((progress / totalGoal) * 100, 100)
+}: ChallengeCardProps) => {
+  const progressPercentage = (progress / totalGoal) * 100
   
-  const getDifficultyColor = () => {
-    switch (difficulty) {
-      case "easy": return "bg-gradient-success"
-      case "medium": return "bg-gradient-warm" 
-      case "hard": return "bg-gradient-energy"
-      default: return "bg-gradient-success"
-    }
+  const typeColors = {
+    daily: "bg-green-500/20 text-green-400 border-green-500/30",
+    weekly: "bg-blue-500/20 text-blue-400 border-blue-500/30", 
+    special: "bg-purple-500/20 text-purple-400 border-purple-500/30"
   }
-
-  const getTypeIcon = () => {
-    switch (type) {
-      case "weekly": return <Calendar className="h-4 w-4" />
-      case "daily": return <Star className="h-4 w-4" />
-      case "special": return <Trophy className="h-4 w-4" />
-      default: return <Calendar className="h-4 w-4" />
-    }
+  
+  const difficultyColors = {
+    easy: "bg-green-500/20 text-green-400",
+    medium: "bg-yellow-500/20 text-yellow-400",
+    hard: "bg-red-500/20 text-red-400"
   }
 
   return (
-    <Card className="shadow-card hover:shadow-float transition-all duration-300 hover:scale-105 bg-gradient-to-br from-card to-secondary/10 overflow-hidden">
-      <div className={`h-2 w-full ${getDifficultyColor()}`} />
+    <Card className="min-w-[320px] shadow-card hover:shadow-hover hover:scale-105 transition-all duration-300 bg-card border-border/30">
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <Badge variant="outline" className="capitalize text-xs">
-                {getTypeIcon()}
-                <span className="ml-1">{type}</span>
-              </Badge>
-              <Badge variant="secondary" className="text-xs capitalize">
-                {difficulty}
-              </Badge>
-            </div>
-            <h3 className="text-lg font-bold text-foreground leading-tight">{title}</h3>
-          </div>
-          <div className="text-right text-sm text-muted-foreground">
-            <div className="flex items-center">
-              <Users className="h-4 w-4 mr-1" />
-              {participants}
-            </div>
-          </div>
+        <div className="flex justify-between items-start">
+          <Badge className={typeColors[type]} variant="outline">
+            {type.charAt(0).toUpperCase() + type.slice(1)}
+          </Badge>
+          <Badge className={difficultyColors[difficulty]} variant="secondary">
+            {difficulty}
+          </Badge>
         </div>
+        <CardTitle className="text-lg text-white">{title}</CardTitle>
       </CardHeader>
       
       <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <p className="text-sm text-gray-400">{description}</p>
         
         <div className="space-y-2">
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-muted-foreground">Progress</span>
-            <span className="font-semibold">
-              {progress.toLocaleString()} / {totalGoal.toLocaleString()}
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-400">Progress</span>
+            <span className="font-medium text-white">
+              {type === "daily" ? `${progress}/${totalGoal} days` : `${progress.toLocaleString()}/${totalGoal.toLocaleString()}`}
             </span>
           </div>
-          <Progress value={progressPercentage} className="h-3" />
+          <Progress value={progressPercentage} className="h-2" />
+        </div>
+        
+        <div className="flex justify-between items-center text-sm text-gray-400">
+          <span className="flex items-center">
+            <Users className="h-4 w-4 mr-1" />
+            {participants} family members
+          </span>
+          <span className="flex items-center">
+            <Calendar className="h-4 w-4 mr-1" />
+            {daysLeft} days left
+          </span>
         </div>
         
         <div className="flex items-center justify-between pt-2">
-          <div className="text-sm">
-            <span className="text-muted-foreground">Reward: </span>
-            <span className="font-medium text-accent">{reward}</span>
+          <div className="flex items-center text-sm">
+            <Trophy className="h-4 w-4 mr-2 text-yellow-500" />
+            <span className="font-medium text-white">{reward}</span>
           </div>
-          <Badge variant="outline" className="text-xs">
-            {daysLeft} days left
-          </Badge>
+          <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
+            <ChevronRight className="h-4 w-4" />
+          </Button>
         </div>
-        
-        <Button 
-          variant={progressPercentage === 100 ? "success" : "energy"} 
-          className="w-full"
-        >
-          {progressPercentage === 100 ? "Completed! 🎉" : "Join Challenge"}
-        </Button>
       </CardContent>
     </Card>
   )

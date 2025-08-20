@@ -1,7 +1,8 @@
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { Button } from "@/components/ui/enhanced-button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Play, Users, Timer, Award } from "lucide-react"
+import { Button } from "@/components/ui/enhanced-button"
+import { Clock, Users, Play } from "lucide-react"
+import { ReactNode } from "react"
 
 interface MiniGameCardProps {
   title: string
@@ -10,10 +11,10 @@ interface MiniGameCardProps {
   participants: string
   difficulty: "easy" | "medium" | "hard"
   points: number
-  icon: React.ReactNode
+  icon: ReactNode
 }
 
-export function MiniGameCard({
+export const MiniGameCard = ({
   title,
   description,
   duration,
@@ -21,58 +22,55 @@ export function MiniGameCard({
   difficulty,
   points,
   icon
-}: MiniGameCardProps) {
-  const getDifficultyColor = () => {
-    switch (difficulty) {
-      case "easy": return "text-green-600 bg-green-50"
-      case "medium": return "text-orange-600 bg-orange-50"
-      case "hard": return "text-red-600 bg-red-50"
-      default: return "text-green-600 bg-green-50"
-    }
+}: MiniGameCardProps) => {
+  const difficultyColors = {
+    easy: "bg-green-500/20 text-green-400",
+    medium: "bg-yellow-500/20 text-yellow-400",
+    hard: "bg-red-500/20 text-red-400"
   }
 
   return (
-    <Card className="shadow-card hover:shadow-float transition-all duration-300 hover:scale-105 bg-gradient-to-br from-card to-secondary/10 group cursor-pointer">
+    <Card className="min-w-[300px] shadow-card hover:shadow-hover hover:scale-105 transition-all duration-300 bg-card border-border/30 group cursor-pointer">
       <CardHeader className="pb-3">
-        <div className="flex items-start justify-between">
+        <div className="flex justify-between items-start">
           <div className="flex items-center space-x-3">
-            <div className="p-3 bg-gradient-energy rounded-xl text-white shadow-sm group-hover:scale-110 transition-transform duration-300">
+            <div className="p-2 bg-primary/20 rounded-lg text-primary">
               {icon}
             </div>
-            <div>
-              <h3 className="font-bold text-foreground">{title}</h3>
-              <div className="flex items-center space-x-2 mt-1">
-                <Badge variant="outline" className={`text-xs ${getDifficultyColor()}`}>
-                  {difficulty}
-                </Badge>
-                <Badge variant="secondary" className="text-xs">
-                  <Award className="h-3 w-3 mr-1" />
-                  {points} pts
-                </Badge>
-              </div>
-            </div>
+            <CardTitle className="text-lg text-white">{title}</CardTitle>
           </div>
+          <Badge className={difficultyColors[difficulty]} variant="secondary">
+            {difficulty}
+          </Badge>
         </div>
       </CardHeader>
       
       <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">{description}</p>
+        <p className="text-sm text-gray-400">{description}</p>
         
-        <div className="flex items-center justify-between text-sm text-muted-foreground">
-          <div className="flex items-center space-x-1">
-            <Timer className="h-4 w-4" />
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="flex items-center text-gray-400">
+            <Clock className="h-4 w-4 mr-2" />
             <span>{duration}</span>
           </div>
-          <div className="flex items-center space-x-1">
-            <Users className="h-4 w-4" />
+          <div className="flex items-center text-gray-400">
+            <Users className="h-4 w-4 mr-2" />
             <span>{participants}</span>
           </div>
         </div>
         
-        <Button variant="playful" className="w-full group-hover:scale-105 transition-transform duration-300">
-          <Play className="h-4 w-4 mr-2" />
-          Start Game
-        </Button>
+        <div className="flex items-center justify-between pt-2">
+          <Badge variant="outline" className="bg-accent/20 text-accent border-accent/30">
+            +{points} points
+          </Badge>
+          <Button 
+            size="sm" 
+            className="group-hover:scale-105 transition-transform bg-primary hover:bg-primary/90"
+          >
+            <Play className="h-4 w-4 mr-2" />
+            Start Game
+          </Button>
+        </div>
       </CardContent>
     </Card>
   )

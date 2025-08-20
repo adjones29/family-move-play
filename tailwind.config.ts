@@ -72,14 +72,14 @@ export default {
 				'badge-bronze': 'hsl(var(--badge-bronze))'
 			},
 			backgroundImage: {
-				'gradient-energy': 'var(--gradient-energy)',
-				'gradient-success': 'var(--gradient-success)', 
-				'gradient-warm': 'var(--gradient-warm)',
-				'gradient-soft': 'var(--gradient-soft)'
+				'gradient-hero': 'var(--gradient-hero)',
+				'gradient-card': 'var(--gradient-card)', 
+				'gradient-netflix': 'var(--gradient-netflix)',
+				'gradient-dark': 'var(--gradient-dark)'
 			},
 			boxShadow: {
 				'card': 'var(--shadow-card)',
-				'button': 'var(--shadow-button)',
+				'hover': 'var(--shadow-hover)',
 				'float': 'var(--shadow-float)'
 			},
 			transitionTimingFunction: {

@@ -6,12 +6,12 @@ import { MiniGameCard } from "@/components/MiniGameCard"
 import { RewardStore } from "@/components/RewardStore"
 import { EarnedRewards } from "@/components/EarnedRewards"
 import { RewardRedemptionModal } from "@/components/RewardRedemptionModal"
+import { HeroSection } from "@/components/HeroSection"
+import { HorizontalScroll } from "@/components/HorizontalScroll"
 import { Button } from "@/components/ui/enhanced-button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
-import { Bell, Settings, Plus, Dumbbell, Target, Gamepad2, Users, Zap, Gift, Star } from "lucide-react"
-import heroImage from "@/assets/hero-family-fitness.jpg"
+import { Bell, Settings, Search, Dumbbell, Target, Gamepad2, Users, Zap, Gift, Star } from "lucide-react"
 
 const Index = () => {
   const { toast } = useToast()
@@ -207,73 +207,45 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-soft">
-      {/* Header */}
-      <div className="bg-gradient-energy text-white shadow-float">
-        <div className="container mx-auto px-4 py-6">
+    <div className="min-h-screen bg-background">
+      {/* Netflix-style Header */}
+      <div className="bg-black/90 backdrop-blur-sm text-white sticky top-0 z-50">
+        <div className="px-8 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="text-3xl font-bold">🏃‍♀️ FitFam</div>
-              <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
-                Premium Family
-              </Badge>
+            <div className="flex items-center space-x-8">
+              <div className="text-2xl font-bold text-primary">FitFam</div>
+              <nav className="hidden md:flex space-x-6">
+                <button className="hover:text-gray-300 transition-colors">Home</button>
+                <button className="hover:text-gray-300 transition-colors">Challenges</button>
+                <button className="hover:text-gray-300 transition-colors">Games</button>
+                <button className="hover:text-gray-300 transition-colors">Rewards</button>
+              </nav>
             </div>
-            <div className="flex items-center space-x-3">
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+            <div className="flex items-center space-x-4">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+                <Search className="h-5 w-5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
                 <Bell className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/20">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
                 <Settings className="h-5 w-5" />
               </Button>
+              <Badge className="bg-primary/20 text-primary border-primary/30">
+                {totalPoints} points
+              </Badge>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 space-y-8">
-        {/* Hero Section */}
-        <Card className="shadow-float bg-gradient-to-r from-card to-secondary/20 overflow-hidden">
-          <CardContent className="p-0">
-            <div className="grid lg:grid-cols-2 gap-8 items-center">
-              <div className="p-8 space-y-6">
-                <div className="space-y-4">
-                  <h1 className="text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-                    Keep Your Family 
-                    <span className="bg-gradient-energy bg-clip-text text-transparent"> Active Together!</span>
-                  </h1>
-                  <p className="text-lg text-muted-foreground">
-                    Turn fitness into a fun family adventure with challenges, games, and rewards that bring everyone together.
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-3">
-                  <Button variant="energy" size="lg">
-                    <Plus className="h-5 w-5 mr-2" />
-                    Start New Challenge
-                  </Button>
-                  <Button variant="outline" size="lg">
-                    <Gamepad2 className="h-5 w-5 mr-2" />
-                    Quick Game
-                  </Button>
-                </div>
-              </div>
-              <div className="relative">
-                <img 
-                  src={heroImage} 
-                  alt="Family exercising together"
-                  className="w-full h-80 lg:h-96 object-cover rounded-r-lg"
-                />
-                <div className="absolute inset-0 bg-gradient-to-l from-transparent to-card/20 rounded-r-lg" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+      {/* Hero Section */}
+      <HeroSection />
 
-        {/* Activity Stats */}
-        <section>
-          <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center">
-            <Users className="h-6 w-6 mr-2 text-primary" />
-            Family Overview
-          </h2>
+      {/* Content Sections with Horizontal Scrolling */}
+      <div className="space-y-8">
+        {/* Activity Stats - Full Width */}
+        <section className="px-8">
           <ActivityStats 
             totalSteps={31086}
             activeMinutes={127}
@@ -283,55 +255,37 @@ const Index = () => {
           />
         </section>
 
-        {/* Family Members */}
-        <section>
-          <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center">
-            <Users className="h-6 w-6 mr-2 text-primary" />
-            Family Members
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {familyMembers.map((member, index) => (
-              <FamilyMemberCard key={index} {...member} />
-            ))}
-          </div>
-        </section>
+        {/* Family Members - Horizontal Scroll */}
+        <HorizontalScroll title="Family Members">
+          {familyMembers.map((member, index) => (
+            <FamilyMemberCard key={index} {...member} />
+          ))}
+        </HorizontalScroll>
 
-        {/* Active Challenges */}
-        <section>
-          <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center">
-            <Target className="h-6 w-6 mr-2 text-primary" />
-            Active Challenges
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {challenges.map((challenge, index) => (
-              <ChallengeCard key={index} {...challenge} />
-            ))}
-          </div>
-        </section>
+        {/* Active Challenges - Horizontal Scroll */}
+        <HorizontalScroll title="Active Challenges">
+          {challenges.map((challenge, index) => (
+            <ChallengeCard key={index} {...challenge} />
+          ))}
+        </HorizontalScroll>
 
-        {/* Mini Games */}
-        <section>
-          <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center">
-            <Gamepad2 className="h-6 w-6 mr-2 text-primary" />
-            Quick Mini-Games
-          </h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {miniGames.map((game, index) => (
-              <MiniGameCard key={index} {...game} />
-            ))}
-          </div>
-        </section>
+        {/* Mini Games - Horizontal Scroll */}
+        <HorizontalScroll title="Quick Mini-Games">
+          {miniGames.map((game, index) => (
+            <MiniGameCard key={index} {...game} />
+          ))}
+        </HorizontalScroll>
 
-        {/* Reward Store */}
-        <section>
+        {/* Reward Store - Full Width */}
+        <section className="px-8">
           <RewardStore 
             totalPoints={totalPoints}
             onRewardRedeem={handleRewardRedeem}
           />
         </section>
 
-        {/* Earned Rewards */}
-        <section>
+        {/* Earned Rewards - Full Width */}
+        <section className="px-8 pb-8">
           <EarnedRewards 
             rewards={earnedRewards}
             onUseReward={handleUseReward}
