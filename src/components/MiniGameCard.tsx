@@ -37,7 +37,7 @@ export const MiniGameCard = ({
             <div className="p-2 bg-primary/20 rounded-lg text-primary">
               {icon}
             </div>
-            <CardTitle className="text-lg text-white">{title}</CardTitle>
+            <CardTitle className="text-lg text-card-foreground">{title}</CardTitle>
           </div>
           <Badge className={difficultyColors[difficulty]} variant="secondary">
             {difficulty}
@@ -46,14 +46,14 @@ export const MiniGameCard = ({
       </CardHeader>
       
       <CardContent className="space-y-4">
-        <p className="text-sm text-gray-400">{description}</p>
+        <p className="text-sm text-muted-foreground">{description}</p>
         
         <div className="grid grid-cols-2 gap-4 text-sm">
-          <div className="flex items-center text-gray-400">
+          <div className="flex items-center text-muted-foreground">
             <Clock className="h-4 w-4 mr-2" />
             <span>{duration}</span>
           </div>
-          <div className="flex items-center text-gray-400">
+          <div className="flex items-center text-muted-foreground">
             <Users className="h-4 w-4 mr-2" />
             <span>{participants}</span>
           </div>

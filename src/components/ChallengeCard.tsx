@@ -52,23 +52,23 @@ export const ChallengeCard = ({
             {difficulty}
           </Badge>
         </div>
-        <CardTitle className="text-lg text-white">{title}</CardTitle>
+        <CardTitle className="text-lg text-card-foreground">{title}</CardTitle>
       </CardHeader>
       
       <CardContent className="space-y-4">
-        <p className="text-sm text-gray-400">{description}</p>
+        <p className="text-sm text-muted-foreground">{description}</p>
         
         <div className="space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-400">Progress</span>
-            <span className="font-medium text-white">
+            <span className="text-muted-foreground">Progress</span>
+            <span className="font-medium text-card-foreground">
               {type === "daily" ? `${progress}/${totalGoal} days` : `${progress.toLocaleString()}/${totalGoal.toLocaleString()}`}
             </span>
           </div>
           <Progress value={progressPercentage} className="h-2" />
         </div>
         
-        <div className="flex justify-between items-center text-sm text-gray-400">
+        <div className="flex justify-between items-center text-sm text-muted-foreground">
           <span className="flex items-center">
             <Users className="h-4 w-4 mr-1" />
             {participants} family members
@@ -82,7 +82,7 @@ export const ChallengeCard = ({
         <div className="flex items-center justify-between pt-2">
           <div className="flex items-center text-sm">
             <Trophy className="h-4 w-4 mr-2 text-yellow-500" />
-            <span className="font-medium text-white">{reward}</span>
+            <span className="font-medium text-card-foreground">{reward}</span>
           </div>
           <Button variant="ghost" size="sm" className="text-primary hover:text-primary/80">
             <ChevronRight className="h-4 w-4" />
