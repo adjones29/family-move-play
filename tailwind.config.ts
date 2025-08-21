@@ -74,8 +74,8 @@ export default {
 			backgroundImage: {
 				'gradient-hero': 'var(--gradient-hero)',
 				'gradient-card': 'var(--gradient-card)', 
-				'gradient-netflix': 'var(--gradient-netflix)',
-				'gradient-dark': 'var(--gradient-dark)'
+				'gradient-primary': 'var(--gradient-primary)',
+				'gradient-accent': 'var(--gradient-accent)'
 			},
 			boxShadow: {
 				'card': 'var(--shadow-card)',
