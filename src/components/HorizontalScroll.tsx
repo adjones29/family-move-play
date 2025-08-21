@@ -24,13 +24,13 @@ export const HorizontalScroll = ({ title, children }: HorizontalScrollProps) => 
 
   return (
     <div className="group relative px-8 py-6">
-      <h2 className="text-xl font-semibold text-foreground mb-4">{title}</h2>
+      <h2 className="text-xl font-semibold text-white mb-4">{title}</h2>
       
       {/* Scroll Buttons */}
       <Button
         variant="ghost"
         size="icon"
-        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-card/90 hover:bg-card text-card-foreground opacity-0 group-hover:opacity-100 transition-opacity shadow-card"
+        className="absolute left-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white opacity-0 group-hover:opacity-100 transition-opacity"
         onClick={scrollLeft}
       >
         <ChevronLeft className="h-6 w-6" />
@@ -39,7 +39,7 @@ export const HorizontalScroll = ({ title, children }: HorizontalScrollProps) => 
       <Button
         variant="ghost"
         size="icon"
-        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-card/90 hover:bg-card text-card-foreground opacity-0 group-hover:opacity-100 transition-opacity shadow-card"
+        className="absolute right-2 top-1/2 -translate-y-1/2 z-10 bg-black/50 hover:bg-black/70 text-white opacity-0 group-hover:opacity-100 transition-opacity"
         onClick={scrollRight}
       >
         <ChevronRight className="h-6 w-6" />
