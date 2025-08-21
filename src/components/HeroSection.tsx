@@ -18,10 +18,10 @@ export const HeroSection = () => {
       {/* Content */}
       <div className="relative z-10 flex flex-col justify-end h-full px-8 pb-20">
         <div className="max-w-2xl space-y-4">
-          <h1 className="text-5xl lg:text-6xl font-bold text-white leading-tight drop-shadow-lg">
+          <h1 className="text-5xl lg:text-6xl font-bold text-foreground leading-tight drop-shadow-lg">
             FitFam
           </h1>
-          <p className="text-lg text-white/90 max-w-lg drop-shadow-md">
+          <p className="text-lg text-foreground/80 max-w-lg drop-shadow-md">
             Keep your family active together through gamified fitness tracking, collaborative challenges, and shared rewards.
           </p>
           <div className="flex gap-4 mt-6">

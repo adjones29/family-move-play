@@ -32,12 +32,12 @@ export const FamilyMemberCard = ({
             {avatar ? (
               <img src={avatar} alt={name} className="w-full h-full rounded-full object-cover" />
             ) : (
-              <User className="h-6 w-6 text-white" />
+              <User className="h-6 w-6 text-card-foreground" />
             )}
           </div>
           <div className="flex-1">
-            <h3 className="font-bold text-white">{name}</h3>
-            <div className="flex items-center space-x-2 text-sm text-gray-400">
+            <h3 className="font-bold text-card-foreground">{name}</h3>
+            <div className="flex items-center space-x-2 text-sm text-muted-foreground">
               <span>{dailySteps.toLocaleString()} steps</span>
               <span>•</span>
               <span className="flex items-center">
@@ -50,8 +50,8 @@ export const FamilyMemberCard = ({
         
         <div className="mt-4 space-y-2">
           <div className="flex justify-between text-sm">
-            <span className="text-gray-400">Daily Goal</span>
-            <span className={`font-medium ${progressPercentage >= 100 ? 'text-green-400' : 'text-white'}`}>
+            <span className="text-muted-foreground">Daily Goal</span>
+            <span className={`font-medium ${progressPercentage >= 100 ? 'text-green-600' : 'text-card-foreground'}`}>
               {dailySteps.toLocaleString()} / {stepGoal.toLocaleString()}
             </span>
           </div>
@@ -59,7 +59,7 @@ export const FamilyMemberCard = ({
         </div>
         
         <div className="mt-4 flex justify-between items-center">
-          <Badge variant="secondary" className="bg-secondary/50 text-gray-300">
+          <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground">
             Weekly: {weeklyScore} pts
           </Badge>
           {progressPercentage >= 100 && (
