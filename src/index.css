@@ -18,7 +18,7 @@
 
     /* Bright Orange Primary */
     --primary: 25 100% 55%;
-    --primary-foreground: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
     
     /* Light Purple Secondary */
     --secondary: 270 60% 90%;
@@ -29,10 +29,10 @@
 
     /* Vibrant Green Accent */
     --accent: 140 80% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent-foreground: 0 0% 0%;
 
     --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive-foreground: 0 0% 0%;
 
     --border: 220 13% 85%;
     --input: 220 13% 90%;
