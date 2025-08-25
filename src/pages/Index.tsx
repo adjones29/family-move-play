@@ -6,18 +6,27 @@ import { MiniGameCard } from "@/components/MiniGameCard"
 import { RewardStore } from "@/components/RewardStore"
 import { EarnedRewards } from "@/components/EarnedRewards"
 import { RewardRedemptionModal } from "@/components/RewardRedemptionModal"
+import { SettingsModal } from "@/components/SettingsModal"
+import { NotificationsDrawer } from "@/components/NotificationsDrawer"
+import { MiniGameModal } from "@/components/MiniGameModal"
 import { HeroSection } from "@/components/HeroSection"
 import { HorizontalScroll } from "@/components/HorizontalScroll"
 import { Button } from "@/components/ui/enhanced-button"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
-import { Bell, Settings, Search, Dumbbell, Target, Gamepad2, Users, Zap, Gift, Star } from "lucide-react"
+import { useNavigate } from "react-router-dom"
+import { Bell, Settings, Dumbbell, Target, Gamepad2, Users, Zap, Gift, Star } from "lucide-react"
 
 const Index = () => {
   const { toast } = useToast()
+  const navigate = useNavigate()
   const [totalPoints, setTotalPoints] = useState(125) // Mock starting points
   const [selectedReward, setSelectedReward] = useState<any>(null)
   const [showRedemptionModal, setShowRedemptionModal] = useState(false)
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [selectedGame, setSelectedGame] = useState<any>(null)
+  const [showGameModal, setShowGameModal] = useState(false)
   type EarnedReward = {
     id: string
     title: string
@@ -216,19 +225,41 @@ const Index = () => {
               <div className="text-2xl font-bold text-primary">FitFam</div>
               <nav className="hidden md:flex space-x-6">
                 <button className="hover:text-gray-300 transition-colors">Home</button>
-                <button className="hover:text-gray-300 transition-colors">Challenges</button>
-                <button className="hover:text-gray-300 transition-colors">Games</button>
-                <button className="hover:text-gray-300 transition-colors">Rewards</button>
+                <button 
+                  className="hover:text-gray-300 transition-colors"
+                  onClick={() => navigate("/challenges")}
+                >
+                  Challenges
+                </button>
+                <button 
+                  className="hover:text-gray-300 transition-colors"
+                  onClick={() => navigate("/games")}
+                >
+                  Games
+                </button>
+                <button 
+                  className="hover:text-gray-300 transition-colors"
+                  onClick={() => navigate("/rewards")}
+                >
+                  Rewards
+                </button>
               </nav>
             </div>
             <div className="flex items-center space-x-4">
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
-                <Search className="h-5 w-5" />
-              </Button>
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-white hover:bg-white/10"
+                onClick={() => setShowNotifications(true)}
+              >
                 <Bell className="h-5 w-5" />
               </Button>
-              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-white hover:bg-white/10"
+                onClick={() => setShowSettingsModal(true)}
+              >
                 <Settings className="h-5 w-5" />
               </Button>
               <Badge className="bg-primary/20 text-primary border-primary/30">
@@ -258,21 +289,46 @@ const Index = () => {
         {/* Family Members - Horizontal Scroll */}
         <HorizontalScroll title="Family Members">
           {familyMembers.map((member, index) => (
-            <FamilyMemberCard key={index} {...member} />
+            <div 
+              key={index}
+              onClick={() => {
+                toast({
+                  title: `${member.name}'s Profile`,
+                  description: `Daily steps: ${member.dailySteps.toLocaleString()} | Weekly score: ${member.weeklyScore} | Badges: ${member.badges}`,
+                })
+              }}
+              className="cursor-pointer"
+            >
+              <FamilyMemberCard {...member} />
+            </div>
           ))}
         </HorizontalScroll>
 
         {/* Active Challenges - Horizontal Scroll */}
         <HorizontalScroll title="Active Challenges">
           {challenges.map((challenge, index) => (
-            <ChallengeCard key={index} {...challenge} />
+            <div 
+              key={index}
+              onClick={() => navigate("/challenges")}
+              className="cursor-pointer"
+            >
+              <ChallengeCard {...challenge} />
+            </div>
           ))}
         </HorizontalScroll>
 
         {/* Mini Games - Horizontal Scroll */}
         <HorizontalScroll title="Quick Mini-Games">
           {miniGames.map((game, index) => (
-            <MiniGameCard key={index} {...game} />
+            <div 
+              key={index} 
+              onClick={() => {
+                setSelectedGame(game)
+                setShowGameModal(true)
+              }}
+            >
+              <MiniGameCard {...game} />
+            </div>
           ))}
         </HorizontalScroll>
 
@@ -293,13 +349,29 @@ const Index = () => {
         </section>
       </div>
 
-      {/* Reward Redemption Modal */}
+      {/* Modals and Drawers */}
       <RewardRedemptionModal
         isOpen={showRedemptionModal}
         onClose={() => setShowRedemptionModal(false)}
         reward={selectedReward}
         currentPoints={totalPoints}
         onConfirmRedeem={handleRewardRedeem}
+      />
+      
+      <SettingsModal
+        isOpen={showSettingsModal}
+        onClose={() => setShowSettingsModal(false)}
+      />
+      
+      <NotificationsDrawer
+        isOpen={showNotifications}
+        onClose={() => setShowNotifications(false)}
+      />
+      
+      <MiniGameModal
+        isOpen={showGameModal}
+        onClose={() => setShowGameModal(false)}
+        game={selectedGame}
       />
     </div>
   );
