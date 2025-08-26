@@ -6,9 +6,12 @@ import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, Users, Calendar, Trophy, Target, Clock, Plus } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { CreateChallengeModal } from "@/components/CreateChallengeModal"
 
 const Challenges = () => {
   const navigate = useNavigate()
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [customChallenges, setCustomChallenges] = useState<any[]>([])
   
   const activeChallenges = [
     {
@@ -75,6 +78,13 @@ const Challenges = () => {
     }
   ]
 
+  const handleChallengeCreated = (newChallenge: any) => {
+    setCustomChallenges([...customChallenges, newChallenge])
+  }
+
+  const allActiveChallenges = [...activeChallenges, ...customChallenges.filter(c => c.status === 'active')]
+  const allAvailableChallenges = [...availableChallenges, ...customChallenges.filter(c => c.status === 'available')]
+
   const difficultyColors = {
     easy: "bg-green-500/10 text-green-600 border-green-500/30",
     medium: "bg-yellow-500/10 text-yellow-600 border-yellow-500/30",
@@ -86,16 +96,25 @@ const Challenges = () => {
       {/* Header */}
       <div className="bg-black/90 backdrop-blur-sm text-white sticky top-0 z-50">
         <div className="px-6 py-4">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => navigate("/")}
+                className="text-white hover:bg-white/10"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <h1 className="text-2xl font-bold">Family Challenges</h1>
+            </div>
             <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => navigate("/")}
-              className="text-white hover:bg-white/10"
+              onClick={() => setShowCreateModal(true)} 
+              className="bg-white text-black hover:bg-white/90"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <Plus className="h-4 w-4 mr-2" />
+              Create Challenge
             </Button>
-            <h1 className="text-2xl font-bold">Family Challenges</h1>
           </div>
         </div>
       </div>
@@ -109,7 +128,7 @@ const Challenges = () => {
           </TabsList>
 
           <TabsContent value="active" className="space-y-4">
-            {activeChallenges.map((challenge) => (
+            {allActiveChallenges.map((challenge) => (
               <Card key={challenge.id} className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
@@ -162,7 +181,7 @@ const Challenges = () => {
           </TabsContent>
 
           <TabsContent value="available" className="space-y-4">
-            {availableChallenges.map((challenge) => (
+            {allAvailableChallenges.map((challenge) => (
               <Card key={challenge.id} className="p-6">
                 <div className="flex items-start justify-between mb-4">
                   <div>
@@ -231,6 +250,12 @@ const Challenges = () => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <CreateChallengeModal 
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onChallengeCreated={handleChallengeCreated}
+      />
     </div>
   )
 }

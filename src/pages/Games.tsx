@@ -4,13 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { MiniGameModal } from "@/components/MiniGameModal"
-import { ArrowLeft, Users, Clock, Trophy, Target, Dumbbell, Zap, Heart, GamepadIcon } from "lucide-react"
+import { CreateMiniGameModal } from "@/components/CreateMiniGameModal"
+import { ArrowLeft, Users, Clock, Trophy, Target, Dumbbell, Zap, Heart, GamepadIcon, Plus } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 const Games = () => {
   const navigate = useNavigate()
   const [selectedGame, setSelectedGame] = useState<any>(null)
   const [showGameModal, setShowGameModal] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [customGames, setCustomGames] = useState<any[]>([])
 
   const quickGames = [
     {
@@ -91,6 +94,14 @@ const Games = () => {
     }
   ]
 
+  const handleGameCreated = (newGame: any) => {
+    setCustomGames([...customGames, newGame])
+  }
+
+  const allQuickGames = [...quickGames, ...customGames.filter(g => g.category === 'quick' || !g.category)]
+  const allCardioGames = [...cardioGames, ...customGames.filter(g => g.category === 'cardio')]
+  const allTeamGames = [...teamGames, ...customGames.filter(g => g.category === 'team')]
+
   const difficultyColors = {
     easy: "bg-green-500/10 text-green-600 border-green-500/30",
     medium: "bg-yellow-500/10 text-yellow-600 border-yellow-500/30",
@@ -111,7 +122,7 @@ const Games = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/20 rounded-lg text-primary">
-              {game.icon}
+              {game.icon || <GamepadIcon className="h-6 w-6" />}
             </div>
             <CardTitle className="text-lg">{game.title}</CardTitle>
           </div>
@@ -153,19 +164,28 @@ const Games = () => {
       {/* Header */}
       <div className="bg-black/90 backdrop-blur-sm text-white sticky top-0 z-50">
         <div className="px-6 py-4">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => navigate("/")}
-              className="text-white hover:bg-white/10"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div className="flex items-center gap-3">
-              <GamepadIcon className="h-6 w-6" />
-              <h1 className="text-2xl font-bold">Mini Games</h1>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => navigate("/")}
+                className="text-white hover:bg-white/10"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+              <div className="flex items-center gap-3">
+                <GamepadIcon className="h-6 w-6" />
+                <h1 className="text-2xl font-bold">Mini Games</h1>
+              </div>
             </div>
+            <Button 
+              onClick={() => setShowCreateModal(true)} 
+              className="bg-white text-black hover:bg-white/90"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Create Game
+            </Button>
           </div>
         </div>
       </div>
@@ -180,24 +200,24 @@ const Games = () => {
 
           <TabsContent value="quick">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {quickGames.map((game, index) => (
-                <GameCard key={index} game={game} />
+              {allQuickGames.map((game, index) => (
+                <GameCard key={game.id || index} game={game} />
               ))}
             </div>
           </TabsContent>
 
           <TabsContent value="cardio">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {cardioGames.map((game, index) => (
-                <GameCard key={index} game={game} />
+              {allCardioGames.map((game, index) => (
+                <GameCard key={game.id || index} game={game} />
               ))}
             </div>
           </TabsContent>
 
           <TabsContent value="team">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {teamGames.map((game, index) => (
-                <GameCard key={index} game={game} />
+              {allTeamGames.map((game, index) => (
+                <GameCard key={game.id || index} game={game} />
               ))}
             </div>
           </TabsContent>
@@ -208,6 +228,12 @@ const Games = () => {
         isOpen={showGameModal}
         onClose={() => setShowGameModal(false)}
         game={selectedGame}
+      />
+
+      <CreateMiniGameModal 
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onGameCreated={handleGameCreated}
       />
     </div>
   )
