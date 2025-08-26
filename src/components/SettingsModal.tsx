@@ -8,6 +8,7 @@ import { Slider } from "@/components/ui/slider"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Separator } from "@/components/ui/separator"
 import { User, Bell, Shield, Palette, Volume2, Clock, Users } from "lucide-react"
+import { FamilyManagement } from "./FamilyManagement"
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -22,6 +23,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [volume, setVolume] = useState([75])
   const [theme, setTheme] = useState("system")
   const [language, setLanguage] = useState("english")
+  const [showFamilyManagement, setShowFamilyManagement] = useState(false)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -67,6 +69,20 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     <SelectItem value="french">Français</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+              <Separator />
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label htmlFor="manage-family">Manage Family</Label>
+                  <p className="text-sm text-muted-foreground">Add, edit, or remove family members</p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowFamilyManagement(true)}
+                >
+                  Manage
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -182,6 +198,12 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
           </div>
         </div>
       </DialogContent>
+
+      {/* Family Management Modal */}
+      <FamilyManagement 
+        isOpen={showFamilyManagement} 
+        onClose={() => setShowFamilyManagement(false)} 
+      />
     </Dialog>
   )
 }
