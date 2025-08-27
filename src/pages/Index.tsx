@@ -1,4 +1,6 @@
 import { useState } from "react"
+import { useChallenges, useMiniGames, useRewards } from "@/hooks/useSupabaseData"
+import { getIconComponent } from "@/utils/iconMapping"
 import { FamilyMemberCard } from "@/components/FamilyMemberCard"
 import { ChallengeCard } from "@/components/ChallengeCard"
 import { ActivityStats } from "@/components/ActivityStats"
@@ -16,10 +18,14 @@ import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
 import { Bell, Settings, Dumbbell, Target, Gamepad2, Users, Zap, Gift, Star } from "lucide-react"
+import { Challenge, MiniGame, Reward } from "@/lib/supabase"
 
 const Index = () => {
   const { toast } = useToast()
   const navigate = useNavigate()
+  const { challenges, loading: challengesLoading, error: challengesError } = useChallenges()
+  const { miniGames, loading: miniGamesLoading, error: miniGamesError } = useMiniGames()
+  const { rewards, loading: rewardsLoading, error: rewardsError } = useRewards()
   const [totalPoints, setTotalPoints] = useState(125) // Mock starting points
   const [selectedReward, setSelectedReward] = useState<any>(null)
   const [showRedemptionModal, setShowRedemptionModal] = useState(false)
@@ -61,75 +67,35 @@ const Index = () => {
     }
   ])
 
-  // Mock family data
+  // Mock family data (keeping this local as requested)
   const familyMembers = [
     {
       name: "Dad",
-      avatar: "",
-      dailySteps: 8542,
-      stepGoal: 10000,
-      weeklyScore: 325,
-      badges: 12,
-      memberColor: "member-1" as const
-    },
-    {
-      name: "Mom", 
-      avatar: "",
-      dailySteps: 11234,
-      stepGoal: 10000,
-      weeklyScore: 412,
-      badges: 18,
-      memberColor: "member-2" as const
-    },
-    {
-      name: "Alex",
-      avatar: "",
-      dailySteps: 6789,
-      stepGoal: 8000,
-      weeklyScore: 245,
-      badges: 8,
-      memberColor: "member-3" as const
-    },
-    {
-      name: "Sam",
-      avatar: "",
-      dailySteps: 4521,
-      stepGoal: 6000,
-      weeklyScore: 156,
-      badges: 5,
-      memberColor: "member-4" as const
-    }
-  ]
+  // Transform Supabase data to match component expectations
+  const transformedChallenges = challenges.map(challenge => ({
+    title: challenge.title,
+    description: challenge.description,
+    type: challenge.type,
+    participants: challenge.participants,
+    progress: challenge.progress,
+    totalGoal: challenge.total_goal,
+    daysLeft: challenge.days_left,
+    reward: challenge.reward,
+    difficulty: challenge.difficulty
+  }))
 
-  const challenges = [
-    {
-      title: "Family Walk Week",
-      description: "Take 50,000 steps together as a family this week!",
-      type: "weekly" as const,
-      participants: 4,
-      progress: 32150,
-      totalGoal: 50000,
-      daysLeft: 3,
-      reward: "Movie Night",
-      difficulty: "medium" as const
-    },
-    {
-      title: "Dance Party Daily",
-      description: "Dance for 15 minutes every day this week",
-      type: "daily" as const, 
-      participants: 4,
-      progress: 4,
-      totalGoal: 7,
-      daysLeft: 3,
-      reward: "Ice Cream Trip",
-      difficulty: "easy" as const
-    },
-    {
-      title: "Fitness Champions",
-      description: "Complete 5 different mini-games this month",
-      type: "special" as const,
-      participants: 4,
-      progress: 3,
+  const transformedMiniGames = miniGames.map(game => {
+    const IconComponent = getIconComponent(game.icon_name)
+    return {
+      title: game.title,
+      description: game.description,
+      duration: game.duration,
+      participants: game.participants,
+      difficulty: game.difficulty,
+      points: game.points,
+      icon: <IconComponent className="h-6 w-6" />
+    }
+  })
       totalGoal: 5,
       daysLeft: 12,
       reward: "Theme Park Visit",
@@ -215,6 +181,29 @@ const Index = () => {
     })
   }
 
+  // Show loading state
+  if (challengesLoading || miniGamesLoading || rewardsLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading FitFam data...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (challengesError || miniGamesError || rewardsError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive mb-4">Error loading data from Supabase</p>
+          <Button onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    )
+  }
   return (
     <div className="min-h-screen bg-background">
       {/* Netflix-style Header */}
@@ -306,7 +295,7 @@ const Index = () => {
 
         {/* Active Challenges - Horizontal Scroll */}
         <HorizontalScroll title="Active Challenges">
-          {challenges.map((challenge, index) => (
+          {transformedChallenges.map((challenge, index) => (
             <div 
               key={index}
               onClick={() => navigate("/challenges")}
@@ -319,7 +308,7 @@ const Index = () => {
 
         {/* Mini Games - Horizontal Scroll */}
         <HorizontalScroll title="Quick Mini-Games">
-          {miniGames.map((game, index) => (
+          {transformedMiniGames.map((game, index) => (
             <div 
               key={index} 
               onClick={() => {
@@ -337,44 +326,9 @@ const Index = () => {
           <RewardStore 
             totalPoints={totalPoints}
             onRewardRedeem={handleRewardRedeem}
+            supabaseRewards={rewards}
           />
         </section>
 
         {/* Earned Rewards - Full Width */}
         <section className="px-8 pb-8">
-          <EarnedRewards 
-            rewards={earnedRewards}
-            onUseReward={handleUseReward}
-          />
-        </section>
-      </div>
-
-      {/* Modals and Drawers */}
-      <RewardRedemptionModal
-        isOpen={showRedemptionModal}
-        onClose={() => setShowRedemptionModal(false)}
-        reward={selectedReward}
-        currentPoints={totalPoints}
-        onConfirmRedeem={handleRewardRedeem}
-      />
-      
-      <SettingsModal
-        isOpen={showSettingsModal}
-        onClose={() => setShowSettingsModal(false)}
-      />
-      
-      <NotificationsDrawer
-        isOpen={showNotifications}
-        onClose={() => setShowNotifications(false)}
-      />
-      
-      <MiniGameModal
-        isOpen={showGameModal}
-        onClose={() => setShowGameModal(false)}
-        game={selectedGame}
-      />
-    </div>
-  );
-};
-
-export default Index;

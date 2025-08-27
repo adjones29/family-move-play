@@ -1,263 +1,329 @@
 import { useState } from "react"
+import { useChallenges, useMiniGames, useRewards } from "@/hooks/useSupabaseData"
+import { getIconComponent } from "@/utils/iconMapping"
+import { useChallenges, useMiniGames, useRewards } from "@/hooks/useSupabaseData"
+import { getIconComponent } from "@/utils/iconMapping"
+import { FamilyMemberCard } from "@/components/FamilyMemberCard"
+import { ChallengeCard } from "@/components/ChallengeCard"
+import { ActivityStats } from "@/components/ActivityStats"
+import { MiniGameCard } from "@/components/MiniGameCard"
+import { RewardStore } from "@/components/RewardStore"
+import { EarnedRewards } from "@/components/EarnedRewards"
+import { RewardRedemptionModal } from "@/components/RewardRedemptionModal"
+import { SettingsModal } from "@/components/SettingsModal"
+import { NotificationsDrawer } from "@/components/NotificationsDrawer"
+import { MiniGameModal } from "@/components/MiniGameModal"
+import { HeroSection } from "@/components/HeroSection"
+import { HorizontalScroll } from "@/components/HorizontalScroll"
 import { Button } from "@/components/ui/enhanced-button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowLeft, Users, Calendar, Trophy, Target, Clock, Plus } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
-import { CreateChallengeModal } from "@/components/CreateChallengeModal"
+import { Bell, Settings, Dumbbell, Target, Gamepad2, Users, Zap, Gift, Star } from "lucide-react"
+import { Challenge, MiniGame, Reward } from "@/lib/supabase"
+import { Challenge, MiniGame, Reward } from "@/lib/supabase"
 
-const Challenges = () => {
+const Index = () => {
+  const { toast } = useToast()
   const navigate = useNavigate()
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [customChallenges, setCustomChallenges] = useState<any[]>([])
-  
-  const activeChallenges = [
+  const { challenges, loading: challengesLoading, error: challengesError } = useChallenges()
+  const { miniGames, loading: miniGamesLoading, error: miniGamesError } = useMiniGames()
+  const { rewards, loading: rewardsLoading, error: rewardsError } = useRewards()
+  const { challenges, loading: challengesLoading, error: challengesError } = useChallenges()
+  const { miniGames, loading: miniGamesLoading, error: miniGamesError } = useMiniGames()
+  const { rewards, loading: rewardsLoading, error: rewardsError } = useRewards()
+  const [totalPoints, setTotalPoints] = useState(125) // Mock starting points
+  const [selectedReward, setSelectedReward] = useState<any>(null)
+  const [showRedemptionModal, setShowRedemptionModal] = useState(false)
+  const [showSettingsModal, setShowSettingsModal] = useState(false)
+  const [showNotifications, setShowNotifications] = useState(false)
+  const [selectedGame, setSelectedGame] = useState<any>(null)
+  const [showGameModal, setShowGameModal] = useState(false)
+  type EarnedReward = {
+    id: string
+    title: string
+    description: string
+    redeemedAt: Date
+    expiresAt?: Date
+    status: "active" | "used" | "expired"
+    category: "family" | "individual" | "special"
+    rarity: "common" | "rare" | "epic" | "legendary"
+    icon?: React.ReactNode
+  }
+
+  const [earnedRewards, setEarnedRewards] = useState<EarnedReward[]>([
     {
-      id: "1",
-      title: "Family Walk Week",
-      description: "Take 50,000 steps together as a family this week!",
-      type: "weekly",
-      participants: 4,
-      progress: 32150,
-      totalGoal: 50000,
-      daysLeft: 3,
-      reward: "Movie Night",
-      difficulty: "medium" as const,
-      category: "steps"
+      id: "movie-night-1",
+      title: "Family Movie Night",
+      description: "Choose any movie for tonight's family viewing with snacks included!",
+      redeemedAt: new Date(2024, 11, 15),
+      expiresAt: new Date(2024, 11, 22),
+      status: "active",
+      category: "family",
+      rarity: "common"
     },
     {
-      id: "2", 
-      title: "Dance Party Daily",
-      description: "Dance for 15 minutes every day this week",
-      type: "daily",
-      participants: 4,
-      progress: 4,
-      totalGoal: 7,
-      daysLeft: 3,
-      reward: "Ice Cream Trip",
+      id: "extra-screen-time-1", 
+      title: "Extra Screen Time",
+      description: "Earn 30 minutes of bonus screen time for games or videos",
+      redeemedAt: new Date(2024, 11, 10),
+      status: "used",
+      category: "individual",
+      rarity: "common"
+    }
+  ])
+
+    reward: challenge.reward,
+    difficulty: challenge.difficulty,
+    category: challenge.category || 'general'
+  }))
+  const miniGames = [
+    {
+      title: "Push-up Challenge",
+      description: "See who can do the most push-ups in 60 seconds!",
+      duration: "1-2 min",
+      participants: "2-4 players",
+      difficulty: "medium" as const,
+      points: 50,
+      icon: <Dumbbell className="h-6 w-6" />
+    },
+    {
+      title: "Animal Yoga",
+      description: "Copy fun animal poses and movements together",
+      duration: "5-10 min", 
+      participants: "1-4 players",
       difficulty: "easy" as const,
-      category: "activity"
-    }
-  ]
-
-  const availableChallenges = [
-    {
-      id: "3",
-      title: "Weekend Warriors",
-      description: "Complete 3 different activities this weekend",
-      type: "weekend",
-      participants: "2-4",
-      duration: "2 days",
-      reward: "Extra Screen Time",
-      difficulty: "medium" as const,
-      points: 150
+      points: 30,
+      icon: <Target className="h-6 w-6" />
     },
     {
-      id: "4",
-      title: "Yoga Master",
-      description: "Practice yoga for 30 minutes, 5 days this week",
-      type: "weekly", 
-      participants: "1-4",
-      duration: "7 days",
-      reward: "Special Breakfast",
+      title: "Obstacle Course",
+      description: "Navigate through a living room obstacle course",
+      duration: "3-5 min",
+      participants: "1-4 players", 
       difficulty: "hard" as const,
-      points: 200
+      points: 75,
+      icon: <Zap className="h-6 w-6" />
     }
   ]
 
-  const completedChallenges = [
-    {
-      id: "5",
-      title: "Step Challenge Pro",
-      description: "Walk 10,000 steps every day for a week",
-      completedDate: "2024-12-10",
-      reward: "Pizza Night",
-      points: 300
+  const handleRewardRedeem = (rewardId: string, cost: number) => {
+    // Find the reward details (in a real app, this would come from an API)
+    const rewardDetails = {
+      "movie-night": { title: "Family Movie Night", description: "Choose any movie for tonight's family viewing with snacks included!", rarity: "common" as const, category: "family" as const },
+      "ice-cream-trip": { title: "Ice Cream Shop Visit", description: "Family trip to your favorite ice cream parlor - everyone gets two scoops!", rarity: "rare" as const, category: "family" as const },
+      "extra-screen-time": { title: "Extra Screen Time", description: "Earn 30 minutes of bonus screen time for games or videos", rarity: "common" as const, category: "individual" as const },
+      "skip-chore": { title: "Skip One Chore", description: "Get out of doing one assigned household chore this week", rarity: "common" as const, category: "special" as const }
     }
-  ]
 
-  const handleChallengeCreated = (newChallenge: any) => {
-    setCustomChallenges([...customChallenges, newChallenge])
+    const reward = rewardDetails[rewardId as keyof typeof rewardDetails]
+    if (!reward) return
+
+    // Add to earned rewards
+    const newReward: EarnedReward = {
+  const allActiveChallenges = [...transformedSupabaseChallenges, ...customChallenges.filter(c => c.status === 'active')]
+      title: reward.title,
+      description: reward.description,
+      redeemedAt: new Date(),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+      status: "active",
+      category: reward.category,
+      rarity: reward.rarity
+    }
+
+    setEarnedRewards(prev => [newReward, ...prev])
+    setTotalPoints(prev => prev - cost)
+    
+    toast({
+      title: "Reward Redeemed! 🎉",
+      description: `You've successfully redeemed "${reward.title}"`,
+    })
   }
 
-  const allActiveChallenges = [...activeChallenges, ...customChallenges.filter(c => c.status === 'active')]
-  const allAvailableChallenges = [...availableChallenges, ...customChallenges.filter(c => c.status === 'available')]
-
-  const difficultyColors = {
-    easy: "bg-green-500/10 text-green-600 border-green-500/30",
-    medium: "bg-yellow-500/10 text-yellow-600 border-yellow-500/30",
-    hard: "bg-red-500/10 text-red-600 border-red-500/30"
+  const handleUseReward = (rewardId: string) => {
+    setEarnedRewards(prev => 
+      prev.map(reward => 
+        reward.id === rewardId 
+          ? { ...reward, status: "used" as const }
+          : reward
+      )
+    )
+    
+    toast({
+      title: "Reward Used! ✅",
+      description: "Hope you enjoyed your reward!",
+    })
   }
 
+  // Show loading state
+  if (challengesLoading || miniGamesLoading || rewardsLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading FitFam data...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Show error state
+  if (challengesError || miniGamesError || rewardsError) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive mb-4">Error loading data from Supabase</p>
+          <Button onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    )
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading challenges...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive mb-4">Error loading challenges</p>
+          <Button onClick={() => window.location.reload()}>Retry</Button>
+        </div>
+      </div>
+    )
+  }
+  }
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      {/* Netflix-style Header */}
       <div className="bg-black/90 backdrop-blur-sm text-white sticky top-0 z-50">
-        <div className="px-6 py-4">
+        <div className="px-8 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center space-x-8">
+              <div className="text-2xl font-bold text-primary">FitFam</div>
+              <nav className="hidden md:flex space-x-6">
+                <button className="hover:text-gray-300 transition-colors">Home</button>
+                <button 
+                  className="hover:text-gray-300 transition-colors"
+                  onClick={() => navigate("/challenges")}
+                >
+                  Challenges
+                </button>
+                <button 
+                  className="hover:text-gray-300 transition-colors"
+                  onClick={() => navigate("/games")}
+                >
+                  Games
+                </button>
+                <button 
+                  className="hover:text-gray-300 transition-colors"
+                  onClick={() => navigate("/rewards")}
+                >
+                  Rewards
+                </button>
+              </nav>
+            </div>
+            <div className="flex items-center space-x-4">
               <Button 
                 variant="ghost" 
                 size="icon" 
-                onClick={() => navigate("/")}
                 className="text-white hover:bg-white/10"
+                onClick={() => setShowNotifications(true)}
               >
-                <ArrowLeft className="h-5 w-5" />
+                <Bell className="h-5 w-5" />
               </Button>
-              <h1 className="text-2xl font-bold">Family Challenges</h1>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="text-white hover:bg-white/10"
+                onClick={() => setShowSettingsModal(true)}
+              >
+                <Settings className="h-5 w-5" />
+              </Button>
+              <Badge className="bg-primary/20 text-primary border-primary/30">
+                {totalPoints} points
+              </Badge>
             </div>
-            <Button 
-              onClick={() => setShowCreateModal(true)} 
-              className="bg-white text-black hover:bg-white/90"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Challenge
-            </Button>
           </div>
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-8">
-        <Tabs defaultValue="active" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="available">Available</TabsTrigger>
-            <TabsTrigger value="completed">Completed</TabsTrigger>
-          </TabsList>
+      {/* Hero Section */}
+      <HeroSection />
 
-          <TabsContent value="active" className="space-y-4">
-            {allActiveChallenges.map((challenge) => (
-              <Card key={challenge.id} className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">{challenge.title}</h3>
-                    <p className="text-muted-foreground">{challenge.description}</p>
-                  </div>
-                  <Badge className={difficultyColors[challenge.difficulty]} variant="outline">
-                    {challenge.difficulty}
-                  </Badge>
-                </div>
+      {/* Content Sections with Horizontal Scrolling */}
+      <div className="space-y-8">
+        {/* Activity Stats - Full Width */}
+        <section className="px-8">
+          <ActivityStats 
+            totalSteps={31086}
+            activeMinutes={127}
+            caloriesBurned={1842}
+            goalsAchieved={7}
+            totalGoals={12}
+          />
+        </section>
 
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <span>{challenge.participants} members</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span>{challenge.daysLeft} days left</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Trophy className="h-4 w-4 text-yellow-500" />
-                      <span>{challenge.reward}</span>
-                    </div>
-                  </div>
+        {/* Family Members - Horizontal Scroll */}
+        <HorizontalScroll title="Family Members">
+          {familyMembers.map((member, index) => (
+            <div 
+              key={index}
+              onClick={() => {
+                toast({
+                  title: `${member.name}'s Profile`,
+                  description: `Daily steps: ${member.dailySteps.toLocaleString()} | Weekly score: ${member.weeklyScore} | Badges: ${member.badges}`,
+                })
+              }}
+              className="cursor-pointer"
+            >
+              <FamilyMemberCard {...member} />
+            </div>
+          ))}
+        </HorizontalScroll>
 
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Progress</span>
-                      <span>
-                        {challenge.type === "daily" 
-                          ? `${challenge.progress}/${challenge.totalGoal} days`
-                          : `${challenge.progress.toLocaleString()}/${challenge.totalGoal.toLocaleString()}`
-                        }
-                      </span>
-                    </div>
-                    <Progress 
-                      value={(challenge.progress / challenge.totalGoal) * 100} 
-                      className="h-3"
-                    />
-                  </div>
+        {/* Active Challenges - Horizontal Scroll */}
+        <HorizontalScroll title="Active Challenges">
+          {transformedChallenges.map((challenge, index) => (
+            <div 
+              key={index}
+              onClick={() => navigate("/challenges")}
+              className="cursor-pointer"
+            >
+              <ChallengeCard {...challenge} />
+            </div>
+          ))}
+        </HorizontalScroll>
 
-                  <Button variant="energy" className="w-full">
-                    View Details
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </TabsContent>
+        {/* Mini Games - Horizontal Scroll */}
+        <HorizontalScroll title="Quick Mini-Games">
+          {transformedMiniGames.map((game, index) => (
+            <div 
+              key={index} 
+              onClick={() => {
+                setSelectedGame(game)
+                setShowGameModal(true)
+              }}
+            >
+              <MiniGameCard {...game} />
+            </div>
+          ))}
+        </HorizontalScroll>
 
-          <TabsContent value="available" className="space-y-4">
-            {allAvailableChallenges.map((challenge) => (
-              <Card key={challenge.id} className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">{challenge.title}</h3>
-                    <p className="text-muted-foreground">{challenge.description}</p>
-                  </div>
-                  <Badge className={difficultyColors[challenge.difficulty]} variant="outline">
-                    {challenge.difficulty}
-                  </Badge>
-                </div>
+        {/* Reward Store - Full Width */}
+        <section className="px-8">
+          <RewardStore 
+            totalPoints={totalPoints}
+            onRewardRedeem={handleRewardRedeem}
+            supabaseRewards={rewards}
+          />
+        </section>
 
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <span>{challenge.participants} members</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span>{challenge.duration}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Target className="h-4 w-4 text-muted-foreground" />
-                      <span>{challenge.points} points</span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Trophy className="h-4 w-4 text-yellow-500" />
-                      <span className="font-medium">{challenge.reward}</span>
-                    </div>
-                    <Button variant="success">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Join Challenge
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </TabsContent>
-
-          <TabsContent value="completed" className="space-y-4">
-            {completedChallenges.map((challenge) => (
-              <Card key={challenge.id} className="p-6 bg-muted/20">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">{challenge.title}</h3>
-                    <p className="text-muted-foreground">{challenge.description}</p>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Completed on {new Date(challenge.completedDate).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Trophy className="h-4 w-4 text-yellow-500" />
-                      <span className="font-medium">{challenge.reward}</span>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      +{challenge.points} points earned
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </TabsContent>
-        </Tabs>
-      </div>
-
-      <CreateChallengeModal 
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onChallengeCreated={handleChallengeCreated}
-      />
-    </div>
-  )
-}
-
-export default Challenges
+        {/* Earned Rewards - Full Width */}
+        <section className="px-8 pb-8">
