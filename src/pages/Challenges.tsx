@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/enhanced-button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -7,83 +7,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowLeft, Users, Calendar, Trophy, Target, Clock, Plus } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { CreateChallengeModal } from "@/components/CreateChallengeModal"
+import { getChallenges, addChallenge, initializeStorage, type Challenge } from "@/utils/localStorage"
 
 const Challenges = () => {
   const navigate = useNavigate()
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [customChallenges, setCustomChallenges] = useState<any[]>([])
-  
-  const activeChallenges = [
-    {
-      id: "1",
-      title: "Family Walk Week",
-      description: "Take 50,000 steps together as a family this week!",
-      type: "weekly",
-      participants: 4,
-      progress: 32150,
-      totalGoal: 50000,
-      daysLeft: 3,
-      reward: "Movie Night",
-      difficulty: "medium" as const,
-      category: "steps"
-    },
-    {
-      id: "2", 
-      title: "Dance Party Daily",
-      description: "Dance for 15 minutes every day this week",
-      type: "daily",
-      participants: 4,
-      progress: 4,
-      totalGoal: 7,
-      daysLeft: 3,
-      reward: "Ice Cream Trip",
-      difficulty: "easy" as const,
-      category: "activity"
-    }
-  ]
+  const [challenges, setChallenges] = useState<Challenge[]>([])
+  const [selectedDifficulty, setSelectedDifficulty] = useState<'All' | 'Easy' | 'Medium' | 'Hard'>('All')
 
-  const availableChallenges = [
-    {
-      id: "3",
-      title: "Weekend Warriors",
-      description: "Complete 3 different activities this weekend",
-      type: "weekend",
-      participants: "2-4",
-      duration: "2 days",
-      reward: "Extra Screen Time",
-      difficulty: "medium" as const,
-      points: 150
-    },
-    {
-      id: "4",
-      title: "Yoga Master",
-      description: "Practice yoga for 30 minutes, 5 days this week",
-      type: "weekly", 
-      participants: "1-4",
-      duration: "7 days",
-      reward: "Special Breakfast",
-      difficulty: "hard" as const,
-      points: 200
-    }
-  ]
+  useEffect(() => {
+    initializeStorage()
+    setChallenges(getChallenges())
+  }, [])
 
-  const completedChallenges = [
-    {
-      id: "5",
-      title: "Step Challenge Pro",
-      description: "Walk 10,000 steps every day for a week",
-      completedDate: "2024-12-10",
-      reward: "Pizza Night",
-      points: 300
-    }
-  ]
-
-  const handleChallengeCreated = (newChallenge: any) => {
-    setCustomChallenges([...customChallenges, newChallenge])
+  const handleChallengeCreated = (newChallenge: Omit<Challenge, 'id'>) => {
+    addChallenge(newChallenge)
+    setChallenges(getChallenges())
   }
 
-  const allActiveChallenges = [...activeChallenges, ...customChallenges.filter(c => c.status === 'active')]
-  const allAvailableChallenges = [...availableChallenges, ...customChallenges.filter(c => c.status === 'available')]
+  const filteredChallenges = selectedDifficulty === 'All' 
+    ? challenges 
+    : challenges.filter(challenge => challenge.difficulty === selectedDifficulty)
 
   const difficultyColors = {
     easy: "bg-green-500/10 text-green-600 border-green-500/30",
@@ -120,133 +64,40 @@ const Challenges = () => {
       </div>
 
       <div className="container mx-auto px-6 py-8">
-        <Tabs defaultValue="active" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="available">Available</TabsTrigger>
-            <TabsTrigger value="completed">Completed</TabsTrigger>
+        <Tabs value={selectedDifficulty} onValueChange={(value) => setSelectedDifficulty(value as any)} className="space-y-6">
+          <TabsList className="grid w-full grid-cols-4">
+            <TabsTrigger value="All">All Challenges</TabsTrigger>
+            <TabsTrigger value="Easy">Easy</TabsTrigger>
+            <TabsTrigger value="Medium">Medium</TabsTrigger>
+            <TabsTrigger value="Hard">Hard</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="active" className="space-y-4">
-            {allActiveChallenges.map((challenge) => (
-              <Card key={challenge.id} className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">{challenge.title}</h3>
-                    <p className="text-muted-foreground">{challenge.description}</p>
-                  </div>
-                  <Badge className={difficultyColors[challenge.difficulty]} variant="outline">
-                    {challenge.difficulty}
-                  </Badge>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <span>{challenge.participants} members</span>
+          <TabsContent value={selectedDifficulty}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredChallenges.map((challenge) => (
+                <Card key={challenge.id} className="p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-xl font-semibold mb-2">{challenge.title}</h3>
+                      <p className="text-muted-foreground">{challenge.description}</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span>{challenge.daysLeft} days left</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Trophy className="h-4 w-4 text-yellow-500" />
-                      <span>{challenge.reward}</span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-sm">
-                      <span>Progress</span>
-                      <span>
-                        {challenge.type === "daily" 
-                          ? `${challenge.progress}/${challenge.totalGoal} days`
-                          : `${challenge.progress.toLocaleString()}/${challenge.totalGoal.toLocaleString()}`
-                        }
-                      </span>
-                    </div>
-                    <Progress 
-                      value={(challenge.progress / challenge.totalGoal) * 100} 
-                      className="h-3"
-                    />
-                  </div>
-
-                  <Button variant="energy" className="w-full">
-                    View Details
-                  </Button>
-                </div>
-              </Card>
-            ))}
-          </TabsContent>
-
-          <TabsContent value="available" className="space-y-4">
-            {allAvailableChallenges.map((challenge) => (
-              <Card key={challenge.id} className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">{challenge.title}</h3>
-                    <p className="text-muted-foreground">{challenge.description}</p>
-                  </div>
-                  <Badge className={difficultyColors[challenge.difficulty]} variant="outline">
-                    {challenge.difficulty}
-                  </Badge>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-4 text-sm">
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <span>{challenge.participants} members</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-muted-foreground" />
-                      <span>{challenge.duration}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Target className="h-4 w-4 text-muted-foreground" />
-                      <span>{challenge.points} points</span>
-                    </div>
+                    <Badge className={difficultyColors[challenge.difficulty]} variant="outline">
+                      {challenge.difficulty}
+                    </Badge>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Trophy className="h-4 w-4 text-yellow-500" />
-                      <span className="font-medium">{challenge.reward}</span>
+                      <span className="font-medium">{challenge.points} points</span>
                     </div>
-                    <Button variant="success">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Join Challenge
+                    <Button variant="energy" size="sm">
+                      Start Challenge
                     </Button>
                   </div>
-                </div>
-              </Card>
-            ))}
-          </TabsContent>
-
-          <TabsContent value="completed" className="space-y-4">
-            {completedChallenges.map((challenge) => (
-              <Card key={challenge.id} className="p-6 bg-muted/20">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="text-xl font-semibold mb-2">{challenge.title}</h3>
-                    <p className="text-muted-foreground">{challenge.description}</p>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Completed on {new Date(challenge.completedDate).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Trophy className="h-4 w-4 text-yellow-500" />
-                      <span className="font-medium">{challenge.reward}</span>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      +{challenge.points} points earned
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
+                </Card>
+              ))}
+            </div>
           </TabsContent>
         </Tabs>
       </div>

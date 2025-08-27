@@ -11,13 +11,11 @@ interface MiniGameModalProps {
   isOpen: boolean
   onClose: () => void
   game: {
+    id?: string
     title: string
     description: string
-    duration: string
-    participants: string
-    difficulty: "easy" | "medium" | "hard"
     points: number
-    icon: React.ReactNode
+    category: string
   } | null
 }
 
@@ -76,7 +74,7 @@ export function MiniGameModal({ isOpen, onClose, game }: MiniGameModalProps) {
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            {game.icon}
+            <Play className="h-5 w-5" />
             {game.title}
           </DialogTitle>
         </DialogHeader>
@@ -87,24 +85,9 @@ export function MiniGameModal({ isOpen, onClose, game }: MiniGameModalProps) {
               <div className="space-y-4">
                 <p className="text-muted-foreground">{game.description}</p>
                 
-                <div className="grid grid-cols-2 gap-4">
-                  <Card className="p-3">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Clock className="h-4 w-4 text-muted-foreground" />
-                      <span>{game.duration}</span>
-                    </div>
-                  </Card>
-                  <Card className="p-3">
-                    <div className="flex items-center gap-2 text-sm">
-                      <Users className="h-4 w-4 text-muted-foreground" />
-                      <span>{game.participants}</span>
-                    </div>
-                  </Card>
-                </div>
-
                 <div className="flex items-center justify-between">
-                  <Badge className={difficultyColors[game.difficulty]} variant="outline">
-                    {game.difficulty}
+                  <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
+                    {game.category}
                   </Badge>
                   <div className="flex items-center gap-1 text-sm font-medium">
                     <Trophy className="h-4 w-4 text-yellow-500" />

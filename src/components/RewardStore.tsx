@@ -1,35 +1,10 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/enhanced-button"
-import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { RewardCard } from "./RewardCard"
-import { 
-  Gift, 
-  Star, 
-  Users, 
-  Gamepad2, 
-  Home, 
-  MapPin, 
-  Pizza, 
-  Popcorn,
-  Car,
-  ShoppingBag,
-  Cake
-} from "lucide-react"
-
-interface Reward {
-  id: string
-  title: string
-  description: string
-  cost: number
-  category: "family" | "individual" | "special"
-  rarity: "common" | "rare" | "epic" | "legendary"
-  timeLimit?: string
-  participantsRequired?: number
-  icon?: React.ReactNode
-  available: boolean
-}
+import { getRewards, initializeStorage, type Reward } from "@/utils/localStorage"
+import { Gift, Star } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
 
 interface RewardStoreProps {
   totalPoints: number
@@ -37,124 +12,29 @@ interface RewardStoreProps {
 }
 
 export function RewardStore({ totalPoints, onRewardRedeem }: RewardStoreProps) {
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
+  const [selectedCategory, setSelectedCategory] = useState<"All" | "Family Rewards" | "Individual Rewards" | "Special Rewards">("All")
+  const [rewards, setRewards] = useState<Reward[]>([])
 
-  const rewards: Reward[] = [
-    // Family Rewards
-    {
-      id: "movie-night",
-      title: "Family Movie Night",
-      description: "Choose any movie for tonight's family viewing with snacks included!",
-      cost: 50,
-      category: "family",
-      rarity: "common",
-      participantsRequired: 2,
-      icon: <Popcorn className="h-4 w-4" />,
-      available: totalPoints >= 50
-    },
-    {
-      id: "ice-cream-trip",
-      title: "Ice Cream Shop Visit",
-      description: "Family trip to your favorite ice cream parlor - everyone gets two scoops!",
-      cost: 75,
-      category: "family", 
-      rarity: "rare",
-      timeLimit: "Valid for 7 days",
-      participantsRequired: 3,
-      icon: <Gift className="h-4 w-4" />,
-      available: totalPoints >= 75
-    },
-    {
-      id: "theme-park",
-      title: "Theme Park Adventure",
-      description: "Full day at the local theme park with fast passes included!",
-      cost: 200,
-      category: "family",
-      rarity: "legendary",
-      timeLimit: "Valid for 30 days",
-      participantsRequired: 4,
-      icon: <Car className="h-4 w-4" />,
-      available: totalPoints >= 200
-    },
-    
-    // Individual Rewards
-    {
-      id: "extra-screen-time",
-      title: "Extra Screen Time",
-      description: "Earn 30 minutes of bonus screen time for games or videos",
-      cost: 25,
-      category: "individual",
-      rarity: "common",
-      timeLimit: "Use within 3 days",
-      icon: <Gamepad2 className="h-4 w-4" />,
-      available: totalPoints >= 25
-    },
-    {
-      id: "choose-dinner",
-      title: "Pick Tonight's Dinner",
-      description: "Choose what the whole family has for dinner (within reason!)",
-      cost: 40,
-      category: "individual",
-      rarity: "rare",
-      timeLimit: "Valid today only",
-      icon: <Pizza className="h-4 w-4" />,
-      available: totalPoints >= 40
-    },
-    {
-      id: "shopping-choice",
-      title: "Special Purchase",
-      description: "Pick one small item during our next shopping trip",
-      cost: 60,
-      category: "individual",
-      rarity: "epic",
-      timeLimit: "Valid for 14 days",
-      icon: <ShoppingBag className="h-4 w-4" />,
-      available: totalPoints >= 60
-    },
-    
-    // Special Rewards
-    {
-      id: "skip-chore",
-      title: "Skip One Chore",
-      description: "Get out of doing one assigned household chore this week",
-      cost: 30,
-      category: "special",
-      rarity: "common",
-      timeLimit: "Use this week",
-      icon: <Home className="h-4 w-4" />,
-      available: totalPoints >= 30
-    },
-    {
-      id: "plan-outing",
-      title: "Plan Family Outing",
-      description: "You get to plan and choose our next family adventure!",
-      cost: 100,
-      category: "special",
-      rarity: "epic",
-      timeLimit: "Valid for 21 days",
-      participantsRequired: 4,
-      icon: <MapPin className="h-4 w-4" />,
-      available: totalPoints >= 100
-    },
-    {
-      id: "birthday-bonus",
-      title: "Birthday Week Special",
-      description: "Extra special privileges during your birthday week!",
-      cost: 150,
-      category: "special",
-      rarity: "legendary",
-      timeLimit: "Save for birthday",
-      icon: <Cake className="h-4 w-4" />,
-      available: totalPoints >= 150
-    }
-  ]
+  useEffect(() => {
+    initializeStorage()
+    setRewards(getRewards())
+  }, [])
 
-  const filteredRewards = selectedCategory === "all" 
+  const filteredRewards = selectedCategory === "All" 
     ? rewards 
     : rewards.filter(reward => reward.category === selectedCategory)
 
-  const handleRedeem = (rewardId: string, cost: number) => {
-    onRewardRedeem(rewardId, cost)
+  const getCategoryDisplayName = (category: string) => {
+    switch (category) {
+      case 'Family Rewards':
+        return 'family'
+      case 'Individual Rewards':
+        return 'individual'
+      case 'Special Rewards':
+        return 'special'
+      default:
+        return category.toLowerCase()
+    }
   }
 
   return (
@@ -173,12 +53,12 @@ export function RewardStore({ totalPoints, onRewardRedeem }: RewardStoreProps) {
       </CardHeader>
       
       <CardContent>
-        <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="space-y-6">
+        <Tabs value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as any)} className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="all">All Rewards</TabsTrigger>
-            <TabsTrigger value="family">Family</TabsTrigger>
-            <TabsTrigger value="individual">Individual</TabsTrigger>
-            <TabsTrigger value="special">Special</TabsTrigger>
+            <TabsTrigger value="All">All Rewards</TabsTrigger>
+            <TabsTrigger value="Family Rewards">Family</TabsTrigger>
+            <TabsTrigger value="Individual Rewards">Individual</TabsTrigger>
+            <TabsTrigger value="Special Rewards">Special</TabsTrigger>
           </TabsList>
           
           <TabsContent value={selectedCategory} className="space-y-4">
@@ -186,8 +66,13 @@ export function RewardStore({ totalPoints, onRewardRedeem }: RewardStoreProps) {
               {filteredRewards.map((reward) => (
                 <RewardCard
                   key={reward.id}
-                  {...reward}
-                  onRedeem={() => handleRedeem(reward.id, reward.cost)}
+                  title={reward.title}
+                  description={reward.description}
+                  cost={reward.cost}
+                  category={getCategoryDisplayName(reward.category) as any}
+                  rarity={reward.rarity}
+                  available={totalPoints >= reward.cost}
+                  onRedeem={() => onRewardRedeem(reward.id, reward.cost)}
                 />
               ))}
             </div>
