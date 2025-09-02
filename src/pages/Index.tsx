@@ -5,6 +5,8 @@ import { ActivityStats } from "@/components/ActivityStats"
 import { MiniGameCard } from "@/components/MiniGameCard"
 import { RewardStore } from "@/components/RewardStore"
 import { EarnedRewards } from "@/components/EarnedRewards"
+import { QuickMiniGamesStore } from "@/components/QuickMiniGamesStore"
+import { ActiveChallengesStore } from "@/components/ActiveChallengesStore"
 import { RewardRedemptionModal } from "@/components/RewardRedemptionModal"
 import { SettingsModal } from "@/components/SettingsModal"
 import { NotificationsDrawer } from "@/components/NotificationsDrawer"
@@ -215,6 +217,10 @@ const Index = () => {
     })
   }
 
+  const handlePointsEarned = (points: number) => {
+    setTotalPoints(prev => prev + points)
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Netflix-style Header */}
@@ -304,33 +310,21 @@ const Index = () => {
           ))}
         </HorizontalScroll>
 
-        {/* Active Challenges - Horizontal Scroll */}
-        <HorizontalScroll title="Active Challenges">
-          {challenges.map((challenge, index) => (
-            <div 
-              key={index}
-              onClick={() => navigate("/challenges")}
-              className="cursor-pointer"
-            >
-              <ChallengeCard {...challenge} />
-            </div>
-          ))}
-        </HorizontalScroll>
+        {/* Active Challenges - Full Width */}
+        <section className="px-8">
+          <ActiveChallengesStore 
+            familyMembers={familyMembers}
+            onPointsEarned={handlePointsEarned}
+          />
+        </section>
 
-        {/* Mini Games - Horizontal Scroll */}
-        <HorizontalScroll title="Quick Mini-Games">
-          {miniGames.map((game, index) => (
-            <div 
-              key={index} 
-              onClick={() => {
-                setSelectedGame(game)
-                setShowGameModal(true)
-              }}
-            >
-              <MiniGameCard {...game} />
-            </div>
-          ))}
-        </HorizontalScroll>
+        {/* Mini Games - Full Width */}
+        <section className="px-8">
+          <QuickMiniGamesStore 
+            familyMembers={familyMembers}
+            onPointsEarned={handlePointsEarned}
+          />
+        </section>
 
         {/* Reward Store - Full Width */}
         <section className="px-8">
