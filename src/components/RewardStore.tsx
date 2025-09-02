@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 
 interface RewardStoreProps {
   totalPoints: number
-  onRewardRedeem: (rewardId: string, cost: number) => void
+  onRewardRedeem: (rewardId: string) => void
 }
 
 export function RewardStore({ totalPoints, onRewardRedeem }: RewardStoreProps) {
@@ -72,7 +72,7 @@ export function RewardStore({ totalPoints, onRewardRedeem }: RewardStoreProps) {
                   category={getCategoryDisplayName(reward.category) as any}
                   rarity={reward.rarity}
                   available={totalPoints >= reward.cost}
-                  onRedeem={() => onRewardRedeem(reward.id, reward.cost)}
+                  onRedeem={() => onRewardRedeem(reward.id)}
                 />
               ))}
             </div>

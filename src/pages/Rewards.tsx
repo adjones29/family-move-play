@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/enhanced-button"
 import { RewardStore } from "@/components/RewardStore"
 import { EarnedRewards } from "@/components/EarnedRewards"
 import { RewardRedemptionModal } from "@/components/RewardRedemptionModal"
+import { RewardRedemptionConfirmModal } from "@/components/RewardRedemptionConfirmModal"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
@@ -12,9 +13,18 @@ import { useNavigate } from "react-router-dom"
 const Rewards = () => {
   const navigate = useNavigate()
   const { toast } = useToast()
-  const [totalPoints, setTotalPoints] = useState(125)
-  const [selectedReward, setSelectedReward] = useState<any>(null)
-  const [showRedemptionModal, setShowRedemptionModal] = useState(false)
+  const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
+  const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
+
+  // Mock family members with points
+  const [familyMembers, setFamilyMembers] = useState([
+    { name: "Dad", points: 325, memberColor: "member-1" },
+    { name: "Mom", points: 412, memberColor: "member-2" },
+    { name: "Alex", points: 245, memberColor: "member-3" },
+    { name: "Sam", points: 156, memberColor: "member-4" }
+  ])
+
+  const totalFamilyPoints = familyMembers.reduce((sum, member) => sum + member.points, 0)
 
   type EarnedReward = {
     id: string
@@ -59,34 +69,59 @@ const Rewards = () => {
     }
   ])
 
-  const handleRewardRedeem = (rewardId: string, cost: number) => {
-    const rewardDetails = {
-      "movie-night": { title: "Family Movie Night", description: "Choose any movie for tonight's family viewing with snacks included!", rarity: "common" as const, category: "family" as const },
-      "ice-cream-trip": { title: "Ice Cream Shop Visit", description: "Family trip to your favorite ice cream parlor - everyone gets two scoops!", rarity: "rare" as const, category: "family" as const },
-      "extra-screen-time": { title: "Extra Screen Time", description: "Earn 30 minutes of bonus screen time for games or videos", rarity: "common" as const, category: "individual" as const },
-      "skip-chore": { title: "Skip One Chore", description: "Get out of doing one assigned household chore this week", rarity: "common" as const, category: "special" as const }
+  const handleRewardSelect = (rewardId: string) => {
+    // Find the reward from localStorage
+    const rewards = JSON.parse(localStorage.getItem('fitfam-rewards') || '[]')
+    const reward = rewards.find((r: any) => r.id === rewardId)
+    if (reward) {
+      setSelectedRewardForRedemption(reward)
+      setShowRedemptionConfirmModal(true)
     }
+  }
 
-    const reward = rewardDetails[rewardId as keyof typeof rewardDetails]
+  const handleRewardRedemption = (rewardId: string, cost: number, selectedMember?: string) => {
+    const rewards = JSON.parse(localStorage.getItem('fitfam-rewards') || '[]')
+    const reward = rewards.find((r: any) => r.id === rewardId)
     if (!reward) return
 
+    // Handle point deduction
+    if (reward.category === "Family Rewards") {
+      // Divide cost across all family members
+      const costPerMember = Math.ceil(cost / familyMembers.length)
+      setFamilyMembers(prev => 
+        prev.map(member => ({
+          ...member,
+          points: member.points - costPerMember
+        }))
+      )
+    } else if (selectedMember) {
+      // Deduct from selected member
+      setFamilyMembers(prev => 
+        prev.map(member => 
+          member.name === selectedMember 
+            ? { ...member, points: member.points - cost }
+            : member
+        )
+      )
+    }
+
+    // Add to earned rewards
     const newReward: EarnedReward = {
       id: `${rewardId}-${Date.now()}`,
       title: reward.title,
       description: reward.description,
       redeemedAt: new Date(),
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
       status: "active",
-      category: reward.category,
+      category: reward.category === "Family Rewards" ? "family" : reward.category === "Individual Rewards" ? "individual" : "special",
       rarity: reward.rarity
     }
 
     setEarnedRewards(prev => [newReward, ...prev])
-    setTotalPoints(prev => prev - cost)
     
     toast({
       title: "Reward Redeemed! 🎉",
-      description: `You've successfully redeemed "${reward.title}"`,
+      description: `Successfully redeemed "${reward.title}"${selectedMember ? ` for ${selectedMember}` : ''}`,
     })
   }
 
@@ -126,7 +161,7 @@ const Rewards = () => {
               </div>
             </div>
             <Badge className="bg-primary/20 text-primary border-primary/30">
-              {totalPoints} points
+              {totalFamilyPoints} points
             </Badge>
           </div>
         </div>
@@ -141,8 +176,8 @@ const Rewards = () => {
 
           <TabsContent value="store">
             <RewardStore 
-              totalPoints={totalPoints}
-              onRewardRedeem={handleRewardRedeem}
+              totalPoints={totalFamilyPoints}
+              onRewardRedeem={handleRewardSelect}
             />
           </TabsContent>
 
@@ -155,12 +190,12 @@ const Rewards = () => {
         </Tabs>
       </div>
 
-      <RewardRedemptionModal
-        isOpen={showRedemptionModal}
-        onClose={() => setShowRedemptionModal(false)}
-        reward={selectedReward}
-        currentPoints={totalPoints}
-        onConfirmRedeem={handleRewardRedeem}
+      <RewardRedemptionConfirmModal
+        isOpen={showRedemptionConfirmModal}
+        onClose={() => setShowRedemptionConfirmModal(false)}
+        reward={selectedRewardForRedemption}
+        familyMembers={familyMembers}
+        onConfirmRedemption={handleRewardRedemption}
       />
     </div>
   )
