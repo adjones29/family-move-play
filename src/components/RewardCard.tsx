@@ -109,7 +109,7 @@ export function RewardCard({
           </div>
           
           <Button
-            variant={available ? "energy" : "outline"}
+            variant={available ? "default" : "outline"}
             size="sm"
             onClick={onRedeem}
             disabled={!available}
