@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { FamilyMemberCard } from "@/components/FamilyMemberCard"
 import { ChallengeCard } from "@/components/ChallengeCard"
 import { ActivityStats } from "@/components/ActivityStats"
@@ -185,6 +185,12 @@ const Index = () => {
       setShowRedemptionConfirmModal(true)
     }
   }
+
+  // Initialize localStorage on component mount
+  useEffect(() => {
+    const { initializeStorage } = require('@/utils/localStorage')
+    initializeStorage()
+  }, [])
 
   const handleRewardRedemption = (rewardId: string, cost: number, selectedMember?: string) => {
     const rewards = JSON.parse(localStorage.getItem('fitfam-rewards') || '[]')
