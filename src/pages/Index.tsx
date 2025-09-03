@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
 import { Bell, Settings, Dumbbell, Target, Gamepad2, Users, Zap, Gift, Star } from "lucide-react"
+import { initializeStorage } from "@/utils/localStorage"
 
 const Index = () => {
   const { toast } = useToast()
@@ -188,7 +189,6 @@ const Index = () => {
 
   // Initialize localStorage on component mount
   useEffect(() => {
-    const { initializeStorage } = require('@/utils/localStorage')
     initializeStorage()
   }, [])
 
