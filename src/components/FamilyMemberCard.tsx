@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { User, Zap } from "lucide-react"
+import { User, TrendingUp } from "lucide-react"
 
 interface FamilyMemberCardProps {
   name: string
@@ -11,6 +11,9 @@ interface FamilyMemberCardProps {
   weeklyScore: number
   badges: number
   memberColor: "member-1" | "member-2" | "member-3" | "member-4"
+  points: number
+  weeklySteps?: number
+  onClick: () => void
 }
 
 export const FamilyMemberCard = ({
@@ -20,12 +23,21 @@ export const FamilyMemberCard = ({
   stepGoal,
   weeklyScore,
   badges,
-  memberColor
+  memberColor,
+  points,
+  weeklySteps,
+  onClick
 }: FamilyMemberCardProps) => {
-  const progressPercentage = Math.min((dailySteps / stepGoal) * 100, 100)
+  const dailyProgressPercentage = Math.min((dailySteps / stepGoal) * 100, 100)
+  const weeklyGoal = stepGoal * 7
+  const currentWeeklySteps = weeklySteps || dailySteps * 3 + Math.floor(Math.random() * stepGoal * 2) // Mock weekly data
+  const weeklyProgressPercentage = Math.min((currentWeeklySteps / weeklyGoal) * 100, 100)
   
   return (
-    <Card className="min-w-[280px] shadow-card hover:shadow-hover hover:scale-105 transition-all duration-300 bg-card border-border/30">
+    <Card 
+      className="min-w-[280px] shadow-card hover:shadow-hover hover:scale-105 transition-all duration-300 bg-card border-border/30 cursor-pointer"
+      onClick={onClick}
+    >
       <CardContent className="p-6">
         <div className="flex items-center space-x-4">
           <div className={`w-12 h-12 rounded-full bg-${memberColor} flex items-center justify-center`}>
@@ -38,33 +50,48 @@ export const FamilyMemberCard = ({
           <div className="flex-1">
             <h3 className="font-bold text-card-foreground">{name}</h3>
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-              <span>{dailySteps.toLocaleString()} steps</span>
+              <span>{dailySteps.toLocaleString()} steps today</span>
               <span>•</span>
               <span className="flex items-center">
-                <Zap className="h-3 w-3 mr-1" />
-                {badges} badges
+                <TrendingUp className="h-3 w-3 mr-1" />
+                {points} points
               </span>
             </div>
           </div>
         </div>
         
-        <div className="mt-4 space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-muted-foreground">Daily Goal</span>
-            <span className={`font-medium ${progressPercentage >= 100 ? 'text-green-600' : 'text-card-foreground'}`}>
-              {dailySteps.toLocaleString()} / {stepGoal.toLocaleString()}
-            </span>
+        <div className="mt-4 space-y-3">
+          {/* Daily Progress */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Daily Goal</span>
+              <span className={`font-medium ${dailyProgressPercentage >= 100 ? 'text-green-600' : 'text-card-foreground'}`}>
+                {dailySteps.toLocaleString()} / {stepGoal.toLocaleString()}
+              </span>
+            </div>
+            <Progress value={dailyProgressPercentage} className="h-2" />
           </div>
-          <Progress value={progressPercentage} className="h-2" />
+
+          {/* Weekly Progress */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Weekly Goal</span>
+              <span className={`font-medium ${weeklyProgressPercentage >= 100 ? 'text-green-600' : 'text-card-foreground'}`}>
+                {currentWeeklySteps.toLocaleString()} / {weeklyGoal.toLocaleString()}
+              </span>
+            </div>
+            <Progress value={weeklyProgressPercentage} className="h-2" />
+          </div>
         </div>
         
         <div className="mt-4 flex justify-between items-center">
           <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground">
-            Weekly: {weeklyScore} pts
+            Click to manage
           </Badge>
-          {progressPercentage >= 100 && (
+          {(dailyProgressPercentage >= 100 || weeklyProgressPercentage >= 100) && (
             <Badge className="bg-green-500/20 text-green-400 border-green-500/30">
-              Goal Complete!
+              {dailyProgressPercentage >= 100 && weeklyProgressPercentage >= 100 ? 'Both Complete!' : 
+               weeklyProgressPercentage >= 100 ? 'Weekly Complete!' : 'Daily Complete!'}
             </Badge>
           )}
         </div>

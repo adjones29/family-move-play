@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { FamilyMemberCard } from "@/components/FamilyMemberCard"
+import { FamilyMemberModal } from "@/components/FamilyMemberModal"
 import { ChallengeCard } from "@/components/ChallengeCard"
 import { ActivityStats } from "@/components/ActivityStats"
 import { MiniGameCard } from "@/components/MiniGameCard"
@@ -30,6 +31,8 @@ const Index = () => {
   const [showNotifications, setShowNotifications] = useState(false)
   const [selectedGame, setSelectedGame] = useState<any>(null)
   const [showGameModal, setShowGameModal] = useState(false)
+  const [selectedFamilyMember, setSelectedFamilyMember] = useState<any>(null)
+  const [showFamilyMemberModal, setShowFamilyMemberModal] = useState(false)
   type EarnedReward = {
     id: string
     title: string
@@ -264,6 +267,21 @@ const Index = () => {
     )
   }
 
+  const handleFamilyMemberClick = (member: any) => {
+    setSelectedFamilyMember(member)
+    setShowFamilyMemberModal(true)
+  }
+
+  const handleFamilyMemberUpdate = (updatedMember: any) => {
+    setFamilyMembers(prev => 
+      prev.map(member => 
+        member.name === updatedMember.name 
+          ? updatedMember
+          : member
+      )
+    )
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Netflix-style Header */}
@@ -338,18 +356,11 @@ const Index = () => {
         {/* Family Members - Horizontal Scroll */}
         <HorizontalScroll title="Family Members">
           {familyMembers.map((member, index) => (
-            <div 
-              key={index}
-              onClick={() => {
-                toast({
-                  title: `${member.name}'s Profile`,
-                  description: `Daily steps: ${member.dailySteps.toLocaleString()} | Weekly score: ${member.weeklyScore} | Badges: ${member.badges}`,
-                })
-              }}
-              className="cursor-pointer"
-            >
-              <FamilyMemberCard {...member} />
-            </div>
+            <FamilyMemberCard 
+              key={index} 
+              {...member} 
+              onClick={() => handleFamilyMemberClick(member)}
+            />
           ))}
         </HorizontalScroll>
 
@@ -409,6 +420,13 @@ const Index = () => {
         isOpen={showGameModal}
         onClose={() => setShowGameModal(false)}
         game={selectedGame}
+      />
+
+      <FamilyMemberModal
+        member={selectedFamilyMember}
+        isOpen={showFamilyMemberModal}
+        onClose={() => setShowFamilyMemberModal(false)}
+        onUpdate={handleFamilyMemberUpdate}
       />
     </div>
   );
