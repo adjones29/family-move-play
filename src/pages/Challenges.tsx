@@ -36,64 +36,68 @@ const Challenges = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-black/90 backdrop-blur-sm text-white sticky top-0 z-50">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => navigate("/")}
-                className="text-white hover:bg-white/10"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <h1 className="text-2xl font-bold">Family Challenges</h1>
-            </div>
+    <div className="pb-20"> {/* Bottom padding for navigation */}
+      {/* Mobile Header */}
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
             <Button 
-              onClick={() => setShowCreateModal(true)} 
-              className="bg-white text-black hover:bg-white/90"
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate("/")}
+              className="h-10 w-10"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Challenge
+              <ArrowLeft className="h-5 w-5" />
             </Button>
+            <div>
+              <h1 className="text-xl font-bold">Challenges</h1>
+              <p className="text-sm text-muted-foreground">Family Activities</p>
+            </div>
           </div>
+          <Button 
+            onClick={() => setShowCreateModal(true)} 
+            className="bg-primary text-primary-foreground hover:bg-primary/90 h-10"
+            size="sm"
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            Create
+          </Button>
         </div>
-      </div>
+      </header>
 
-      <div className="container mx-auto px-6 py-8">
-        <Tabs value={selectedDifficulty} onValueChange={(value) => setSelectedDifficulty(value as any)} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="All">All Challenges</TabsTrigger>
-            <TabsTrigger value="Easy">Easy</TabsTrigger>
-            <TabsTrigger value="Medium">Medium</TabsTrigger>
-            <TabsTrigger value="Hard">Hard</TabsTrigger>
+      <div className="px-4 py-4">
+        <Tabs value={selectedDifficulty} onValueChange={(value) => setSelectedDifficulty(value as any)} className="space-y-4">
+          <TabsList className="grid w-full grid-cols-4 h-10">
+            <TabsTrigger value="All" className="text-xs">All</TabsTrigger>
+            <TabsTrigger value="Easy" className="text-xs">Easy</TabsTrigger>
+            <TabsTrigger value="Medium" className="text-xs">Medium</TabsTrigger>
+            <TabsTrigger value="Hard" className="text-xs">Hard</TabsTrigger>
           </TabsList>
 
-          <TabsContent value={selectedDifficulty}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <TabsContent value={selectedDifficulty} className="mt-4">
+            <div className="space-y-4">
               {filteredChallenges.map((challenge) => (
-                <Card key={challenge.id} className="p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-xl font-semibold mb-2">{challenge.title}</h3>
-                      <p className="text-muted-foreground">{challenge.description}</p>
+                <Card key={challenge.id} className="p-4 cursor-pointer transition-all duration-300 active:scale-95">
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 pr-2">
+                        <h3 className="text-lg font-semibold mb-1">{challenge.title}</h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2">{challenge.description}</p>
+                      </div>
+                      <Badge className={difficultyColors[challenge.difficulty]} variant="outline">
+                        {challenge.difficulty}
+                      </Badge>
                     </div>
-                    <Badge className={difficultyColors[challenge.difficulty]} variant="outline">
-                      {challenge.difficulty}
-                    </Badge>
-                  </div>
 
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Trophy className="h-4 w-4 text-yellow-500" />
-                      <span className="font-medium">{challenge.points} points</span>
+                    <div className="flex items-center justify-between pt-2">
+                      <div className="flex items-center gap-2">
+                        <Trophy className="h-4 w-4 text-yellow-500" />
+                        <span className="font-medium text-sm">{challenge.points} points</span>
+                      </div>
+                      <Button variant="energy" size="sm" className="h-8">
+                        Start
+                      </Button>
                     </div>
-                    <Button variant="energy" size="sm">
-                      Start Challenge
-                    </Button>
                   </div>
                 </Card>
               ))}

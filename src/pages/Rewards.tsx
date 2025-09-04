@@ -141,47 +141,48 @@ const Rewards = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-black/90 backdrop-blur-sm text-white sticky top-0 z-50">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => navigate("/")}
-                className="text-white hover:bg-white/10"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div className="flex items-center gap-3">
-                <Gift className="h-6 w-6" />
-                <h1 className="text-2xl font-bold">Reward Center</h1>
+    <div className="pb-20"> {/* Bottom padding for navigation */}
+      {/* Mobile Header */}
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate("/")}
+              className="h-10 w-10"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center gap-2">
+              <Gift className="h-5 w-5 text-primary" />
+              <div>
+                <h1 className="text-xl font-bold">Rewards</h1>
+                <p className="text-sm text-muted-foreground">Reward Center</p>
               </div>
             </div>
-            <Badge className="bg-primary/20 text-primary border-primary/30">
-              {totalFamilyPoints} points
-            </Badge>
           </div>
+          <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">
+            {totalFamilyPoints} pts
+          </Badge>
         </div>
-      </div>
+      </header>
 
-      <div className="container mx-auto px-6 py-8">
-        <Tabs defaultValue="store" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="store">Reward Store</TabsTrigger>
-            <TabsTrigger value="earned">My Rewards</TabsTrigger>
+      <div className="px-4 py-4">
+        <Tabs defaultValue="store" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-2 h-10">
+            <TabsTrigger value="store" className="text-sm">Store</TabsTrigger>
+            <TabsTrigger value="earned" className="text-sm">My Rewards</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="store">
+          <TabsContent value="store" className="mt-4">
             <RewardStore 
               totalPoints={totalFamilyPoints}
               onRewardRedeem={handleRewardSelect}
             />
           </TabsContent>
 
-          <TabsContent value="earned">
+          <TabsContent value="earned" className="mt-4">
             <EarnedRewards 
               rewards={earnedRewards}
               onUseReward={handleUseReward}

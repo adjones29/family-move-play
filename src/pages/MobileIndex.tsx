@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react"
 import { FamilyMemberCard } from "@/components/FamilyMemberCard"
 import { FamilyMemberModal } from "@/components/FamilyMemberModal"
-import { ChallengeCard } from "@/components/ChallengeCard"
 import { ActivityStats } from "@/components/ActivityStats"
-import { MiniGameCard } from "@/components/MiniGameCard"
 import { RewardStore } from "@/components/RewardStore"
 import { EarnedRewards } from "@/components/EarnedRewards"
 import { QuickMiniGamesStore } from "@/components/QuickMiniGamesStore"
@@ -12,17 +10,13 @@ import { RewardRedemptionModal } from "@/components/RewardRedemptionModal"
 import { RewardRedemptionConfirmModal } from "@/components/RewardRedemptionConfirmModal"
 import { SettingsModal } from "@/components/SettingsModal"
 import { NotificationsDrawer } from "@/components/NotificationsDrawer"
-import { MiniGameModal } from "@/components/MiniGameModal"
-import { HeroSection } from "@/components/HeroSection"
-import { HorizontalScroll } from "@/components/HorizontalScroll"
 import { Button } from "@/components/ui/enhanced-button"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
-import { useNavigate } from "react-router-dom"
-import { Bell, Settings, Dumbbell, Target, Gamepad2, Users, Zap, Gift, Star } from "lucide-react"
+import { Bell, Settings } from "lucide-react"
 import { initializeStorage } from "@/utils/localStorage"
 
-const Index = () => {
+const MobileIndex = () => {
   const { toast } = useToast()
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
@@ -30,6 +24,7 @@ const Index = () => {
   const [showNotifications, setShowNotifications] = useState(false)
   const [selectedFamilyMember, setSelectedFamilyMember] = useState<any>(null)
   const [showFamilyMemberModal, setShowFamilyMemberModal] = useState(false)
+  
   type EarnedReward = {
     id: string
     title: string
@@ -110,72 +105,6 @@ const Index = () => {
 
   // Calculate total points from all family members
   const totalFamilyPoints = familyMembers.reduce((sum, member) => sum + member.points, 0)
-
-  const challenges = [
-    {
-      title: "Family Walk Week",
-      description: "Take 50,000 steps together as a family this week!",
-      type: "weekly" as const,
-      participants: 4,
-      progress: 32150,
-      totalGoal: 50000,
-      daysLeft: 3,
-      reward: "Movie Night",
-      difficulty: "medium" as const
-    },
-    {
-      title: "Dance Party Daily",
-      description: "Dance for 15 minutes every day this week",
-      type: "daily" as const, 
-      participants: 4,
-      progress: 4,
-      totalGoal: 7,
-      daysLeft: 3,
-      reward: "Ice Cream Trip",
-      difficulty: "easy" as const
-    },
-    {
-      title: "Fitness Champions",
-      description: "Complete 5 different mini-games this month",
-      type: "special" as const,
-      participants: 4,
-      progress: 3,
-      totalGoal: 5,
-      daysLeft: 12,
-      reward: "Theme Park Visit",
-      difficulty: "hard" as const
-    }
-  ]
-
-  const miniGames = [
-    {
-      title: "Push-up Challenge",
-      description: "See who can do the most push-ups in 60 seconds!",
-      duration: "1-2 min",
-      participants: "2-4 players",
-      difficulty: "medium" as const,
-      points: 50,
-      icon: <Dumbbell className="h-6 w-6" />
-    },
-    {
-      title: "Animal Yoga",
-      description: "Copy fun animal poses and movements together",
-      duration: "5-10 min", 
-      participants: "1-4 players",
-      difficulty: "easy" as const,
-      points: 30,
-      icon: <Target className="h-6 w-6" />
-    },
-    {
-      title: "Obstacle Course",
-      description: "Navigate through a living room obstacle course",
-      duration: "3-5 min",
-      participants: "1-4 players", 
-      difficulty: "hard" as const,
-      points: 75,
-      icon: <Zap className="h-6 w-6" />
-    }
-  ]
 
   const handleRewardSelect = (rewardId: string) => {
     // Find the reward from localStorage
@@ -372,7 +301,7 @@ const Index = () => {
         </section>
       </div>
 
-      {/* Modals and Drawers */}
+      {/* Modals and Drawers - Convert to Bottom Sheets */}
       <RewardRedemptionConfirmModal
         isOpen={showRedemptionConfirmModal}
         onClose={() => setShowRedemptionConfirmModal(false)}
@@ -401,4 +330,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default MobileIndex;

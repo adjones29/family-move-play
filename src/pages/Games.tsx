@@ -51,33 +51,35 @@ const Games = () => {
 
   const GameCard = ({ game }: { game: MiniGame }) => (
     <Card 
-      className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105"
+      className="cursor-pointer transition-all duration-300 active:scale-95"
       onClick={() => handleGameClick(game)}
     >
-      <CardHeader>
+      <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/20 rounded-lg text-primary">
               {getCategoryIcon(game.category)}
             </div>
-            <CardTitle className="text-lg">{game.title}</CardTitle>
+            <div>
+              <CardTitle className="text-base">{game.title}</CardTitle>
+              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 text-xs mt-1">
+                {game.category}
+              </Badge>
+            </div>
           </div>
-          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
-            {game.category}
-          </Badge>
         </div>
       </CardHeader>
       
-      <CardContent className="space-y-4">
-        <p className="text-sm text-muted-foreground">{game.description}</p>
+      <CardContent className="space-y-3 pt-0">
+        <p className="text-sm text-muted-foreground line-clamp-2">{game.description}</p>
         
-        <div className="flex items-center justify-between pt-2">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Trophy className="h-4 w-4 text-yellow-500" />
-            <span className="font-medium">{game.points} points</span>
+            <span className="font-medium text-sm">{game.points} points</span>
           </div>
-          <Button variant="energy" size="sm">
-            Play Now
+          <Button variant="energy" size="sm" className="h-8">
+            Play
           </Button>
         </div>
       </CardContent>
@@ -85,47 +87,49 @@ const Games = () => {
   )
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="bg-black/90 backdrop-blur-sm text-white sticky top-0 z-50">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                onClick={() => navigate("/")}
-                className="text-white hover:bg-white/10"
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              <div className="flex items-center gap-3">
-                <GamepadIcon className="h-6 w-6" />
-                <h1 className="text-2xl font-bold">Mini Games</h1>
+    <div className="pb-20"> {/* Bottom padding for navigation */}
+      {/* Mobile Header */}
+      <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => navigate("/")}
+              className="h-10 w-10"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center gap-2">
+              <GamepadIcon className="h-5 w-5 text-primary" />
+              <div>
+                <h1 className="text-xl font-bold">Games</h1>
+                <p className="text-sm text-muted-foreground">Mini Activities</p>
               </div>
             </div>
-            <Button 
-              onClick={() => setShowCreateModal(true)} 
-              className="bg-white text-black hover:bg-white/90"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Create Game
-            </Button>
           </div>
+          <Button 
+            onClick={() => setShowCreateModal(true)} 
+            className="bg-primary text-primary-foreground hover:bg-primary/90 h-10"
+            size="sm"
+          >
+            <Plus className="h-4 w-4 mr-1" />
+            Create
+          </Button>
         </div>
-      </div>
+      </header>
 
-      <div className="container mx-auto px-6 py-8">
-        <Tabs value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as any)} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="All">All Games</TabsTrigger>
-            <TabsTrigger value="Exercise">Exercise</TabsTrigger>
-            <TabsTrigger value="Fun">Fun</TabsTrigger>
-            <TabsTrigger value="Adventure">Adventure</TabsTrigger>
+      <div className="px-4 py-4">
+        <Tabs value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as any)} className="space-y-4">
+          <TabsList className="grid w-full grid-cols-4 h-10">
+            <TabsTrigger value="All" className="text-xs">All</TabsTrigger>
+            <TabsTrigger value="Exercise" className="text-xs">Exercise</TabsTrigger>
+            <TabsTrigger value="Fun" className="text-xs">Fun</TabsTrigger>
+            <TabsTrigger value="Adventure" className="text-xs">Adventure</TabsTrigger>
           </TabsList>
 
-          <TabsContent value={selectedCategory}>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <TabsContent value={selectedCategory} className="mt-4">
+            <div className="space-y-4">
               {filteredGames.map((game) => (
                 <GameCard key={game.id} game={game} />
               ))}
