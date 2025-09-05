@@ -5,7 +5,7 @@ import { RewardCard } from "./RewardCard"
 import { getRewards, initializeStorage, type Reward } from "@/utils/localStorage"
 import { Gift, Star } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/enhanced-button"
+import { Button } from "@/components/ui/button"
 
 interface RewardStoreProps {
   totalPoints: number

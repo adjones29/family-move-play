@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/enhanced-button"
+import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -100,7 +100,7 @@ export function MiniGameModal({ isOpen, onClose, game }: MiniGameModalProps) {
                 <Button variant="outline" onClick={onClose} className="flex-1">
                   Cancel
                 </Button>
-                <Button variant="energy" onClick={startGame} className="flex-1">
+                <Button variant="default" onClick={startGame} className="flex-1">
                   <Play className="h-4 w-4 mr-2" />
                   Start Game
                 </Button>
@@ -159,7 +159,7 @@ export function MiniGameModal({ isOpen, onClose, game }: MiniGameModalProps) {
                 <Button variant="outline" onClick={onClose} className="flex-1">
                   Close
                 </Button>
-                <Button variant="success" onClick={playAgain} className="flex-1">
+                <Button variant="default" onClick={playAgain} className="flex-1">
                   Play Again
                 </Button>
               </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/enhanced-button"
+import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
@@ -114,7 +114,7 @@ export function ActiveChallengesStore({ familyMembers, onPointsEarned }: ActiveC
                           <Trophy className="h-3 w-3 text-yellow-500" />
                           <span className="text-xs font-medium">{challenge.points} pts</span>
                         </div>
-                        <Button variant="energy" size="sm" className="text-xs px-2 py-1 h-6">
+                        <Button variant="default" size="sm" className="text-xs px-2 py-1 h-6">
                           Start
                         </Button>
                       </div>
