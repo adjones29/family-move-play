@@ -257,13 +257,14 @@ const MobileIndex = () => {
         {/* Family Members */}
         <section>
           <h2 className="text-lg font-semibold mb-3">Family Members</h2>
-          <div className="space-y-3">
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth pb-2">
             {familyMembers.map((member, index) => (
-              <FamilyMemberCard 
-                key={index} 
-                {...member} 
-                onClick={() => handleFamilyMemberClick(member)}
-              />
+              <div key={index} className="flex-shrink-0 w-64">
+                <FamilyMemberCard 
+                  {...member} 
+                  onClick={() => handleFamilyMemberClick(member)}
+                />
+              </div>
             ))}
           </div>
         </section>

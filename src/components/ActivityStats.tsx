@@ -31,20 +31,6 @@ export function ActivityStats({
       icon: Clock,
       color: "bg-member-2", 
       subtext: "This week"
-    },
-    {
-      title: "Calories Burned",
-      value: caloriesBurned.toLocaleString(),
-      icon: Flame,
-      color: "bg-member-3",
-      subtext: "Combined"
-    },
-    {
-      title: "Goals Hit",
-      value: `${goalsAchieved}/${totalGoals}`,
-      icon: Target,
-      color: "bg-member-4",
-      subtext: "This month"
     }
   ]
 

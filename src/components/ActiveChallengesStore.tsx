@@ -15,7 +15,7 @@ interface ActiveChallengesStoreProps {
 }
 
 export function ActiveChallengesStore({ familyMembers, onPointsEarned }: ActiveChallengesStoreProps) {
-  const [selectedDifficulty, setSelectedDifficulty] = useState<"All" | "Easy" | "Medium" | "Hard">("All")
+  const [selectedDifficulty, setSelectedDifficulty] = useState<"Easy" | "Medium" | "Hard">("Easy")
   const [challenges, setChallenges] = useState<Challenge[]>([])
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null)
   const [showParticipantModal, setShowParticipantModal] = useState(false)
@@ -27,9 +27,7 @@ export function ActiveChallengesStore({ familyMembers, onPointsEarned }: ActiveC
     setChallenges(getChallenges())
   }, [])
 
-  const filteredChallenges = selectedDifficulty === "All" 
-    ? challenges 
-    : challenges.filter(challenge => challenge.difficulty === selectedDifficulty)
+  const filteredChallenges = challenges.filter(challenge => challenge.difficulty === selectedDifficulty)
 
   const difficultyColors = {
     Easy: "bg-green-500/10 text-green-600 border-green-500/30",
@@ -70,36 +68,36 @@ export function ActiveChallengesStore({ familyMembers, onPointsEarned }: ActiveC
   return (
     <>
       <Card className="shadow-float">
-        <CardHeader>
-          <CardTitle className="text-2xl flex items-center">
-            <Target className="h-6 w-6 mr-2 text-primary" />
-            Active Challenges
-          </CardTitle>
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg flex items-center">
+              <Target className="h-5 w-5 mr-2 text-primary" />
+              Active Challenges
+            </CardTitle>
+            <Button variant="ghost" size="sm" className="text-primary text-sm">
+              See All
+            </Button>
+          </div>
         </CardHeader>
         
         <CardContent>
-          <Tabs value={selectedDifficulty} onValueChange={(value) => setSelectedDifficulty(value as any)} className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="All">All Challenges</TabsTrigger>
-              <TabsTrigger value="Easy">Easy</TabsTrigger>
-              <TabsTrigger value="Medium">Medium</TabsTrigger>
-              <TabsTrigger value="Hard">Hard</TabsTrigger>
+          <Tabs value={selectedDifficulty} onValueChange={(value) => setSelectedDifficulty(value as any)} className="space-y-4">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="Easy" className="text-xs">Easy</TabsTrigger>
+              <TabsTrigger value="Medium" className="text-xs">Medium</TabsTrigger>
+              <TabsTrigger value="Hard" className="text-xs">Hard</TabsTrigger>
             </TabsList>
             
-            <TabsContent value={selectedDifficulty} className="space-y-4">
-              <div className="grid md:grid-cols-2 gap-4">
-                {filteredChallenges.slice(0, 4).map((challenge) => (
+            <TabsContent value={selectedDifficulty} className="space-y-3">
+              <div className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth pb-2">
+                {filteredChallenges.slice(0, 6).map((challenge) => (
                   <Card 
                     key={challenge.id} 
-                    className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105"
+                    className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 flex-shrink-0 w-48"
                     onClick={() => handleChallengeSelect(challenge)}
                   >
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <h3 className="text-xl font-semibold mb-2">{challenge.title}</h3>
-                          <p className="text-muted-foreground">{challenge.description}</p>
-                        </div>
+                    <CardContent className="p-3">
+                      <div className="flex items-start justify-between mb-2">
                         <Badge 
                           className={difficultyColors[challenge.difficulty]} 
                           variant="outline"
@@ -107,14 +105,17 @@ export function ActiveChallengesStore({ familyMembers, onPointsEarned }: ActiveC
                           {challenge.difficulty}
                         </Badge>
                       </div>
-
+                      
+                      <h3 className="text-sm font-semibold mb-1 line-clamp-2">{challenge.title}</h3>
+                      <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{challenge.description}</p>
+                      
                       <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <Trophy className="h-4 w-4 text-yellow-500" />
-                          <span className="font-medium">{challenge.points} points</span>
+                        <div className="flex items-center gap-1">
+                          <Trophy className="h-3 w-3 text-yellow-500" />
+                          <span className="text-xs font-medium">{challenge.points} pts</span>
                         </div>
-                        <Button variant="energy" size="sm">
-                          Start Challenge
+                        <Button variant="energy" size="sm" className="text-xs px-2 py-1 h-6">
+                          Start
                         </Button>
                       </div>
                     </CardContent>
@@ -123,9 +124,9 @@ export function ActiveChallengesStore({ familyMembers, onPointsEarned }: ActiveC
               </div>
               
               {filteredChallenges.length === 0 && (
-                <div className="text-center py-8">
-                  <Target className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">No challenges available in this difficulty</p>
+                <div className="text-center py-6">
+                  <Target className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                  <p className="text-sm text-muted-foreground">No challenges available</p>
                 </div>
               )}
             </TabsContent>
