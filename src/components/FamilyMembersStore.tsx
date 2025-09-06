@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
 import { FamilyMemberCard } from "@/components/FamilyMemberCard"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import { Users } from "lucide-react"
 
 interface FamilyMember {
   name: string
@@ -21,26 +22,37 @@ interface FamilyMembersStoreProps {
 
 export const FamilyMembersStore = ({ familyMembers, onMemberClick }: FamilyMembersStoreProps) => {
   return (
-    <Card className="shadow-card bg-card border-border/30">
+    <Card className="shadow-float">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold text-card-foreground">
-          Family Members
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg flex items-center">
+            <Users className="h-5 w-5 mr-2 text-primary" />
+            Family Members
+          </CardTitle>
+          <Button variant="ghost" size="sm" className="text-primary text-sm">
+            See All
+          </Button>
+        </div>
       </CardHeader>
-      <CardContent className="p-0">
-        <ScrollArea className="w-full whitespace-nowrap">
-          <div className="flex gap-4 p-4 pt-0">
-            {familyMembers.map((member, index) => (
-              <div key={index} className="flex-shrink-0 w-64">
-                <FamilyMemberCard 
-                  {...member} 
-                  onClick={() => onMemberClick(member)}
-                />
-              </div>
-            ))}
+      
+      <CardContent>
+        <div className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth pb-2">
+          {familyMembers.map((member, index) => (
+            <div key={index} className="flex-shrink-0 w-64">
+              <FamilyMemberCard 
+                {...member} 
+                onClick={() => onMemberClick(member)}
+              />
+            </div>
+          ))}
+        </div>
+        
+        {familyMembers.length === 0 && (
+          <div className="text-center py-6">
+            <Users className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+            <p className="text-sm text-muted-foreground">No family members added</p>
           </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        )}
       </CardContent>
     </Card>
   )
