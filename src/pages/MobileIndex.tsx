@@ -10,7 +10,7 @@ import { RewardRedemptionModal } from "@/components/RewardRedemptionModal"
 import { RewardRedemptionConfirmModal } from "@/components/RewardRedemptionConfirmModal"
 import { SettingsModal } from "@/components/SettingsModal"
 import { NotificationsDrawer } from "@/components/NotificationsDrawer"
-import { HorizontalScroll } from "@/components/HorizontalScroll"
+import { FamilyMembersStore } from "@/components/FamilyMembersStore"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
@@ -257,16 +257,10 @@ const MobileIndex = () => {
 
         {/* Family Members */}
         <section>
-          <HorizontalScroll title="Family Members">
-            {familyMembers.map((member, index) => (
-              <div key={index} className="flex-shrink-0 w-64">
-                <FamilyMemberCard 
-                  {...member} 
-                  onClick={() => handleFamilyMemberClick(member)}
-                />
-              </div>
-            ))}
-          </HorizontalScroll>
+          <FamilyMembersStore 
+            familyMembers={familyMembers}
+            onMemberClick={handleFamilyMemberClick}
+          />
         </section>
 
         {/* Active Challenges */}
