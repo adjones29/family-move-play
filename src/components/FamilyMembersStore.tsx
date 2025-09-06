@@ -38,12 +38,11 @@ export const FamilyMembersStore = ({ familyMembers, onMemberClick }: FamilyMembe
       <CardContent>
         <div className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth pb-2">
           {familyMembers.map((member, index) => (
-            <div key={index} className="flex-shrink-0 w-64">
-              <FamilyMemberCard 
-                {...member} 
-                onClick={() => onMemberClick(member)}
-              />
-            </div>
+            <FamilyMemberCard 
+              key={index}
+              {...member} 
+              onClick={() => onMemberClick(member)}
+            />
           ))}
         </div>
         
