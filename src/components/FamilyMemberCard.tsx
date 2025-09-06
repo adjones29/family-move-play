@@ -35,7 +35,7 @@ export const FamilyMemberCard = ({
   
   return (
     <Card 
-      className="shadow-card hover:shadow-hover active:scale-95 transition-all duration-300 bg-card border-border/30 cursor-pointer min-h-[100px] flex-shrink-0 w-64"
+      className="shadow-card hover:shadow-hover active:scale-95 transition-all duration-300 bg-card border-border/30 cursor-pointer min-h-[100px] flex-shrink-0 w-48"
       onClick={onClick}
     >
       <CardContent className="p-3">
