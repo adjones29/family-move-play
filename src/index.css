@@ -139,4 +139,27 @@
   .pb-safe-area-inset-top {
     padding-top: var(--safe-area-inset-top);
   }
+  
+  /* Custom scrollbar utilities */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Custom shadow utilities */
+  .shadow-float {
+    box-shadow: var(--shadow-float);
+  }
+  
+  .shadow-card {
+    box-shadow: var(--shadow-card);
+  }
+  
+  .shadow-hover {
+    box-shadow: var(--shadow-hover);
+  }
 }
