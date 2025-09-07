@@ -18,9 +18,10 @@ interface FamilyMember {
 interface FamilyMembersStoreProps {
   familyMembers: FamilyMember[]
   onMemberClick: (member: FamilyMember) => void
+  onSeeAll?: () => void
 }
 
-export const FamilyMembersStore = ({ familyMembers, onMemberClick }: FamilyMembersStoreProps) => {
+export const FamilyMembersStore = ({ familyMembers, onMemberClick, onSeeAll }: FamilyMembersStoreProps) => {
   return (
     <Card className="shadow-float">
       <CardHeader className="pb-3">
@@ -29,7 +30,12 @@ export const FamilyMembersStore = ({ familyMembers, onMemberClick }: FamilyMembe
             <Users className="h-5 w-5 mr-2 text-primary" />
             Family Members
           </CardTitle>
-          <Button variant="ghost" size="sm" className="text-primary text-sm">
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className="text-primary text-sm hover:bg-primary/10"
+            onClick={onSeeAll}
+          >
             See All
           </Button>
         </div>

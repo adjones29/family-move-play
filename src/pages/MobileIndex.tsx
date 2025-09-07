@@ -261,6 +261,7 @@ const MobileIndex = () => {
           <FamilyMembersStore 
             familyMembers={familyMembers}
             onMemberClick={handleFamilyMemberClick}
+            onSeeAll={() => toast({ title: "Family Overview", description: "Navigate to detailed family stats page" })}
           />
         </section>
       </div>
