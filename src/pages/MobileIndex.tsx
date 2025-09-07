@@ -242,9 +242,8 @@ const MobileIndex = () => {
         </div>
       </header>
 
-      {/* Mobile Content - Single Column */}
-      <div className="space-y-6 px-4 py-4">
-        {/* Activity Stats */}
+      {/* Activity Stats */}
+      <div className="px-4 pt-4 pb-2">
         <section>
           <ActivityStats 
             totalSteps={31086}
@@ -254,15 +253,20 @@ const MobileIndex = () => {
             totalGoals={12}
           />
         </section>
+      </div>
 
-        {/* Family Members */}
+      {/* Family Members - Dedicated Container */}
+      <div className="px-4 py-4 bg-muted/20">
         <section>
           <FamilyMembersStore 
             familyMembers={familyMembers}
             onMemberClick={handleFamilyMemberClick}
           />
         </section>
+      </div>
 
+      {/* Mobile Content - Remaining Sections */}
+      <div className="space-y-6 px-4 py-4">
         {/* Active Challenges */}
         <section>
           <ActiveChallengesStore 
