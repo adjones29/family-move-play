@@ -44,7 +44,7 @@ export const SegmentedControl = ({ value, onChange, options, className = "", ari
       className={`
         grid gap-1.5
         bg-muted rounded-xl p-1.5 h-11
-        overflow-visible items-stretch
+        overflow-hidden items-stretch
         ${className}
       `}
       style={{ gridTemplateColumns: `repeat(${options.length}, 1fr)` }}
@@ -70,11 +70,14 @@ export const SegmentedControl = ({ value, onChange, options, className = "", ari
               ? 'bg-primary/10 text-primary font-semibold' 
               : 'bg-transparent text-muted-foreground hover:bg-secondary'
             }
-            focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0
+            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-inset
           `}
           style={{
-            transform: 'none',
+            transform: 'none !important',
             margin: 0,
+            border: 0,
+            top: 'auto',
+            left: 'auto',
           }}
         >
           {option.label}
