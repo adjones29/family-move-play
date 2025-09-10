@@ -35,11 +35,11 @@ export const FamilyMemberCard = ({
   
   return (
     <Card 
-      className="shadow-card hover:shadow-hover active:scale-95 transition-all duration-300 bg-card border-border/30 cursor-pointer min-h-[100px] flex-shrink-0 w-48"
+      className="rounded-lg border bg-card text-card-foreground shadow-sm cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 flex-shrink-0 w-48"
       onClick={onClick}
     >
       <CardContent className="p-3">
-        <div className="flex items-start justify-between mb-3">
+        <div className="flex items-start justify-between mb-2">
           <div className="flex items-center space-x-2">
             <div className={`w-10 h-10 rounded-full bg-${memberColor} flex items-center justify-center`}>
               {avatar ? (
@@ -49,7 +49,7 @@ export const FamilyMemberCard = ({
               )}
             </div>
             <div>
-              <h3 className="font-bold text-card-foreground text-sm">{name}</h3>
+              <h3 className="text-sm font-semibold">{name}</h3>
               <div className="flex items-center space-x-1 text-xs text-muted-foreground">
                 <span>{dailySteps.toLocaleString()}</span>
                 <span>•</span>
@@ -71,7 +71,7 @@ export const FamilyMemberCard = ({
                 {dailySteps.toLocaleString()} / {stepGoal.toLocaleString()}
               </span>
             </div>
-            <Progress value={dailyProgressPercentage} className="h-1.5" />
+            <Progress value={dailyProgressPercentage} className="h-1" />
           </div>
 
           {/* Weekly Progress */}
@@ -82,7 +82,7 @@ export const FamilyMemberCard = ({
                 {currentWeeklySteps.toLocaleString()} / {weeklyGoal.toLocaleString()}
               </span>
             </div>
-            <Progress value={weeklyProgressPercentage} className="h-1.5" />
+            <Progress value={weeklyProgressPercentage} className="h-1" />
           </div>
         </div>
         

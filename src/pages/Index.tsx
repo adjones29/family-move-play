@@ -17,6 +17,7 @@ import { HeroSection } from "@/components/HeroSection"
 import { HorizontalScroll } from "@/components/HorizontalScroll"
 import { Button } from "@/components/ui/enhanced-button"
 import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
@@ -338,16 +339,31 @@ const Index = () => {
 
         {/* Family Members */}
         <section>
-          <h2 className="text-lg font-semibold mb-3">Family Members</h2>
-          <div className="space-y-3">
-            {familyMembers.map((member, index) => (
-              <FamilyMemberCard 
-                key={index} 
-                {...member} 
-                onClick={() => handleFamilyMemberClick(member)}
-              />
-            ))}
-          </div>
+          <Card className="shadow-float">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-lg flex items-center">
+                  <Users className="h-5 w-5 mr-2 text-primary" />
+                  Family Members
+                </CardTitle>
+                <Button variant="ghost" size="sm" className="text-primary text-sm">
+                  See All
+                </Button>
+              </div>
+            </CardHeader>
+            
+            <CardContent className="p-6 pt-0">
+              <div className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth pb-2">
+                {familyMembers.map((member, index) => (
+                  <FamilyMemberCard 
+                    key={index} 
+                    {...member} 
+                    onClick={() => handleFamilyMemberClick(member)}
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </section>
 
         {/* Active Challenges */}
