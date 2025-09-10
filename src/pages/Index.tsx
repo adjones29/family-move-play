@@ -19,13 +19,11 @@ import { Button } from "@/components/ui/enhanced-button"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
-import { useAuth } from "@/contexts/AuthContext"
-import { Bell, Settings, Dumbbell, Target, Gamepad2, Users, Zap, Gift, Star, LogOut } from "lucide-react"
+import { Bell, Settings, Dumbbell, Target, Gamepad2, Users, Zap, Gift, Star } from "lucide-react"
 import { initializeStorage } from "@/utils/localStorage"
 
 const Index = () => {
   const { toast } = useToast()
-  const { user, signOut } = useAuth()
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
@@ -310,15 +308,6 @@ const Index = () => {
             <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">
               {totalFamilyPoints} pts
             </Badge>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-10 w-10"
-              onClick={signOut}
-              title="Sign Out"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
           </div>
         </div>
       </header>

@@ -256,7 +256,7 @@ const MobileIndex = () => {
       </div>
 
       {/* Family Members - Dedicated Container */}
-      <div className="px-4 py-4 bg-white">
+      <div className="px-4 py-4 bg-muted/20">
         <section>
           <FamilyMembersStore 
             familyMembers={familyMembers}
