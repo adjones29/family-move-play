@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { SegmentedControl } from "@/components/ui/segmented-control"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -80,57 +80,60 @@ export function ActiveChallengesStore({ familyMembers, onPointsEarned }: ActiveC
           </div>
         </CardHeader>
         
-        <CardContent>
-          <Tabs value={selectedDifficulty} onValueChange={(value) => setSelectedDifficulty(value as any)} className="space-y-4">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="Easy" className="text-xs">Easy</TabsTrigger>
-              <TabsTrigger value="Medium" className="text-xs">Medium</TabsTrigger>
-              <TabsTrigger value="Hard" className="text-xs">Hard</TabsTrigger>
-            </TabsList>
+        <CardContent className="space-y-4">
+          <SegmentedControl
+            value={selectedDifficulty}
+            onChange={(value) => setSelectedDifficulty(value as "Easy" | "Medium" | "Hard")}
+            options={[
+              { label: 'Easy', value: 'Easy' },
+              { label: 'Medium', value: 'Medium' },
+              { label: 'Hard', value: 'Hard' },
+            ]}
+            ariaLabel="Challenge difficulty filter"
+          />
+          
+          <div className="space-y-3">
+            <div className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth pb-2">
+              {filteredChallenges.slice(0, 6).map((challenge) => (
+                <Card 
+                  key={challenge.id} 
+                  className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 flex-shrink-0 w-48"
+                  onClick={() => handleChallengeSelect(challenge)}
+                >
+                  <CardContent className="p-3">
+                    <div className="flex items-start justify-between mb-2">
+                      <Badge 
+                        className={difficultyColors[challenge.difficulty]} 
+                        variant="outline"
+                      >
+                        {challenge.difficulty}
+                      </Badge>
+                    </div>
+                    
+                    <h3 className="text-sm font-semibold mb-1 line-clamp-2">{challenge.title}</h3>
+                    <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{challenge.description}</p>
+                    
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1">
+                        <Trophy className="h-3 w-3 text-yellow-500" />
+                        <span className="text-xs font-medium">{challenge.points} pts</span>
+                      </div>
+                      <Button variant="default" size="sm" className="text-xs px-2 py-1 h-6">
+                        Start
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
             
-            <TabsContent value={selectedDifficulty} className="space-y-3">
-              <div className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth pb-2">
-                {filteredChallenges.slice(0, 6).map((challenge) => (
-                  <Card 
-                    key={challenge.id} 
-                    className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 flex-shrink-0 w-48"
-                    onClick={() => handleChallengeSelect(challenge)}
-                  >
-                    <CardContent className="p-3">
-                      <div className="flex items-start justify-between mb-2">
-                        <Badge 
-                          className={difficultyColors[challenge.difficulty]} 
-                          variant="outline"
-                        >
-                          {challenge.difficulty}
-                        </Badge>
-                      </div>
-                      
-                      <h3 className="text-sm font-semibold mb-1 line-clamp-2">{challenge.title}</h3>
-                      <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{challenge.description}</p>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-1">
-                          <Trophy className="h-3 w-3 text-yellow-500" />
-                          <span className="text-xs font-medium">{challenge.points} pts</span>
-                        </div>
-                        <Button variant="default" size="sm" className="text-xs px-2 py-1 h-6">
-                          Start
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+            {filteredChallenges.length === 0 && (
+              <div className="text-center py-6">
+                <Target className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                <p className="text-sm text-muted-foreground">No challenges available</p>
               </div>
-              
-              {filteredChallenges.length === 0 && (
-                <div className="text-center py-6">
-                  <Target className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                  <p className="text-sm text-muted-foreground">No challenges available</p>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
+            )}
+          </div>
         </CardContent>
       </Card>
 
