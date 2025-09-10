@@ -22,10 +22,17 @@ const SegmentedControl = React.forwardRef<
       ref={ref}
       role="tablist"
       aria-orientation="horizontal"
-      className={cn(
-        "relative flex w-full rounded-full bg-surface-2 p-1",
-        className
-      )}
+      className={cn(className)}
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: 0,
+        background: 'var(--surface-2)',
+        borderRadius: '9999px',
+        padding: '4px',
+        height: '40px',
+        alignItems: 'stretch'
+      }}
     >
       {options.map((option, index) => {
         const isSelected = value === option.value
@@ -36,14 +43,33 @@ const SegmentedControl = React.forwardRef<
             aria-selected={isSelected}
             aria-controls={`panel-${option.value}`}
             tabIndex={isSelected ? 0 : -1}
-            className={cn(
-              "relative flex-1 rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200 ease-out",
-              "h-9 min-h-9 flex items-center justify-center",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2",
-              isSelected
-                ? "bg-accent text-accent-foreground shadow-sm"
-                : "text-muted-foreground hover:bg-surface-3 hover:text-foreground"
-            )}
+            style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: isSelected ? 'var(--accent)' : 'transparent',
+              color: isSelected ? 'var(--on-accent)' : 'var(--text-secondary)',
+              border: 'none',
+              borderRadius: '9999px',
+              fontWeight: isSelected ? 600 : 400,
+              fontSize: '14px',
+              cursor: 'pointer',
+              transition: 'all 150ms ease-out',
+              margin: 0
+            }}
+            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
+            onMouseEnter={(e) => {
+              if (!isSelected) {
+                e.currentTarget.style.background = 'var(--surface-3)'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isSelected) {
+                e.currentTarget.style.background = 'transparent'
+              }
+            }}
             onClick={() => onChange(option.value)}
             onKeyDown={(e) => {
               if (e.key === "ArrowLeft" && index > 0) {
