@@ -22,7 +22,7 @@ const SegmentedControl = React.forwardRef<
       ref={ref}
       role="tablist"
       aria-orientation="horizontal"
-      className={cn(className)}
+      className={className}
       style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
@@ -31,6 +31,7 @@ const SegmentedControl = React.forwardRef<
         borderRadius: '9999px',
         padding: '4px',
         height: '40px',
+        overflow: 'hidden',
         alignItems: 'stretch'
       }}
     >
@@ -44,22 +45,28 @@ const SegmentedControl = React.forwardRef<
             aria-controls={`panel-${option.value}`}
             tabIndex={isSelected ? 0 : -1}
             style={{
+              all: 'unset',
+              boxSizing: 'border-box',
               width: '100%',
               height: '100%',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              borderRadius: '9999px',
               background: isSelected ? 'var(--accent)' : 'transparent',
               color: isSelected ? 'var(--on-accent)' : 'var(--text-secondary)',
-              border: 'none',
-              borderRadius: '9999px',
+              cursor: 'pointer',
               fontWeight: isSelected ? 600 : 400,
               fontSize: '14px',
-              cursor: 'pointer',
-              transition: 'all 150ms ease-out',
-              margin: 0
+              lineHeight: 1,
+              margin: 0,
+              border: 0,
+              transform: 'none !important' as any,
+              top: 'auto',
+              WebkitTapHighlightColor: 'transparent',
+              appearance: 'none',
+              transition: 'background-color 150ms ease-out, color 150ms ease-out'
             }}
-            className="focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2"
             onMouseEnter={(e) => {
               if (!isSelected) {
                 e.currentTarget.style.background = 'var(--surface-3)'
@@ -69,6 +76,13 @@ const SegmentedControl = React.forwardRef<
               if (!isSelected) {
                 e.currentTarget.style.background = 'transparent'
               }
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.boxShadow = 'inset 0 0 0 2px var(--focus)'
+              e.currentTarget.style.outline = 'none'
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.boxShadow = 'none'
             }}
             onClick={() => onChange(option.value)}
             onKeyDown={(e) => {
