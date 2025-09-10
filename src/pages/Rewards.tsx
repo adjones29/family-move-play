@@ -5,7 +5,7 @@ import { EarnedRewards } from "@/components/EarnedRewards"
 import { RewardRedemptionModal } from "@/components/RewardRedemptionModal"
 import { RewardRedemptionConfirmModal } from "@/components/RewardRedemptionConfirmModal"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { SegmentedControl } from "@/components/ui/segmented-control"
 import { useToast } from "@/hooks/use-toast"
 import { ArrowLeft, Gift } from "lucide-react"
 import { useNavigate } from "react-router-dom"
@@ -15,6 +15,7 @@ const Rewards = () => {
   const { toast } = useToast()
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
+  const [selectedTab, setSelectedTab] = useState<'store' | 'earned'>('store')
 
   // Mock family members with points
   const [familyMembers, setFamilyMembers] = useState([
@@ -168,27 +169,30 @@ const Rewards = () => {
         </div>
       </header>
 
-      <div className="px-4 py-4">
-        <Tabs defaultValue="store" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-2 h-10">
-            <TabsTrigger value="store" className="text-sm">Store</TabsTrigger>
-            <TabsTrigger value="earned" className="text-sm">My Rewards</TabsTrigger>
-          </TabsList>
+      <div className="px-4 py-4 space-y-4">
+        <SegmentedControl
+          value={selectedTab}
+          onChange={(value) => setSelectedTab(value as 'store' | 'earned')}
+          options={[
+            { label: 'Store', value: 'store' },
+            { label: 'My Rewards', value: 'earned' },
+          ]}
+          ariaLabel="Rewards section"
+        />
 
-          <TabsContent value="store" className="mt-4">
-            <RewardStore 
-              totalPoints={totalFamilyPoints}
-              onRewardRedeem={handleRewardSelect}
-            />
-          </TabsContent>
+        {selectedTab === 'store' && (
+          <RewardStore 
+            totalPoints={totalFamilyPoints}
+            onRewardRedeem={handleRewardSelect}
+          />
+        )}
 
-          <TabsContent value="earned" className="mt-4">
-            <EarnedRewards 
-              rewards={earnedRewards}
-              onUseReward={handleUseReward}
-            />
-          </TabsContent>
-        </Tabs>
+        {selectedTab === 'earned' && (
+          <EarnedRewards 
+            rewards={earnedRewards}
+            onUseReward={handleUseReward}
+          />
+        )}
       </div>
 
       <RewardRedemptionConfirmModal

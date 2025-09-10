@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { SegmentedControl } from "@/components/ui/segmented-control"
 import { RewardCard } from "./RewardCard"
 import { getRewards, initializeStorage, type Reward } from "@/utils/localStorage"
 import { Gift, Star } from "lucide-react"
@@ -56,39 +56,42 @@ export function RewardStore({ totalPoints, onRewardRedeem }: RewardStoreProps) {
         </div>
       </CardHeader>
       
-      <CardContent>
-        <Tabs value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as any)} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="Family Rewards" className="text-xs">Family</TabsTrigger>
-            <TabsTrigger value="Individual Rewards" className="text-xs">Individual</TabsTrigger>
-            <TabsTrigger value="Special Rewards" className="text-xs">Special</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value={selectedCategory} className="space-y-3">
-            <div className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth pb-2">
-              {filteredRewards.slice(0, 6).map((reward) => (
-                <div key={reward.id} className="flex-shrink-0 w-48">
-                  <RewardCard
-                    title={reward.title}
-                    description={reward.description}
-                    cost={reward.cost}
-                    category={getCategoryDisplayName(reward.category) as any}
-                    rarity={reward.rarity}
-                    available={totalPoints >= reward.cost}
-                    onRedeem={() => onRewardRedeem(reward.id)}
-                  />
-                </div>
-              ))}
-            </div>
-            
-            {filteredRewards.length === 0 && (
-              <div className="text-center py-6">
-                <Gift className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                <p className="text-sm text-muted-foreground">No rewards available</p>
+      <CardContent className="space-y-4">
+        <SegmentedControl
+          value={selectedCategory}
+          onChange={(value) => setSelectedCategory(value as "Family Rewards" | "Individual Rewards" | "Special Rewards")}
+          options={[
+            { label: 'Family', value: 'Family Rewards' },
+            { label: 'Individual', value: 'Individual Rewards' },
+            { label: 'Special', value: 'Special Rewards' },
+          ]}
+          ariaLabel="Reward category filter"
+        />
+        
+        <div className="space-y-3">
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth pb-2">
+            {filteredRewards.slice(0, 6).map((reward) => (
+              <div key={reward.id} className="flex-shrink-0 w-48">
+                <RewardCard
+                  title={reward.title}
+                  description={reward.description}
+                  cost={reward.cost}
+                  category={getCategoryDisplayName(reward.category) as any}
+                  rarity={reward.rarity}
+                  available={totalPoints >= reward.cost}
+                  onRedeem={() => onRewardRedeem(reward.id)}
+                />
               </div>
-            )}
-          </TabsContent>
-        </Tabs>
+            ))}
+          </div>
+          
+          {filteredRewards.length === 0 && (
+            <div className="text-center py-6">
+              <Gift className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+              <p className="text-sm text-muted-foreground">No rewards available</p>
+            </div>
+          )}
+        </div>
       </CardContent>
     </Card>
   )

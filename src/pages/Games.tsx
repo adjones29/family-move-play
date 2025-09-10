@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/enhanced-button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { SegmentedControl } from "@/components/ui/segmented-control"
 import { MiniGameModal } from "@/components/MiniGameModal"
 import { CreateMiniGameModal } from "@/components/CreateMiniGameModal"
 import { ArrowLeft, Users, Clock, Trophy, Target, Dumbbell, Zap, Heart, GamepadIcon, Plus } from "lucide-react"
@@ -119,23 +119,24 @@ const Games = () => {
         </div>
       </header>
 
-      <div className="px-4 py-4">
-        <Tabs value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as any)} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4 h-10">
-            <TabsTrigger value="All" className="text-xs">All</TabsTrigger>
-            <TabsTrigger value="Exercise" className="text-xs">Exercise</TabsTrigger>
-            <TabsTrigger value="Fun" className="text-xs">Fun</TabsTrigger>
-            <TabsTrigger value="Adventure" className="text-xs">Adventure</TabsTrigger>
-          </TabsList>
+      <div className="px-4 py-4 space-y-4">
+        <SegmentedControl
+          value={selectedCategory}
+          onChange={(value) => setSelectedCategory(value as 'All' | 'Exercise' | 'Fun' | 'Adventure')}
+          options={[
+            { label: 'All', value: 'All' },
+            { label: 'Exercise', value: 'Exercise' },
+            { label: 'Fun', value: 'Fun' },
+            { label: 'Adventure', value: 'Adventure' },
+          ]}
+          ariaLabel="Game category filter"
+        />
 
-          <TabsContent value={selectedCategory} className="mt-4">
-            <div className="space-y-4">
-              {filteredGames.map((game) => (
-                <GameCard key={game.id} game={game} />
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+        <div className="space-y-4">
+          {filteredGames.map((game) => (
+            <GameCard key={game.id} game={game} />
+          ))}
+        </div>
       </div>
 
       <MiniGameModal

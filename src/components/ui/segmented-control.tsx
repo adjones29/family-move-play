@@ -5,9 +5,10 @@ interface SegmentedControlProps {
   onChange: (value: string) => void
   options: Array<{ label: string; value: string }>
   className?: string
+  ariaLabel?: string
 }
 
-export const SegmentedControl = ({ value, onChange, options, className = "" }: SegmentedControlProps) => {
+export const SegmentedControl = ({ value, onChange, options, className = "", ariaLabel }: SegmentedControlProps) => {
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const activeIndex = options.findIndex(option => option.value === value)
@@ -39,12 +40,14 @@ export const SegmentedControl = ({ value, onChange, options, className = "" }: S
     <div
       ref={containerRef}
       role="tablist"
+      aria-label={ariaLabel}
       className={`
-        grid grid-cols-4 gap-1.5
+        grid gap-1.5
         bg-muted rounded-xl p-1.5 h-11
         overflow-visible items-stretch
         ${className}
       `}
+      style={{ gridTemplateColumns: `repeat(${options.length}, 1fr)` }}
     >
       {options.map((option, index) => (
         <button
