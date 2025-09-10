@@ -67,12 +67,9 @@ export default {
 				'member-2': 'hsl(var(--member-2))',
 				'member-3': 'hsl(var(--member-3))',
 				'member-4': 'hsl(var(--member-4))',
-				/* Surface Colors */
-				'surface-2': 'hsl(var(--surface-2))',
-				'surface-3': 'hsl(var(--surface-3))',
-				'text-secondary': 'hsl(var(--text-secondary))',
-				'on-accent': 'hsl(var(--on-accent))',
-				'focus': 'hsl(var(--focus))'
+				'badge-gold': 'hsl(var(--badge-gold))',
+				'badge-silver': 'hsl(var(--badge-silver))',
+				'badge-bronze': 'hsl(var(--badge-bronze))'
 			},
 			backgroundImage: {
 				'gradient-hero': 'var(--gradient-hero)',
