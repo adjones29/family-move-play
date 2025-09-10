@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/enhanced-button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { SegmentedControl } from "@/components/ui/segmented-control"
 import { ArrowLeft, Users, Calendar, Trophy, Target, Clock, Plus } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { CreateChallengeModal } from "@/components/CreateChallengeModal"
@@ -66,44 +66,46 @@ const Challenges = () => {
       </header>
 
       <div className="px-4 py-4">
-        <Tabs value={selectedDifficulty} onValueChange={(value) => setSelectedDifficulty(value as any)} className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4 h-10">
-            <TabsTrigger value="All" className="text-xs">All</TabsTrigger>
-            <TabsTrigger value="Easy" className="text-xs">Easy</TabsTrigger>
-            <TabsTrigger value="Medium" className="text-xs">Medium</TabsTrigger>
-            <TabsTrigger value="Hard" className="text-xs">Hard</TabsTrigger>
-          </TabsList>
+        <div className="space-y-4">
+          <SegmentedControl
+            value={selectedDifficulty}
+            onChange={(value) => setSelectedDifficulty(value as any)}
+            options={[
+              { label: 'All', value: 'All' },
+              { label: 'Easy', value: 'Easy' },
+              { label: 'Medium', value: 'Medium' },
+              { label: 'Hard', value: 'Hard' }
+            ]}
+          />
 
-          <TabsContent value={selectedDifficulty} className="mt-4">
-            <div className="space-y-4">
-              {filteredChallenges.map((challenge) => (
-                <Card key={challenge.id} className="p-4 cursor-pointer transition-all duration-300 active:scale-95">
-                  <div className="space-y-3">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1 pr-2">
-                        <h3 className="text-lg font-semibold mb-1">{challenge.title}</h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2">{challenge.description}</p>
-                      </div>
-                      <Badge className={difficultyColors[challenge.difficulty]} variant="outline">
-                        {challenge.difficulty}
-                      </Badge>
+          <div className="space-y-4">
+            {filteredChallenges.map((challenge) => (
+              <Card key={challenge.id} className="p-4 cursor-pointer transition-all duration-300 active:scale-95">
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 pr-2">
+                      <h3 className="text-lg font-semibold mb-1">{challenge.title}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2">{challenge.description}</p>
                     </div>
-
-                    <div className="flex items-center justify-between pt-2">
-                      <div className="flex items-center gap-2">
-                        <Trophy className="h-4 w-4 text-yellow-500" />
-                        <span className="font-medium text-sm">{challenge.points} points</span>
-                      </div>
-                      <Button variant="energy" size="sm" className="h-8">
-                        Start
-                      </Button>
-                    </div>
+                    <Badge className={difficultyColors[challenge.difficulty]} variant="outline">
+                      {challenge.difficulty}
+                    </Badge>
                   </div>
-                </Card>
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+
+                  <div className="flex items-center justify-between pt-2">
+                    <div className="flex items-center gap-2">
+                      <Trophy className="h-4 w-4 text-yellow-500" />
+                      <span className="font-medium text-sm">{challenge.points} points</span>
+                    </div>
+                    <Button variant="energy" size="sm" className="h-8">
+                      Start
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </div>
       </div>
 
       <CreateChallengeModal 

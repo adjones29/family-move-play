@@ -40,6 +40,13 @@
 
     --radius: 0.75rem;
 
+    /* Surface Colors for Components */
+    --surface-2: 210 40% 95%;
+    --surface-3: 210 40% 92%;
+    --text-secondary: 215 25% 45%;
+    --on-accent: 0 0% 0%;
+    --focus: 25 100% 55%;
+
     /* Fun Custom Design Tokens */
     --gradient-hero: linear-gradient(180deg, transparent 0%, hsl(210 100% 97%) 100%);
     --gradient-card: linear-gradient(135deg, hsl(0 0% 100%) 0%, hsl(210 40% 98%) 100%);
