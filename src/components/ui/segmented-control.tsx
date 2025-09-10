@@ -40,9 +40,9 @@ export const SegmentedControl = ({ value, onChange, options, className = "" }: S
       ref={containerRef}
       role="tablist"
       className={`
-        grid grid-cols-4 gap-0
-        bg-muted rounded-full p-1.5 h-11
-        overflow-hidden items-stretch
+        grid grid-cols-4 gap-1.5
+        bg-muted rounded-xl p-1.5 h-11
+        overflow-visible items-stretch
         ${className}
       `}
     >
@@ -59,7 +59,7 @@ export const SegmentedControl = ({ value, onChange, options, className = "" }: S
           className={`
             all-unset box-border w-full h-full
             flex items-center justify-center
-            rounded-full border-0 leading-none
+            rounded-lg border-0 leading-none
             cursor-pointer text-sm font-medium
             transition-all duration-150 ease-out
             -webkit-tap-highlight-transparent
