@@ -9,7 +9,6 @@ interface FamilyMemberCardProps {
   dailySteps: number
   stepGoal: number
   weeklyScore: number
-  badges: number
   memberColor: "member-1" | "member-2" | "member-3" | "member-4"
   points: number
   weeklySteps?: number
@@ -22,7 +21,6 @@ export const FamilyMemberCard = ({
   dailySteps,
   stepGoal,
   weeklyScore,
-  badges,
   memberColor,
   points,
   weeklySteps,

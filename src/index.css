@@ -46,11 +46,6 @@
     --gradient-fun: linear-gradient(135deg, hsl(25 100% 55%) 0%, hsl(320 80% 65%) 100%);
     --gradient-bright: linear-gradient(135deg, hsl(140 80% 50%) 0%, hsl(200 100% 60%) 100%);
     
-    /* Achievement Colors */
-    --badge-gold: 45 95% 55%;
-    --badge-silver: 220 15% 65%;
-    --badge-bronze: 25 80% 55%;
-    
     /* Family Member Colors - Fun & Bright */
     --member-1: 320 80% 65%; /* Bright Pink */
     --member-2: 140 80% 50%; /* Vibrant Green */

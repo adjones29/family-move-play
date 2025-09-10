@@ -35,9 +35,9 @@ const rarityConfig = {
     badge: "bg-member-2 text-white"
   },
   legendary: {
-    border: "border-badge-gold",
-    bg: "bg-gradient-to-br from-card to-badge-gold/10",
-    badge: "bg-badge-gold text-white"
+    border: "border-member-2",
+    bg: "bg-gradient-to-br from-card to-member-2/10",
+    badge: "bg-member-2 text-white"
   }
 }
 
@@ -104,7 +104,7 @@ export function RewardCard({
         
         <div className="flex items-center justify-between pt-2">
           <div className="flex items-center space-x-1">
-            <Star className="h-4 w-4 text-badge-gold fill-badge-gold" />
+            <Star className="h-4 w-4 text-primary fill-primary" />
             <span className="font-semibold text-foreground">{cost} points</span>
           </div>
           

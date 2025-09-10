@@ -68,7 +68,6 @@ const MobileIndex = () => {
       dailySteps: 8542,
       stepGoal: 10000,
       weeklyScore: 325,
-      badges: 12,
       memberColor: "member-1" as const,
       points: 325
     },
@@ -78,7 +77,6 @@ const MobileIndex = () => {
       dailySteps: 11234,
       stepGoal: 10000,
       weeklyScore: 412,
-      badges: 18,
       memberColor: "member-2" as const,
       points: 412
     },
@@ -88,7 +86,6 @@ const MobileIndex = () => {
       dailySteps: 6789,
       stepGoal: 8000,
       weeklyScore: 245,
-      badges: 8,
       memberColor: "member-3" as const,
       points: 245
     },
@@ -98,7 +95,6 @@ const MobileIndex = () => {
       dailySteps: 4521,
       stepGoal: 6000,
       weeklyScore: 156,
-      badges: 5,
       memberColor: "member-4" as const,
       points: 156
     }

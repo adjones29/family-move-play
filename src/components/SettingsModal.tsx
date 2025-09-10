@@ -19,7 +19,6 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [notifications, setNotifications] = useState(true)
   const [soundEffects, setSoundEffects] = useState(true)
   const [dailyReminders, setDailyReminders] = useState(true)
-  const [achievementPopups, setAchievementPopups] = useState(true)
   const [volume, setVolume] = useState([75])
   const [theme, setTheme] = useState("system")
   const [language, setLanguage] = useState("english")
@@ -110,14 +109,6 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   id="daily-reminders"
                   checked={dailyReminders}
                   onCheckedChange={setDailyReminders}
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <Label htmlFor="achievement-popups">Achievement Popups</Label>
-                <Switch 
-                  id="achievement-popups"
-                  checked={achievementPopups}
-                  onCheckedChange={setAchievementPopups}
                 />
               </div>
             </CardContent>

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/enhanced-button"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
-import { Trophy, Users, Target, Gift, Clock, X, CheckCircle, Star } from "lucide-react"
+import { Users, Target, Gift, X, CheckCircle } from "lucide-react"
 
 interface NotificationsDrawerProps {
   isOpen: boolean
@@ -13,7 +13,7 @@ interface NotificationsDrawerProps {
 
 interface Notification {
   id: string
-  type: "achievement" | "challenge" | "reward" | "reminder"
+  type: "challenge" | "reward" | "reminder"
   title: string
   message: string
   time: string
@@ -24,30 +24,21 @@ interface Notification {
 export function NotificationsDrawer({ isOpen, onClose }: NotificationsDrawerProps) {
   const [notifications, setNotifications] = useState<Notification[]>([
     {
-      id: "1",
-      type: "achievement",
-      title: "New Achievement Unlocked!",
-      message: "You've completed your 7-day walking streak! 🎉",
-      time: "2 minutes ago",
-      isRead: false,
-      icon: <Trophy className="h-4 w-4 text-yellow-500" />
-    },
-    {
       id: "2", 
       type: "challenge",
       title: "Family Challenge Update",
-      message: "Your family is 80% complete with this week's walking challenge!",
+      message: "Mom completed her daily step goal! 2/4 members finished today.",
       time: "1 hour ago",
       isRead: false,
       icon: <Users className="h-4 w-4 text-blue-500" />
     },
     {
       id: "3",
-      type: "reward",
-      title: "Reward Expiring Soon",
-      message: "Your 'Family Movie Night' reward expires in 2 days",
+      type: "reward", 
+      title: "Reward Available!",
+      message: "You have enough points to redeem 'Movie Night'! 🍿",
       time: "3 hours ago",
-      isRead: true,
+      isRead: false,
       icon: <Gift className="h-4 w-4 text-purple-500" />
     },
     {
@@ -58,15 +49,6 @@ export function NotificationsDrawer({ isOpen, onClose }: NotificationsDrawerProp
       time: "5 hours ago",
       isRead: true,
       icon: <Target className="h-4 w-4 text-green-500" />
-    },
-    {
-      id: "5",
-      type: "achievement",
-      title: "Points Milestone!",
-      message: "Congratulations! You've earned over 100 points this week",
-      time: "1 day ago",
-      isRead: true,
-      icon: <Star className="h-4 w-4 text-orange-500" />
     }
   ])
 

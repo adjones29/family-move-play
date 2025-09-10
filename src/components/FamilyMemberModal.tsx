@@ -26,7 +26,6 @@ interface FamilyMember {
   dailySteps: number
   stepGoal: number
   weeklyScore: number
-  badges: number
   memberColor: "member-1" | "member-2" | "member-3" | "member-4"
   points: number
   weeklySteps?: number
@@ -177,7 +176,7 @@ export const FamilyMemberModal = ({ member, isOpen, onClose, onUpdate }: FamilyM
             <div>
               <div className="text-xl font-bold">{member.name}'s Progress</div>
               <div className="text-sm text-muted-foreground font-normal">
-                {member.points} points • {member.badges} badges
+                {member.points} points
               </div>
             </div>
           </DialogTitle>
@@ -333,9 +332,6 @@ export const FamilyMemberModal = ({ member, isOpen, onClose, onUpdate }: FamilyM
               <div className="flex items-center gap-1">
                 <Trophy className="h-4 w-4 text-yellow-500" />
                 <span>{member.points} points</span>
-              </div>
-              <div>
-                {member.badges} badges
               </div>
             </div>
             <Button variant="ghost" onClick={onClose}>

@@ -52,7 +52,7 @@ export function EarnedRewards({ rewards, onUseReward, className }: EarnedRewards
     common: "border-muted",
     rare: "border-member-3",
     epic: "border-member-2",
-    legendary: "border-badge-gold"
+    legendary: "border-member-2"
   }
 
   const statusConfig = {

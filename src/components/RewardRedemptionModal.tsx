@@ -75,7 +75,7 @@ export function RewardRedemptionModal({
     common: "text-muted-foreground",
     rare: "text-member-3",
     epic: "text-member-2", 
-    legendary: "text-badge-gold"
+    legendary: "text-primary"
   }
 
   if (showSuccess) {
@@ -85,7 +85,7 @@ export function RewardRedemptionModal({
           <div className="flex flex-col items-center space-y-4 py-8">
             <div className="relative">
               <CheckCircle className="h-16 w-16 text-member-3" />
-              <Sparkles className="h-6 w-6 text-badge-gold absolute -top-1 -right-1 animate-pulse" />
+              <Sparkles className="h-6 w-6 text-primary absolute -top-1 -right-1 animate-pulse" />
             </div>
             <h3 className="text-2xl font-bold text-foreground">Reward Redeemed!</h3>
             <p className="text-muted-foreground">
@@ -145,7 +145,7 @@ export function RewardRedemptionModal({
               <div className="flex justify-between items-center text-sm mb-2">
                 <span className="text-muted-foreground">Cost:</span>
                 <div className="flex items-center space-x-1">
-                  <Star className="h-4 w-4 text-badge-gold fill-badge-gold" />
+                  <Star className="h-4 w-4 text-primary fill-primary" />
                   <span className="font-semibold">{reward.cost}</span>
                 </div>
               </div>
@@ -153,7 +153,7 @@ export function RewardRedemptionModal({
               <div className="flex justify-between items-center text-sm mb-2">
                 <span className="text-muted-foreground">Current Points:</span>
                 <div className="flex items-center space-x-1">
-                  <Star className="h-4 w-4 text-badge-gold fill-badge-gold" />
+                  <Star className="h-4 w-4 text-primary fill-primary" />
                   <span className="font-semibold">{currentPoints}</span>
                 </div>
               </div>
@@ -161,7 +161,7 @@ export function RewardRedemptionModal({
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground">After Redemption:</span>
                 <div className="flex items-center space-x-1">
-                  <Star className="h-4 w-4 text-badge-gold fill-badge-gold" />
+                  <Star className="h-4 w-4 text-primary fill-primary" />
                   <span className={`font-semibold ${remainingPoints < 0 ? 'text-destructive' : 'text-foreground'}`}>
                     {remainingPoints}
                   </span>
