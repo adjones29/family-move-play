@@ -48,13 +48,8 @@ export const FamilyMemberCard = ({
             </div>
             <div>
               <h3 className="text-sm font-semibold">{name}</h3>
-              <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                <span>{dailySteps.toLocaleString()}</span>
-                <span>•</span>
-                <span className="flex items-center">
-                  <TrendingUp className="h-2 w-2 mr-1" />
-                  {points}
-                </span>
+              <div className="text-xs text-muted-foreground">
+                {points.toLocaleString()} points
               </div>
             </div>
           </div>
