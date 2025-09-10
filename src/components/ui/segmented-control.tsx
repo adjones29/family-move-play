@@ -41,7 +41,7 @@ export const SegmentedControl = ({ value, onChange, options, className = "" }: S
       role="tablist"
       className={`
         grid grid-cols-4 gap-0
-        bg-muted rounded-full p-1 h-10
+        bg-muted rounded-full p-1.5 h-11
         overflow-hidden items-stretch
         ${className}
       `}
@@ -64,7 +64,7 @@ export const SegmentedControl = ({ value, onChange, options, className = "" }: S
             transition-all duration-150 ease-out
             -webkit-tap-highlight-transparent
             ${value === option.value 
-              ? 'bg-accent text-accent-foreground font-semibold' 
+              ? 'bg-primary/10 text-primary font-semibold' 
               : 'bg-transparent text-muted-foreground hover:bg-secondary'
             }
             focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-0
