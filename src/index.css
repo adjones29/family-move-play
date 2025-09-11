@@ -107,7 +107,7 @@
   
   /* Touch-friendly minimum sizes */
   button, [role="button"], input, select, textarea {
-    min-height: 16px;
+    min-height: 44px;
   }
   
   /* Safe area utilities */
