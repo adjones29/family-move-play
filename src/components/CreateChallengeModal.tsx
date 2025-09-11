@@ -332,20 +332,16 @@ export function CreateChallengeModal({ isOpen, onClose, onChallengeCreated }: Cr
                 value={challengeData.rewardType}
                 onValueChange={(value: 'points' | 'reward') => setChallengeData({ ...challengeData, rewardType: value })}
               >
-                <div className="flex items-center space-x-2">
+                <Label htmlFor="points" className="flex items-center gap-2 text-sm cursor-pointer">
                   <RadioGroupItem value="points" id="points" />
-                  <Label htmlFor="points" className="flex items-center gap-2">
-                    <Coins className="h-4 w-4" />
-                    Points Reward
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
+                  <Coins className="h-4 w-4" />
+                  Points Reward
+                </Label>
+                <Label htmlFor="reward" className="flex items-center gap-2 text-sm cursor-pointer">
                   <RadioGroupItem value="reward" id="reward" />
-                  <Label htmlFor="reward" className="flex items-center gap-2">
-                    <Trophy className="h-4 w-4" />
-                    Item Reward
-                  </Label>
-                </div>
+                  <Trophy className="h-4 w-4" />
+                  Item Reward
+                </Label>
               </RadioGroup>
 
               {challengeData.rewardType === 'points' && (

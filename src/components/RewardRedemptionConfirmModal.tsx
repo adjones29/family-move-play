@@ -124,20 +124,18 @@ export function RewardRedemptionConfirmModal({
               <RadioGroup value={selectedMember} onValueChange={setSelectedMember}>
                 {familyMembers.map((member) => (
                   <div key={member.name} className="flex items-center justify-between p-2 bg-muted/30 rounded">
-                    <div className="flex items-center space-x-2">
+                    <Label 
+                      htmlFor={member.name} 
+                      className={`flex items-center gap-2 cursor-pointer ${member.points < reward.cost ? 'opacity-50' : ''}`}
+                    >
                       <RadioGroupItem 
                         value={member.name} 
                         id={member.name}
                         disabled={member.points < reward.cost}
+                        className={`text-${member.memberColor}-500`}
                       />
-                      <Label 
-                        htmlFor={member.name} 
-                        className={`flex items-center gap-2 cursor-pointer ${member.points < reward.cost ? 'opacity-50' : ''}`}
-                      >
-                        <div className={`w-3 h-3 rounded-full bg-${member.memberColor}`} />
-                        {member.name}
-                      </Label>
-                    </div>
+                      {member.name}
+                    </Label>
                     <div className="flex items-center gap-2">
                       <span className="text-sm">{member.points} points</span>
                       {member.points < reward.cost && (

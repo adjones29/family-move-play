@@ -349,7 +349,7 @@ export function CreateMiniGameModal({ isOpen, onClose, onGameCreated }: CreateMi
                                 name={`correct-${qIndex}`}
                                 checked={question.correctAnswer === aIndex}
                                 onChange={() => updateQuestion(qIndex, 'correctAnswer', aIndex)}
-                                className="w-4 h-4"
+                                className="w-4 h-4 rounded-full border border-input text-primary focus:ring-2 focus:ring-ring focus:ring-offset-2"
                               />
                               <Input
                                 value={answer}
@@ -431,20 +431,16 @@ export function CreateMiniGameModal({ isOpen, onClose, onGameCreated }: CreateMi
                 value={gameData.rewardType}
                 onValueChange={(value: 'points' | 'reward') => setGameData({ ...gameData, rewardType: value })}
               >
-                <div className="flex items-center space-x-2">
+                <Label htmlFor="points" className="flex items-center gap-2 text-sm cursor-pointer">
                   <RadioGroupItem value="points" id="points" />
-                  <Label htmlFor="points" className="flex items-center gap-2">
-                    <Coins className="h-4 w-4" />
-                    Points Reward
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
+                  <Coins className="h-4 w-4" />
+                  Points Reward
+                </Label>
+                <Label htmlFor="reward" className="flex items-center gap-2 text-sm cursor-pointer">
                   <RadioGroupItem value="reward" id="reward" />
-                  <Label htmlFor="reward" className="flex items-center gap-2">
-                    <Trophy className="h-4 w-4" />
-                    Item Reward
-                  </Label>
-                </div>
+                  <Trophy className="h-4 w-4" />
+                  Item Reward
+                </Label>
               </RadioGroup>
 
               {gameData.rewardType === 'points' && (
