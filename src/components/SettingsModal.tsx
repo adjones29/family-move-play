@@ -45,18 +45,6 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label htmlFor="family-name">Family Name</Label>
-                <Select value="johnson-family">
-                  <SelectTrigger className="w-48">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="johnson-family">Johnson Family</SelectItem>
-                    <SelectItem value="smith-family">Smith Family</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center justify-between">
                 <Label htmlFor="language">Language</Label>
                 <Select value={language} onValueChange={setLanguage}>
                   <SelectTrigger className="w-48">
@@ -124,19 +112,6 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label htmlFor="theme">Theme</Label>
-                <Select value={theme} onValueChange={setTheme}>
-                  <SelectTrigger className="w-48">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center justify-between">
                 <Label htmlFor="sound-effects">Sound Effects</Label>
                 <Switch 
                   id="sound-effects"
@@ -170,10 +145,6 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="parental-controls">Parental Controls</Label>
-                <Button variant="outline" size="sm">Configure</Button>
-              </div>
               <div className="flex items-center justify-between">
                 <Label htmlFor="data-sharing">Data Sharing</Label>
                 <Button variant="outline" size="sm">Manage</Button>
