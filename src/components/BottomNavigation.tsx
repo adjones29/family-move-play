@@ -1,7 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Home, Target, Gamepad2, Gift } from "lucide-react"
+import { Home, Target, Gamepad2, Users, Gift } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export const BottomNavigation = () => {
@@ -28,6 +28,13 @@ export const BottomNavigation = () => {
       label: 'Games',
       icon: Gamepad2,
       path: '/games',
+      badge: null
+    },
+    {
+      id: 'family',
+      label: 'Family',
+      icon: Users,
+      path: '/family',
       badge: null
     },
     {

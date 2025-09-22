@@ -9,6 +9,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Index from "./pages/Index";
 import Challenges from "./pages/Challenges";
 import Games from "./pages/Games";
+import Family from "./pages/Family";
 import Rewards from "./pages/Rewards";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -42,6 +43,13 @@ const App = () => (
               <ProtectedRoute>
                 <MobileLayout>
                   <Games />
+                </MobileLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/family" element={
+              <ProtectedRoute>
+                <MobileLayout>
+                  <Family />
                 </MobileLayout>
               </ProtectedRoute>
             } />
