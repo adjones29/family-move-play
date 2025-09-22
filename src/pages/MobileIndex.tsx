@@ -164,20 +164,6 @@ const MobileIndex = () => {
     })
   }
 
-  const handleUseReward = (rewardId: string) => {
-    setEarnedRewards(prev => 
-      prev.map(reward => 
-        reward.id === rewardId 
-          ? { ...reward, status: "used" as const }
-          : reward
-      )
-    )
-    
-    toast({
-      title: "Reward Used! ✅",
-      description: "Hope you enjoyed your reward!",
-    })
-  }
 
   const handlePointsEarned = (points: number) => {
     // For now, add points equally to all family members
@@ -292,7 +278,6 @@ const MobileIndex = () => {
         <section>
           <EarnedRewards 
             rewards={earnedRewards}
-            onUseReward={handleUseReward}
           />
         </section>
       </div>

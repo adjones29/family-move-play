@@ -126,20 +126,6 @@ const Rewards = () => {
     })
   }
 
-  const handleUseReward = (rewardId: string) => {
-    setEarnedRewards(prev => 
-      prev.map(reward => 
-        reward.id === rewardId 
-          ? { ...reward, status: "used" as const }
-          : reward
-      )
-    )
-    
-    toast({
-      title: "Reward Used! ✅",
-      description: "Hope you enjoyed your reward!",
-    })
-  }
 
   return (
     <div className="pb-20"> {/* Bottom padding for navigation */}
@@ -190,7 +176,6 @@ const Rewards = () => {
         {selectedTab === 'earned' && (
           <EarnedRewards 
             rewards={earnedRewards}
-            onUseReward={handleUseReward}
           />
         )}
       </div>

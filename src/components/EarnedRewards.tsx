@@ -2,9 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/enhanced-button"
 import { 
-  CheckCircle, 
-  Clock, 
-  Trophy, 
+  Trophy,
   Calendar,
   RotateCcw,
   AlertTriangle
@@ -24,12 +22,10 @@ interface EarnedReward {
 
 interface EarnedRewardsProps {
   rewards: EarnedReward[]
-  onUseReward?: (rewardId: string) => void
   className?: string
 }
 
-export function EarnedRewards({ rewards, onUseReward, className }: EarnedRewardsProps) {
-  const activeRewards = rewards.filter(r => r.status === "active")
+export function EarnedRewards({ rewards, className }: EarnedRewardsProps) {
   const usedRewards = rewards.filter(r => r.status === "used")
   const expiredRewards = rewards.filter(r => r.status === "expired")
 
@@ -41,12 +37,6 @@ export function EarnedRewards({ rewards, onUseReward, className }: EarnedRewards
     })
   }
 
-  const isExpiringSoon = (expiresAt?: Date) => {
-    if (!expiresAt) return false
-    const threeDaysFromNow = new Date()
-    threeDaysFromNow.setDate(threeDaysFromNow.getDate() + 3)
-    return expiresAt <= threeDaysFromNow
-  }
 
   const rarityColors = {
     common: "border-muted",
@@ -56,10 +46,6 @@ export function EarnedRewards({ rewards, onUseReward, className }: EarnedRewards
   }
 
   const statusConfig = {
-    active: {
-      badge: "bg-member-3 text-white",
-      icon: <CheckCircle className="h-4 w-4" />
-    },
     used: {
       badge: "bg-muted text-muted-foreground",
       icon: <RotateCcw className="h-4 w-4" />
@@ -85,8 +71,7 @@ export function EarnedRewards({ rewards, onUseReward, className }: EarnedRewards
   }
 
   const RewardCard = ({ reward }: { reward: EarnedReward }) => {
-    const config = statusConfig[reward.status]
-    const isExpiring = isExpiringSoon(reward.expiresAt)
+    const config = statusConfig[reward.status as keyof typeof statusConfig]
     
     return (
       <Card 
@@ -101,12 +86,14 @@ export function EarnedRewards({ rewards, onUseReward, className }: EarnedRewards
               {reward.icon}
               <h4 className="font-semibold text-sm">{reward.title}</h4>
             </div>
-            <div className="flex items-center space-x-1">
-              <Badge variant="secondary" className={config.badge}>
-                {config.icon}
-                <span className="ml-1 text-xs">{reward.status}</span>
-              </Badge>
-            </div>
+            {config && (
+              <div className="flex items-center space-x-1">
+                <Badge variant="secondary" className={config.badge}>
+                  {config.icon}
+                  <span className="ml-1 text-xs">{reward.status}</span>
+                </Badge>
+              </div>
+            )}
           </div>
 
           <p className="text-xs text-muted-foreground mb-3 leading-relaxed">
@@ -118,34 +105,7 @@ export function EarnedRewards({ rewards, onUseReward, className }: EarnedRewards
               <Calendar className="h-3 w-3 mr-1" />
               <span>Earned {formatDate(reward.redeemedAt)}</span>
             </div>
-
-            {reward.expiresAt && reward.status === "active" && (
-              <div className={`flex items-center ${isExpiring ? "text-destructive" : "text-muted-foreground"}`}>
-                <Clock className="h-3 w-3 mr-1" />
-                <span>Expires {formatDate(reward.expiresAt)}</span>
-              </div>
-            )}
           </div>
-
-          {reward.status === "active" && onUseReward && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => onUseReward(reward.id)}
-              className="w-full mt-3 text-xs"
-            >
-              Mark as Used
-            </Button>
-          )}
-
-          {isExpiring && reward.status === "active" && (
-            <div className="mt-2 p-2 bg-destructive/10 border border-destructive/20 rounded text-xs">
-              <div className="flex items-center text-destructive">
-                <AlertTriangle className="h-3 w-3 mr-1" />
-                <span className="font-medium">Expiring soon!</span>
-              </div>
-            </div>
-          )}
         </CardContent>
       </Card>
     )
@@ -160,20 +120,6 @@ export function EarnedRewards({ rewards, onUseReward, className }: EarnedRewards
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        {activeRewards.length > 0 && (
-          <div>
-            <h4 className="font-semibold text-sm text-foreground mb-3 flex items-center">
-              <CheckCircle className="h-4 w-4 mr-1 text-member-3" />
-              Active Rewards ({activeRewards.length})
-            </h4>
-            <div className="grid gap-3">
-              {activeRewards.map(reward => (
-                <RewardCard key={reward.id} reward={reward} />
-              ))}
-            </div>
-          </div>
-        )}
-
         {usedRewards.length > 0 && (
           <div>
             <h4 className="font-semibold text-sm text-muted-foreground mb-3 flex items-center">
