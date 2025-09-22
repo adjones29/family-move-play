@@ -7,9 +7,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
-import { Users, Plus, Edit2, Trash2, Mail, MessageSquare, UserPlus, ArrowLeft } from "lucide-react"
+import { Users, Plus, Edit2, Trash2, Mail, MessageSquare, UserPlus, ArrowLeft, MoreVertical, Phone, Calendar } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { useNavigate } from "react-router-dom"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 interface FamilyMember {
   id: string
@@ -194,14 +195,11 @@ const Family = () => {
 
       <div className="px-4 py-4 space-y-6">
         {/* Add New Member Button */}
-        <div className="flex justify-between items-center">
-          <p className="text-sm text-muted-foreground">
-            Manage your family members and send invitations to join your fitness journey.
-          </p>
+        <div className="sticky top-[73px] z-30 bg-background py-2 -mx-4 px-4 mb-2">
           <Button 
             onClick={() => setShowAddForm(!showAddForm)}
             disabled={familyMembers.length >= 8}
-            className="flex items-center gap-2"
+            className="w-full flex items-center gap-2"
           >
             <Plus className="h-4 w-4" />
             Add Member
@@ -312,72 +310,96 @@ const Family = () => {
         <Separator />
 
         {/* Family Members List */}
-        <div className="space-y-4">
+        <div className="space-y-2">
           <h3 className="text-lg font-semibold">Current Family Members</h3>
-          <div className="grid gap-4">
+          <div className="space-y-2">
             {familyMembers.map((member) => (
-              <Card key={member.id}>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                      <Avatar>
+              <Card key={member.id} className="rounded-2xl shadow-sm">
+                <CardContent className="p-2.5">
+                  <div className="flex items-center justify-between h-14">
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <Avatar className="h-8 w-8 flex-shrink-0">
                         <AvatarImage src={member.avatar} />
-                        <AvatarFallback>
+                        <AvatarFallback className="text-xs">
                           {member.name.split(' ').map(n => n[0]).join('')}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-medium">{member.name}</h4>
-                          <span className="text-lg">{getRoleIcon(member.role)}</span>
-                          <Badge variant="secondary" className="capitalize">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-semibold text-sm truncate">{member.name}</h4>
+                          <Badge variant="secondary" className="text-xs px-1.5 py-0.5 capitalize flex-shrink-0">
                             {member.role}
                           </Badge>
-                          <div className={`w-2 h-2 rounded-full ${getStatusColor(member.status)}`} />
-                          <span className="text-xs text-muted-foreground capitalize">
-                            {member.status}
-                          </span>
+                          <div className={`w-2 h-2 rounded-full flex-shrink-0 ${getStatusColor(member.status)}`} />
                         </div>
-                        <p className="text-sm text-muted-foreground">{member.email}</p>
-                        {member.phone && (
-                          <p className="text-sm text-muted-foreground">{member.phone}</p>
-                        )}
-                        <p className="text-xs text-muted-foreground">
-                          Joined: {new Date(member.joinedDate).toLocaleDateString()}
-                        </p>
                       </div>
                     </div>
                     
-                    <div className="flex flex-col gap-2 sm:flex-row">
+                    <div className="flex items-center gap-1">
                       {member.status === 'pending' && (
                         <Button
-                          size="sm"
-                          variant="outline"
+                          size="icon"
+                          variant="ghost"
                           onClick={() => handleResendInvite(member)}
-                          className="flex items-center gap-1"
+                          className="h-8 w-8"
+                          title="Resend Invitation"
                         >
-                          <MessageSquare className="h-3 w-3" />
-                          Resend
+                          <MessageSquare className="h-3.5 w-3.5" />
                         </Button>
                       )}
                       <Button
-                        size="sm"
-                        variant="outline"
+                        size="icon"
+                        variant="ghost"
                         onClick={() => handleEditMember(member)}
-                        className="flex items-center gap-1"
+                        className="h-8 w-8"
+                        title="Edit Member"
                       >
-                        <Edit2 className="h-3 w-3" />
-                        Edit
+                        <Edit2 className="h-3.5 w-3.5" />
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => handleDeleteMember(member.id)}
-                        className="flex items-center gap-1"
-                      >
-                        <Trash2 className="h-3 w-3" />
-                        Remove
-                      </Button>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-8 w-8"
+                            title="More Options"
+                          >
+                            <MoreVertical className="h-3.5 w-3.5" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem className="flex items-center gap-2">
+                            <Mail className="h-4 w-4" />
+                            <div className="flex flex-col">
+                              <span className="text-xs text-muted-foreground">Email</span>
+                              <span className="text-sm">{member.email}</span>
+                            </div>
+                          </DropdownMenuItem>
+                          {member.phone && (
+                            <DropdownMenuItem className="flex items-center gap-2">
+                              <Phone className="h-4 w-4" />
+                              <div className="flex flex-col">
+                                <span className="text-xs text-muted-foreground">Phone</span>
+                                <span className="text-sm">{member.phone}</span>
+                              </div>
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4" />
+                            <div className="flex flex-col">
+                              <span className="text-xs text-muted-foreground">Joined</span>
+                              <span className="text-sm">{new Date(member.joinedDate).toLocaleDateString()}</span>
+                            </div>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2 text-destructive focus:text-destructive"
+                            onClick={() => handleDeleteMember(member.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            Remove Member
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </div>
                   </div>
                 </CardContent>
