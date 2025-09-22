@@ -31,17 +31,17 @@ export const BottomNavigation = () => {
       badge: null
     },
     {
-      id: 'family',
-      label: 'Family',
-      icon: Users,
-      path: '/family',
-      badge: null
-    },
-    {
       id: 'rewards',
       label: 'Rewards',
       icon: Gift,
       path: '/rewards',
+      badge: null
+    },
+    {
+      id: 'family',
+      label: 'Family',
+      icon: Users,
+      path: '/family',
       badge: null
     }
   ]
