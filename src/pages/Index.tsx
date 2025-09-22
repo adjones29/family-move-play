@@ -5,7 +5,7 @@ import { ChallengeCard } from "@/components/ChallengeCard"
 import { ActivityStats } from "@/components/ActivityStats"
 import { MiniGameCard } from "@/components/MiniGameCard"
 import { RewardStore } from "@/components/RewardStore"
-import { EarnedRewards } from "@/components/EarnedRewards"
+
 import { QuickMiniGamesStore } from "@/components/QuickMiniGamesStore"
 import { ActiveChallengesStore } from "@/components/ActiveChallengesStore"
 import { RewardRedemptionModal } from "@/components/RewardRedemptionModal"
@@ -33,39 +33,6 @@ const Index = () => {
   const [showNotifications, setShowNotifications] = useState(false)
   const [selectedFamilyMember, setSelectedFamilyMember] = useState<any>(null)
   const [showFamilyMemberModal, setShowFamilyMemberModal] = useState(false)
-  type EarnedReward = {
-    id: string
-    title: string
-    description: string
-    redeemedAt: Date
-    expiresAt?: Date
-    status: "active" | "used" | "expired"
-    category: "family" | "individual" | "special"
-    rarity: "common" | "rare" | "epic" | "legendary"
-    icon?: React.ReactNode
-  }
-
-  const [earnedRewards, setEarnedRewards] = useState<EarnedReward[]>([
-    {
-      id: "movie-night-1",
-      title: "Family Movie Night",
-      description: "Choose any movie for tonight's family viewing with snacks included!",
-      redeemedAt: new Date(2024, 11, 15),
-      expiresAt: new Date(2024, 11, 22),
-      status: "active",
-      category: "family",
-      rarity: "common"
-    },
-    {
-      id: "extra-screen-time-1", 
-      title: "Extra Screen Time",
-      description: "Earn 30 minutes of bonus screen time for games or videos",
-      redeemedAt: new Date(2024, 11, 10),
-      status: "used",
-      category: "individual",
-      rarity: "common"
-    }
-  ])
 
   // Mock family data with individual point balances
   const [familyMembers, setFamilyMembers] = useState([
@@ -217,19 +184,6 @@ const Index = () => {
       )
     }
 
-    // Add to earned rewards
-    const newReward: EarnedReward = {
-      id: `${rewardId}-${Date.now()}`,
-      title: reward.title,
-      description: reward.description,
-      redeemedAt: new Date(),
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-      status: "active",
-      category: reward.category === "Family Rewards" ? "family" : reward.category === "Individual Rewards" ? "individual" : "special",
-      rarity: reward.rarity
-    }
-
-    setEarnedRewards(prev => [newReward, ...prev])
     
     toast({
       title: "Reward Redeemed! 🎉",
@@ -237,20 +191,6 @@ const Index = () => {
     })
   }
 
-  const handleUseReward = (rewardId: string) => {
-    setEarnedRewards(prev => 
-      prev.map(reward => 
-        reward.id === rewardId 
-          ? { ...reward, status: "used" as const }
-          : reward
-      )
-    )
-    
-    toast({
-      title: "Reward Used! ✅",
-      description: "Hope you enjoyed your reward!",
-    })
-  }
 
   const handlePointsEarned = (points: number) => {
     // For now, add points equally to all family members
@@ -386,13 +326,6 @@ const Index = () => {
           />
         </section>
 
-        {/* Earned Rewards */}
-        <section>
-          <EarnedRewards 
-            rewards={earnedRewards}
-            onUseReward={handleUseReward}
-          />
-        </section>
       </div>
 
       {/* Modals and Drawers */}
