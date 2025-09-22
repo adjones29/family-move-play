@@ -68,22 +68,19 @@ export function RewardStore({ totalPoints, onRewardRedeem }: RewardStoreProps) {
           ariaLabel="Reward category filter"
         />
         
-        <div className="space-y-3">
-          <div className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth pb-2">
-            {filteredRewards.slice(0, 6).map((reward) => (
-              <div key={reward.id} className="flex-shrink-0 w-48">
-                <RewardCard
-                  title={reward.title}
-                  description={reward.description}
-                  cost={reward.cost}
-                  category={getCategoryDisplayName(reward.category) as any}
-                  rarity={reward.rarity}
-                  available={totalPoints >= reward.cost}
-                  onRedeem={() => onRewardRedeem(reward.id)}
-                />
-              </div>
-            ))}
-          </div>
+        <div className="space-y-4">
+          {filteredRewards.map((reward) => (
+            <RewardCard
+              key={reward.id}
+              title={reward.title}
+              description={reward.description}
+              cost={reward.cost}
+              category={getCategoryDisplayName(reward.category) as any}
+              rarity={reward.rarity}
+              available={totalPoints >= reward.cost}
+              onRedeem={() => onRewardRedeem(reward.id)}
+            />
+          ))}
           
           {filteredRewards.length === 0 && (
             <div className="text-center py-6">
