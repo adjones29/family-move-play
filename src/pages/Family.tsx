@@ -305,20 +305,8 @@ const Family = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48">
-                          <DropdownMenuItem className="flex items-center gap-2">
-                            <Mail className="h-4 w-4" />
-                            <div className="flex flex-col">
-                              <span className="text-xs text-muted-foreground">Email</span>
-                              <span className="text-sm">{member.email}</span>
-                            </div>
-                          </DropdownMenuItem>
-                          {member.phone && <DropdownMenuItem className="flex items-center gap-2">
-                              <Phone className="h-4 w-4" />
-                              <div className="flex flex-col">
-                                <span className="text-xs text-muted-foreground">Phone</span>
-                                <span className="text-sm">{member.phone}</span>
-                              </div>
-                            </DropdownMenuItem>}
+                          
+                          {member.phone}
                           <DropdownMenuItem className="flex items-center gap-2">
                             <Calendar className="h-4 w-4" />
                             <div className="flex flex-col">
