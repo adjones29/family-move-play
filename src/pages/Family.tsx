@@ -305,8 +305,6 @@ const Family = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48">
-                          
-                          {member.phone}
                           <DropdownMenuItem className="flex items-center gap-2">
                             <Calendar className="h-4 w-4" />
                             <div className="flex flex-col">
