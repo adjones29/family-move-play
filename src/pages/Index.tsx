@@ -4,7 +4,7 @@ import { FamilyMemberModal } from "@/components/FamilyMemberModal"
 import { ChallengeCard } from "@/components/ChallengeCard"
 import { ActivityStats } from "@/components/ActivityStats"
 import { MiniGameCard } from "@/components/MiniGameCard"
-import { RewardStore } from "@/components/RewardStore"
+import { RewardStoreCarousel } from "@/components/RewardStoreCarousel"
 
 import { QuickMiniGamesStore } from "@/components/QuickMiniGamesStore"
 import { ActiveChallengesStore } from "@/components/ActiveChallengesStore"
@@ -320,10 +320,10 @@ const Index = () => {
 
         {/* Reward Store */}
         <section>
-          <RewardStore 
-            totalPoints={totalFamilyPoints}
-            onRewardRedeem={handleRewardSelect}
-          />
+        <RewardStoreCarousel 
+          totalPoints={totalFamilyPoints}
+          onRewardRedeem={handleRewardSelect}
+        />
         </section>
 
       </div>
