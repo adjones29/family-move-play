@@ -83,13 +83,20 @@ export const useFamily = () => {
     try {
       const inviteCode = Math.random().toString(36).substring(2, 10).toUpperCase();
       
+      // Debug: verify auth context before insert
+      const { data: sess } = await supabase.auth.getSession();
+      console.log('Auth check before families insert:', { 
+        userIdFromContext: user.id, 
+        userIdFromSession: sess.session?.user.id 
+      });
+      
+      // Don't send created_by - the trigger will set it
       const { data: familyData, error: familyError } = await supabase
         .from('families')
         .insert({
           name,
-          created_by: user.id, // Trigger will ensure this matches auth.uid()
           invite_code: inviteCode
-        })
+        } as any)
         .select()
         .single();
 
