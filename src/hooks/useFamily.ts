@@ -87,7 +87,7 @@ export const useFamily = () => {
         .from('families')
         .insert({
           name,
-          created_by: user.id,
+          created_by: user.id, // Trigger will ensure this matches auth.uid()
           invite_code: inviteCode
         })
         .select()
