@@ -61,14 +61,33 @@ const Family = () => {
       return;
     }
 
-    // Note: In a real app, you'd need to create a user account first
-    // This is simplified - you'd typically invite by email
-    toast({
-      title: "Feature coming soon",
-      description: "Member invitation system will be available soon. For now, members need to sign up and join using the family invite code.",
-    });
-    setShowAddForm(false);
-    setNewMemberName("");
+    try {
+      const { error } = await supabase
+        .from('family_members')
+        .insert({
+          family_id: currentFamily.id,
+          display_name: newMemberName.trim(),
+          role: newMemberRole,
+          status: 'Active'
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Member Created",
+        description: `${newMemberName} has been added to your family.`
+      });
+      
+      setShowAddForm(false);
+      setNewMemberName("");
+      setNewMemberRole('Child');
+    } catch (err: any) {
+      toast({
+        title: "Error creating member",
+        description: err.message,
+        variant: "destructive"
+      });
+    }
   };
 
   const handleDeleteMember = async (memberId: string) => {
@@ -262,11 +281,12 @@ const Family = () => {
               <div className="flex gap-3 pt-2">
                 <Button onClick={handleAddMember} className="flex items-center gap-2">
                   <UserPlus className="h-4 w-4" />
-                  Add Member
+                  Create Family Member
                 </Button>
                 <Button variant="outline" onClick={() => {
                   setShowAddForm(false);
                   setNewMemberName('');
+                  setNewMemberRole('Child');
                 }}>
                   Cancel
                 </Button>

@@ -48,28 +48,31 @@ export type Database = {
       }
       family_members: {
         Row: {
+          display_name: string | null
           family_id: string
           id: string
           joined_at: string | null
           role: string
           status: string
-          user_id: string
+          user_id: string | null
         }
         Insert: {
+          display_name?: string | null
           family_id: string
           id?: string
           joined_at?: string | null
           role: string
           status?: string
-          user_id: string
+          user_id?: string | null
         }
         Update: {
+          display_name?: string | null
           family_id?: string
           id?: string
           joined_at?: string | null
           role?: string
           status?: string
-          user_id?: string
+          user_id?: string | null
         }
         Relationships: [
           {
