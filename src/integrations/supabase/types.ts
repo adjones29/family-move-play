@@ -175,6 +175,10 @@ export type Database = {
         Args: { p_family: string; p_user: string }
         Returns: boolean
       }
+      is_family_member: {
+        Args: { p_family: string; p_user: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
