@@ -88,10 +88,11 @@ const MobileIndex = () => {
     const stepsData: Record<string, { daily: number; weekly: number }> = {}
     
     for (const member of familyMembers) {
-      if (member.name) {
+      const memberId = member.name?.trim()
+      if (memberId) {
         const [daily, weekly] = await Promise.all([
-          getTodaySteps(member.name),
-          getWeeklySteps(member.name)
+          getTodaySteps(memberId),
+          getWeeklySteps(memberId)
         ])
         stepsData[member.member_id] = { daily, weekly }
       }
@@ -105,6 +106,27 @@ const MobileIndex = () => {
       fetchAllMemberSteps()
     }
   }, [familyMembers, fetchAllMemberSteps])
+
+  // Midnight rollover - refresh steps at local midnight
+  useEffect(() => {
+    const scheduleNextMidnightRefresh = () => {
+      const now = new Date()
+      const tomorrow = new Date(now)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      tomorrow.setHours(0, 0, 0, 0)
+      const msUntilMidnight = tomorrow.getTime() - now.getTime()
+      
+      const timeoutId = setTimeout(() => {
+        fetchAllMemberSteps()
+        scheduleNextMidnightRefresh()
+      }, msUntilMidnight)
+      
+      return timeoutId
+    }
+    
+    const timeoutId = scheduleNextMidnightRefresh()
+    return () => clearTimeout(timeoutId)
+  }, [fetchAllMemberSteps])
 
   // Real-time subscription to step_entries changes
   useEffect(() => {
@@ -131,8 +153,8 @@ const MobileIndex = () => {
   // Compute daily and weekly steps from Supabase for each member
   const familyMembersWithSteps = familyMembers.map(member => ({
     ...member,
-    dailySteps: memberSteps[member.member_id]?.daily || 0,
-    weeklySteps: memberSteps[member.member_id]?.weekly || 0
+    dailySteps: memberSteps[member.member_id]?.daily ?? member.dailySteps ?? 0,
+    weeklySteps: memberSteps[member.member_id]?.weekly ?? member.weeklySteps ?? 0
   }))
 
   const handleRewardRedemption = (rewardId: string, cost: number, selectedMember?: string) => {

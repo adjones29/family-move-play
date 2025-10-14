@@ -89,10 +89,9 @@ export async function getTodaySteps(memberId: string): Promise<number> {
       .select('steps')
       .eq('member_id', memberId)
       .eq('date', today)
-      .maybeSingle()
 
     if (error) throw error
-    return data?.steps || 0
+    return data?.reduce((total, entry) => total + entry.steps, 0) || 0
   } catch (error) {
     console.error('Error getting today steps:', error)
     return 0
