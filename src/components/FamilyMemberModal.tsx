@@ -59,10 +59,10 @@ export const FamilyMemberModal = ({ member, isOpen, onClose, onUpdate }: FamilyM
     return unsubscribe
   }, [member])
 
-  const loadStepData = () => {
+  const loadStepData = async () => {
     if (!member) return
     
-    const progress = getProgress(member.name)
+    const progress = await getProgress(member.name)
     setTodaySteps(progress.todaySteps)
     setWeeklySteps(progress.weeklySteps)
   }

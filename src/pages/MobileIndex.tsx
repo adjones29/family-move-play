@@ -84,13 +84,13 @@ const MobileIndex = () => {
   }, [])
 
   // Fetch daily and weekly steps using centralized progress lib
-  const fetchAllMemberSteps = useCallback(() => {
+  const fetchAllMemberSteps = useCallback(async () => {
     const stepsData: Record<string, { daily: number; weekly: number }> = {}
     
     for (const member of familyMembers) {
       const memberId = member.name?.trim()
       if (memberId) {
-        const progress = getProgress(memberId)
+        const progress = await getProgress(memberId)
         stepsData[member.member_id] = { daily: progress.todaySteps, weekly: progress.weeklySteps }
       }
     }
