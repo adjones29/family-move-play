@@ -28,7 +28,7 @@ export const FamilyMemberCard = ({
 }: FamilyMemberCardProps) => {
   const dailyProgressPercentage = Math.min((dailySteps / stepGoal) * 100, 100)
   const weeklyGoal = stepGoal * 7
-  const currentWeeklySteps = weeklySteps || dailySteps * 3 + Math.floor(Math.random() * stepGoal * 2) // Mock weekly data
+  const currentWeeklySteps = weeklySteps ?? 0
   const weeklyProgressPercentage = Math.min((currentWeeklySteps / weeklyGoal) * 100, 100)
   
   return (

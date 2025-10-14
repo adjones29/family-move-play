@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { FamilyMemberCard } from "@/components/FamilyMemberCard"
 import { FamilyMemberModal } from "@/components/FamilyMemberModal"
 import { ActivityStats } from "@/components/ActivityStats"
@@ -18,6 +18,7 @@ import { Bell, Settings } from "lucide-react"
 import { initializeStorage } from "@/utils/localStorage"
 import { useFamilyMemberStats } from "@/hooks/useFamilyMemberStats"
 import { getTodaySteps, getWeeklySteps } from "@/utils/stepTracking"
+import { supabase } from "@/integrations/supabase/client"
 
 const MobileIndex = () => {
   const { toast } = useToast()
@@ -83,27 +84,49 @@ const MobileIndex = () => {
   }, [])
 
   // Fetch daily and weekly steps from Supabase for all members
-  useEffect(() => {
-    const fetchAllMemberSteps = async () => {
-      const stepsData: Record<string, { daily: number; weekly: number }> = {}
-      
-      for (const member of familyMembers) {
-        if (member.name) {
-          const [daily, weekly] = await Promise.all([
-            getTodaySteps(member.name),
-            getWeeklySteps(member.name)
-          ])
-          stepsData[member.member_id] = { daily, weekly }
-        }
+  const fetchAllMemberSteps = useCallback(async () => {
+    const stepsData: Record<string, { daily: number; weekly: number }> = {}
+    
+    for (const member of familyMembers) {
+      if (member.name) {
+        const [daily, weekly] = await Promise.all([
+          getTodaySteps(member.name),
+          getWeeklySteps(member.name)
+        ])
+        stepsData[member.member_id] = { daily, weekly }
       }
-      
-      setMemberSteps(stepsData)
     }
+    
+    setMemberSteps(stepsData)
+  }, [familyMembers])
 
+  useEffect(() => {
     if (familyMembers.length > 0) {
       fetchAllMemberSteps()
     }
-  }, [familyMembers])
+  }, [familyMembers, fetchAllMemberSteps])
+
+  // Real-time subscription to step_entries changes
+  useEffect(() => {
+    const channel = supabase
+      .channel('step-entries-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'step_entries'
+        },
+        () => {
+          fetchAllMemberSteps()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [fetchAllMemberSteps])
 
   // Compute daily and weekly steps from Supabase for each member
   const familyMembersWithSteps = familyMembers.map(member => ({
