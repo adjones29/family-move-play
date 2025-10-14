@@ -83,14 +83,19 @@ export const useFamily = () => {
     try {
       const inviteCode = Math.random().toString(36).substring(2, 10).toUpperCase();
       
-      // Debug: verify auth context before insert
-      const { data: sess } = await supabase.auth.getSession();
-      console.log('Auth check before families insert:', { 
-        userIdFromContext: user.id, 
-        userIdFromSession: sess.session?.user.id 
-      });
-      
-      // Don't send created_by - the trigger will set it
+      // Ensure profile exists first
+      const displayName = user.user_metadata?.name || user.email || 'Me';
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          display_name: displayName,
+          avatar_url: user.user_metadata?.avatar_url
+        }, { onConflict: 'id' });
+
+      if (profileError) throw profileError;
+
+      // Create family (trigger will set created_by)
       const { data: familyData, error: familyError } = await supabase
         .from('families')
         .insert({
@@ -102,14 +107,15 @@ export const useFamily = () => {
 
       if (familyError) throw familyError;
 
-      // Add creator as a parent member
+      // Add creator as a parent member with display name
       const { error: memberError } = await supabase
         .from('family_members')
         .insert({
           family_id: familyData.id,
           user_id: user.id,
           role: 'Parent',
-          status: 'Active'
+          status: 'Active',
+          display_name: displayName
         });
 
       if (memberError) throw memberError;

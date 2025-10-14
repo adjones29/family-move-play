@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/enhanced-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +9,6 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { User, Bell, Shield, Palette, Volume2, Clock, Users } from "lucide-react";
-import { FamilyManagement } from "./FamilyManagement";
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -17,13 +17,18 @@ export function SettingsModal({
   isOpen,
   onClose
 }: SettingsModalProps) {
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState(true);
   const [soundEffects, setSoundEffects] = useState(true);
   const [dailyReminders, setDailyReminders] = useState(true);
   const [volume, setVolume] = useState([75]);
   const [theme, setTheme] = useState("system");
   const [language, setLanguage] = useState("english");
-  const [showFamilyManagement, setShowFamilyManagement] = useState(false);
+
+  const handleManageFamily = () => {
+    onClose();
+    navigate('/family');
+  };
   return <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
@@ -50,7 +55,7 @@ export function SettingsModal({
                   <Label htmlFor="manage-family">Manage Family</Label>
                   <p className="text-sm text-muted-foreground">Add, edit, or remove family members</p>
                 </div>
-                <Button variant="outline" size="sm" onClick={() => setShowFamilyManagement(true)}>
+                <Button variant="outline" size="sm" onClick={handleManageFamily}>
                   Manage
                 </Button>
               </div>
@@ -125,8 +130,5 @@ export function SettingsModal({
           </div>
         </div>
       </DialogContent>
-
-      {/* Family Management Modal */}
-      <FamilyManagement isOpen={showFamilyManagement} onClose={() => setShowFamilyManagement(false)} />
     </Dialog>;
 }
