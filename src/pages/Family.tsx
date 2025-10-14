@@ -11,7 +11,8 @@ import { Users, Plus, Edit2, Trash2, UserPlus, ArrowLeft, MoreVertical, Calendar
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useFamilyMembers } from "@/hooks/useFamilyMembers";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { useFamilyMembers, FamilyMember } from "@/hooks/useFamilyMembers";
 import { useFamily } from "@/hooks/useFamily";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -27,6 +28,9 @@ const Family = () => {
   const [familyName, setFamilyName] = useState("");
   const [newMemberName, setNewMemberName] = useState("");
   const [newMemberRole, setNewMemberRole] = useState<'Parent' | 'Child'>('Child');
+  const [editingMember, setEditingMember] = useState<FamilyMember | null>(null);
+  const [editMemberName, setEditMemberName] = useState("");
+  const [editMemberRole, setEditMemberRole] = useState<'Parent' | 'Child'>('Parent');
   const handleCreateFamily = async () => {
     if (!familyName.trim()) {
       toast({
@@ -125,6 +129,50 @@ const Family = () => {
         title: "Member Updated",
         description: "Family member role has been updated."
       });
+    } catch (err: any) {
+      toast({
+        title: "Error updating member",
+        description: err.message,
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleOpenEditModal = (member: FamilyMember) => {
+    setEditingMember(member);
+    setEditMemberName(member.display_name || '');
+    setEditMemberRole(member.role as 'Parent' | 'Child');
+  };
+
+  const handleSaveEditedMember = async () => {
+    if (!editingMember) return;
+
+    if (!editMemberName.trim()) {
+      toast({
+        title: "Name required",
+        description: "Please enter a name for the family member.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('family_members')
+        .update({
+          display_name: editMemberName.trim(),
+          role: editMemberRole
+        })
+        .eq('id', editingMember.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Member Updated",
+        description: "Family member has been updated successfully."
+      });
+
+      setEditingMember(null);
     } catch (err: any) {
       toast({
         title: "Error updating member",
@@ -340,6 +388,13 @@ const Family = () => {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem 
+                            className="flex items-center gap-2"
+                            onClick={() => handleOpenEditModal(member)}
+                          >
+                            <Edit2 className="h-4 w-4" />
+                            Edit Member
+                          </DropdownMenuItem>
                           <DropdownMenuItem className="flex items-center gap-2">
                             <Calendar className="h-4 w-4" />
                             <div className="flex flex-col">
@@ -368,6 +423,46 @@ const Family = () => {
           )}
         </div>
       </div>
+
+      {/* Edit Member Modal */}
+      <Dialog open={!!editingMember} onOpenChange={() => setEditingMember(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Family Member</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label htmlFor="edit-member-name">Full Name</Label>
+              <Input 
+                id="edit-member-name"
+                value={editMemberName}
+                onChange={(e) => setEditMemberName(e.target.value)}
+                placeholder="Enter full name"
+              />
+            </div>
+            <div>
+              <Label htmlFor="edit-member-role">Role</Label>
+              <Select value={editMemberRole} onValueChange={(value: 'Parent' | 'Child') => setEditMemberRole(value)}>
+                <SelectTrigger id="edit-member-role">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Parent">Parent</SelectItem>
+                  <SelectItem value="Child">Child</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditingMember(null)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSaveEditedMember}>
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>;
 };
 export default Family;
