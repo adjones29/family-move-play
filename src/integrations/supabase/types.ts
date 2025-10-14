@@ -141,6 +141,39 @@ export type Database = {
       }
     }
     Views: {
+      family_member_stats: {
+        Row: {
+          avatar_url: string | null
+          daily_goal: number | null
+          daily_steps: number | null
+          display_name: string | null
+          family_id: string | null
+          member_id: string | null
+          points_total: number | null
+          role: string | null
+          status: string | null
+          user_id: string | null
+          weekly_goal: number | null
+          weekly_score: number | null
+          weekly_steps: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_members_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_members_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       my_family_members: {
         Row: {
           avatar_url: string | null

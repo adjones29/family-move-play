@@ -5,7 +5,6 @@ import { ChallengeCard } from "@/components/ChallengeCard"
 import { ActivityStats } from "@/components/ActivityStats"
 import { MiniGameCard } from "@/components/MiniGameCard"
 import { RewardStoreCarousel } from "@/components/RewardStoreCarousel"
-
 import { QuickMiniGamesStore } from "@/components/QuickMiniGamesStore"
 import { ActiveChallengesStore } from "@/components/ActiveChallengesStore"
 import { RewardRedemptionModal } from "@/components/RewardRedemptionModal"
@@ -23,56 +22,18 @@ import { useNavigate } from "react-router-dom"
 import { useAuth } from "@/contexts/AuthContext"
 import { Bell, Settings, Dumbbell, Target, Gamepad2, Users, Zap, Gift, Star, LogOut } from "lucide-react"
 import { initializeStorage } from "@/utils/localStorage"
+import { useFamilyMemberStats } from "@/hooks/useFamilyMemberStats"
 
 const Index = () => {
   const { toast } = useToast()
   const { user, signOut } = useAuth()
+  const { stats: familyMembers, loading: loadingStats } = useFamilyMemberStats()
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
   const [showNotifications, setShowNotifications] = useState(false)
   const [selectedFamilyMember, setSelectedFamilyMember] = useState<any>(null)
   const [showFamilyMemberModal, setShowFamilyMemberModal] = useState(false)
-
-  // Mock family data with individual point balances
-  const [familyMembers, setFamilyMembers] = useState([
-    {
-      name: "Dad",
-      avatar: "",
-      dailySteps: 8542,
-      stepGoal: 10000,
-      weeklyScore: 325,
-      memberColor: "member-1" as const,
-      points: 325
-    },
-    {
-      name: "Mom", 
-      avatar: "",
-      dailySteps: 11234,
-      stepGoal: 10000,
-      weeklyScore: 412,
-      memberColor: "member-2" as const,
-      points: 412
-    },
-    {
-      name: "Alex",
-      avatar: "",
-      dailySteps: 6789,
-      stepGoal: 8000,
-      weeklyScore: 245,
-      memberColor: "member-3" as const,
-      points: 245
-    },
-    {
-      name: "Sam",
-      avatar: "",
-      dailySteps: 4521,
-      stepGoal: 6000,
-      weeklyScore: 156,
-      memberColor: "member-4" as const,
-      points: 156
-    }
-  ])
 
   // Calculate total points from all family members
   const totalFamilyPoints = familyMembers.reduce((sum, member) => sum + member.points, 0)
@@ -163,27 +124,7 @@ const Index = () => {
     const reward = rewards.find((r: any) => r.id === rewardId)
     if (!reward) return
 
-    // Handle point deduction
-    if (reward.category === "Family Rewards") {
-      // Divide cost across all family members
-      const costPerMember = Math.ceil(cost / familyMembers.length)
-      setFamilyMembers(prev => 
-        prev.map(member => ({
-          ...member,
-          points: member.points - costPerMember
-        }))
-      )
-    } else if (selectedMember) {
-      // Deduct from selected member
-      setFamilyMembers(prev => 
-        prev.map(member => 
-          member.name === selectedMember 
-            ? { ...member, points: member.points - cost }
-            : member
-        )
-      )
-    }
-
+    // TODO: Implement point deduction in database
     
     toast({
       title: "Reward Redeemed! 🎉",
@@ -191,16 +132,12 @@ const Index = () => {
     })
   }
 
-
   const handlePointsEarned = (points: number) => {
-    // For now, add points equally to all family members
-    const pointsPerMember = Math.ceil(points / familyMembers.length)
-    setFamilyMembers(prev => 
-      prev.map(member => ({
-        ...member,
-        points: member.points + pointsPerMember
-      }))
-    )
+    // TODO: Implement points addition in database
+    toast({
+      title: "Points Earned! 🎉",
+      description: `Earned ${points} points!`,
+    })
   }
 
   const handleFamilyMemberClick = (member: any) => {
@@ -209,13 +146,11 @@ const Index = () => {
   }
 
   const handleFamilyMemberUpdate = (updatedMember: any) => {
-    setFamilyMembers(prev => 
-      prev.map(member => 
-        member.name === updatedMember.name 
-          ? updatedMember
-          : member
-      )
-    )
+    // TODO: Implement member update in database
+    toast({
+      title: "Member Updated",
+      description: `Updated ${updatedMember.name}'s information`,
+    })
   }
 
   return (
