@@ -17,10 +17,12 @@ import { useToast } from "@/hooks/use-toast"
 import { Bell, Settings } from "lucide-react"
 import { initializeStorage } from "@/utils/localStorage"
 import { useFamilyMemberStats } from "@/hooks/useFamilyMemberStats"
+import { sumWeeklySteps } from "@/lib/steps"
 
 const MobileIndex = () => {
   const { toast } = useToast()
   const { stats: familyMembers, loading: loadingStats } = useFamilyMemberStats()
+  const [stepsVersion, setStepsVersion] = useState(0)
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
@@ -79,6 +81,19 @@ const MobileIndex = () => {
   useEffect(() => {
     initializeStorage()
   }, [])
+
+  // Listen for step changes to re-compute weekly totals
+  useEffect(() => {
+    const handleStepsChange = () => setStepsVersion(v => v + 1)
+    window.addEventListener('steps:changed', handleStepsChange)
+    return () => window.removeEventListener('steps:changed', handleStepsChange)
+  }, [])
+
+  // Compute weekly steps from localStorage for each member
+  const familyMembersWithLocalWeekly = familyMembers.map(member => ({
+    ...member,
+    weeklySteps: sumWeeklySteps(member.member_id)
+  }))
 
   const handleRewardRedemption = (rewardId: string, cost: number, selectedMember?: string) => {
     const rewards = JSON.parse(localStorage.getItem('fitfam-rewards') || '[]')
@@ -178,7 +193,7 @@ const MobileIndex = () => {
       <div className="px-4 py-4 bg-white">
         <section>
           <FamilyMembersStore 
-            familyMembers={familyMembers}
+            familyMembers={familyMembersWithLocalWeekly}
             onMemberClick={handleFamilyMemberClick}
             onSeeAll={() => toast({ title: "Family Overview", description: "Navigate to detailed family stats page" })}
           />
