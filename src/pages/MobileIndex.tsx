@@ -17,12 +17,12 @@ import { useToast } from "@/hooks/use-toast"
 import { Bell, Settings } from "lucide-react"
 import { initializeStorage } from "@/utils/localStorage"
 import { useFamilyMemberStats } from "@/hooks/useFamilyMemberStats"
-import { sumWeeklySteps, sumDailySteps } from "@/lib/steps"
+import { getTodaySteps, getWeeklySteps } from "@/utils/stepTracking"
 
 const MobileIndex = () => {
   const { toast } = useToast()
   const { stats: familyMembers, loading: loadingStats } = useFamilyMemberStats()
-  const [stepsVersion, setStepsVersion] = useState(0)
+  const [memberSteps, setMemberSteps] = useState<Record<string, { daily: number; weekly: number }>>({})
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
@@ -82,18 +82,34 @@ const MobileIndex = () => {
     initializeStorage()
   }, [])
 
-  // Listen for step changes to re-compute weekly totals
+  // Fetch daily and weekly steps from Supabase for all members
   useEffect(() => {
-    const handleStepsChange = () => setStepsVersion(v => v + 1)
-    window.addEventListener('steps:changed', handleStepsChange)
-    return () => window.removeEventListener('steps:changed', handleStepsChange)
-  }, [])
+    const fetchAllMemberSteps = async () => {
+      const stepsData: Record<string, { daily: number; weekly: number }> = {}
+      
+      for (const member of familyMembers) {
+        if (member.name) {
+          const [daily, weekly] = await Promise.all([
+            getTodaySteps(member.name),
+            getWeeklySteps(member.name)
+          ])
+          stepsData[member.member_id] = { daily, weekly }
+        }
+      }
+      
+      setMemberSteps(stepsData)
+    }
 
-  // Compute daily and weekly steps from localStorage for each member
-  const familyMembersWithLocalSteps = familyMembers.map(member => ({
+    if (familyMembers.length > 0) {
+      fetchAllMemberSteps()
+    }
+  }, [familyMembers])
+
+  // Compute daily and weekly steps from Supabase for each member
+  const familyMembersWithSteps = familyMembers.map(member => ({
     ...member,
-    dailySteps: sumDailySteps(member.member_id),
-    weeklySteps: sumWeeklySteps(member.member_id)
+    dailySteps: memberSteps[member.member_id]?.daily || 0,
+    weeklySteps: memberSteps[member.member_id]?.weekly || 0
   }))
 
   const handleRewardRedemption = (rewardId: string, cost: number, selectedMember?: string) => {
@@ -194,7 +210,7 @@ const MobileIndex = () => {
       <div className="px-4 py-4 bg-white">
         <section>
           <FamilyMembersStore 
-            familyMembers={familyMembersWithLocalSteps}
+            familyMembers={familyMembersWithSteps}
             onMemberClick={handleFamilyMemberClick}
             onSeeAll={() => toast({ title: "Family Overview", description: "Navigate to detailed family stats page" })}
           />
