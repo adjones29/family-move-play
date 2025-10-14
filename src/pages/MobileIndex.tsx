@@ -17,13 +17,12 @@ import { useToast } from "@/hooks/use-toast"
 import { Bell, Settings } from "lucide-react"
 import { initializeStorage } from "@/utils/localStorage"
 import { useFamilyMemberStats } from "@/hooks/useFamilyMemberStats"
-import { getProgress, onStepsUpdated } from "@/lib/progress"
+import { onStepsUpdated } from "@/lib/progress"
 import { supabase } from "@/integrations/supabase/client"
 
 const MobileIndex = () => {
   const { toast } = useToast()
-  const { stats: familyMembers, loading: loadingStats } = useFamilyMemberStats()
-  const [memberSteps, setMemberSteps] = useState<Record<string, { daily: number; weekly: number }>>({})
+  const { stats: familyMembers, loading: loadingStats, refetch } = useFamilyMemberStats()
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
@@ -83,32 +82,13 @@ const MobileIndex = () => {
     initializeStorage()
   }, [])
 
-  // Fetch daily and weekly steps using centralized progress lib
-  const fetchAllMemberSteps = useCallback(async () => {
-    const stepsData: Record<string, { daily: number; weekly: number }> = {}
-    
-    for (const member of familyMembers) {
-      const memberId = member.name?.trim()
-      if (memberId) {
-        const progress = await getProgress(memberId)
-        stepsData[member.member_id] = { daily: progress.todaySteps, weekly: progress.weeklySteps }
-      }
-    }
-    
-    setMemberSteps(stepsData)
-  }, [familyMembers])
-
-  useEffect(() => {
-    if (familyMembers.length > 0) {
-      fetchAllMemberSteps()
-    }
-  }, [familyMembers, fetchAllMemberSteps])
-
   // Listen to steps:updated events from progress lib
   useEffect(() => {
-    const unsubscribe = onStepsUpdated(fetchAllMemberSteps)
+    const unsubscribe = onStepsUpdated(() => {
+      refetch()
+    })
     return unsubscribe
-  }, [fetchAllMemberSteps])
+  }, [refetch])
 
   // Midnight rollover - refresh steps at local midnight
   useEffect(() => {
@@ -120,7 +100,7 @@ const MobileIndex = () => {
       const msUntilMidnight = tomorrow.getTime() - now.getTime()
       
       const timeoutId = setTimeout(() => {
-        fetchAllMemberSteps()
+        refetch()
         scheduleNextMidnightRefresh()
       }, msUntilMidnight)
       
@@ -129,7 +109,7 @@ const MobileIndex = () => {
     
     const timeoutId = scheduleNextMidnightRefresh()
     return () => clearTimeout(timeoutId)
-  }, [fetchAllMemberSteps])
+  }, [refetch])
 
   // Real-time subscription to step_entries changes
   useEffect(() => {
@@ -143,7 +123,7 @@ const MobileIndex = () => {
           table: 'step_entries'
         },
         () => {
-          fetchAllMemberSteps()
+          refetch()
         }
       )
       .subscribe()
@@ -151,14 +131,7 @@ const MobileIndex = () => {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [fetchAllMemberSteps])
-
-  // Compute daily and weekly steps from Supabase for each member
-  const familyMembersWithSteps = familyMembers.map(member => ({
-    ...member,
-    dailySteps: memberSteps[member.member_id]?.daily ?? member.dailySteps ?? 0,
-    weeklySteps: memberSteps[member.member_id]?.weekly ?? member.weeklySteps ?? 0
-  }))
+  }, [refetch])
 
   const handleRewardRedemption = (rewardId: string, cost: number, selectedMember?: string) => {
     const rewards = JSON.parse(localStorage.getItem('fitfam-rewards') || '[]')
@@ -258,7 +231,7 @@ const MobileIndex = () => {
       <div className="px-4 py-4 bg-white">
         <section>
           <FamilyMembersStore 
-            familyMembers={familyMembersWithSteps}
+            familyMembers={familyMembers}
             onMemberClick={handleFamilyMemberClick}
             onSeeAll={() => toast({ title: "Family Overview", description: "Navigate to detailed family stats page" })}
           />

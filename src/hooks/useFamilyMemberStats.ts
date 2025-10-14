@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { getProgress } from '@/lib/progress';
 
 export interface FamilyMemberStats {
   member_id: string;
@@ -44,7 +45,30 @@ export const useFamilyMemberStats = () => {
 
       if (error) throw error;
       
-      setStats(data || []);
+      // Fetch fresh step data from Supabase for each member
+      const statsWithFreshSteps = await Promise.all(
+        (data || []).map(async (stat) => {
+          const memberId = stat.display_name?.trim();
+          if (memberId) {
+            try {
+              const progress = await getProgress(memberId);
+              return {
+                ...stat,
+                daily_steps: progress.todaySteps,
+                weekly_steps: progress.weeklySteps,
+                daily_goal: progress.dailyGoal,
+                weekly_goal: progress.weeklyGoal,
+              };
+            } catch (err) {
+              console.error(`Error fetching progress for ${memberId}:`, err);
+              return stat;
+            }
+          }
+          return stat;
+        })
+      );
+      
+      setStats(statsWithFreshSteps);
       setError(null);
     } catch (err: any) {
       console.error('Error fetching family member stats:', err);
