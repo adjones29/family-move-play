@@ -204,6 +204,13 @@ export type Database = {
       }
     }
     Functions: {
+      current_week_bounds_sun_sat: {
+        Args: { tz?: string }
+        Returns: {
+          week_end: string
+          week_start: string
+        }[]
+      }
       is_family_admin: {
         Args: { p_family: string; p_user: string }
         Returns: boolean
