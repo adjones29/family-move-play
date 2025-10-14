@@ -23,11 +23,13 @@ import { useAuth } from "@/contexts/AuthContext"
 import { Bell, Settings, Dumbbell, Target, Gamepad2, Users, Zap, Gift, Star, LogOut } from "lucide-react"
 import { initializeStorage } from "@/utils/localStorage"
 import { useFamilyMemberStats } from "@/hooks/useFamilyMemberStats"
+import { onStepsUpdated } from "@/lib/progress"
+import { supabase } from "@/integrations/supabase/client"
 
 const Index = () => {
   const { toast } = useToast()
   const { user, signOut } = useAuth()
-  const { stats: familyMembers, loading: loadingStats } = useFamilyMemberStats()
+  const { stats: familyMembers, loading: loadingStats, refetch } = useFamilyMemberStats()
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
@@ -122,6 +124,57 @@ const Index = () => {
   useEffect(() => {
     initializeStorage()
   }, [])
+
+  // Listen to steps:updated events from progress lib
+  useEffect(() => {
+    const unsubscribe = onStepsUpdated(() => {
+      refetch()
+    })
+    return unsubscribe
+  }, [refetch])
+
+  // Midnight rollover - refresh steps at local midnight
+  useEffect(() => {
+    const scheduleNextMidnightRefresh = () => {
+      const now = new Date()
+      const tomorrow = new Date(now)
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      tomorrow.setHours(0, 0, 0, 0)
+      const msUntilMidnight = tomorrow.getTime() - now.getTime()
+      
+      const timeoutId = setTimeout(() => {
+        refetch()
+        scheduleNextMidnightRefresh()
+      }, msUntilMidnight)
+      
+      return timeoutId
+    }
+    
+    const timeoutId = scheduleNextMidnightRefresh()
+    return () => clearTimeout(timeoutId)
+  }, [refetch])
+
+  // Real-time subscription to step_entries changes
+  useEffect(() => {
+    const channel = supabase
+      .channel('step-entries-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'step_entries'
+        },
+        () => {
+          refetch()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [refetch])
 
   const handleRewardRedemption = (rewardId: string, cost: number, selectedMember?: string) => {
     const rewards = JSON.parse(localStorage.getItem('fitfam-rewards') || '[]')
