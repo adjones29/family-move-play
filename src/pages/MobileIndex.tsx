@@ -66,6 +66,10 @@ const MobileIndex = () => {
 
   // Calculate total points from all family members
   const totalFamilyPoints = familyMembers.reduce((sum, member) => sum + member.points, 0)
+  
+  // Calculate family-wide step totals
+  const totalDailySteps = familyMembers.reduce((sum, member) => sum + (member.dailySteps || 0), 0)
+  const totalWeeklySteps = familyMembers.reduce((sum, member) => sum + (member.weeklySteps || 0), 0)
 
   const handleRewardSelect = (rewardId: string) => {
     // Find the reward from localStorage
@@ -218,7 +222,7 @@ const MobileIndex = () => {
       <div className="px-4 pt-4 pb-2">
         <section>
           <ActivityStats 
-            totalSteps={31086}
+            totalSteps={totalDailySteps}
             activeMinutes={127}
             caloriesBurned={1842}
             goalsAchieved={7}
