@@ -21,7 +21,7 @@ export function ActivityStats({
 }: ActivityStatsProps) {
   const stats = [
     {
-      title: "Family Steps",
+      title: "Daily Family Steps",
       value: totalSteps.toLocaleString(),
       icon: Activity,
       color: "bg-member-1",
