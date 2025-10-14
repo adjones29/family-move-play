@@ -15,10 +15,9 @@ import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { 
   upsertStepEntry, 
-  getTodaySteps, 
-  getWeeklySteps,
   formatToLocalDate 
 } from "@/utils/stepTracking"
+import { getProgress, onStepsUpdated, formatInt, emitStepsUpdated } from "@/lib/progress"
 
 interface FamilyMember {
   name: string
@@ -54,20 +53,18 @@ export const FamilyMemberModal = ({ member, isOpen, onClose, onUpdate }: FamilyM
     }
   }, [member])
 
-  const loadStepData = async () => {
+  useEffect(() => {
+    if (!member) return
+    const unsubscribe = onStepsUpdated(loadStepData)
+    return unsubscribe
+  }, [member])
+
+  const loadStepData = () => {
     if (!member) return
     
-    try {
-      const [todayTotal, weeklyTotal] = await Promise.all([
-        getTodaySteps(member.name),
-        getWeeklySteps(member.name)
-      ])
-      
-      setTodaySteps(todayTotal)
-      setWeeklySteps(weeklyTotal)
-    } catch (error) {
-      console.error('Error loading step data:', error)
-    }
+    const progress = getProgress(member.name)
+    setTodaySteps(progress.todaySteps)
+    setWeeklySteps(progress.weeklySteps)
   }
 
   const handleAddSteps = async () => {
@@ -95,8 +92,11 @@ export const FamilyMemberModal = ({ member, isOpen, onClose, onUpdate }: FamilyM
     try {
       await upsertStepEntry(member.name, selectedDate, steps)
       
+      // Emit update event so dashboard refreshes
+      emitStepsUpdated()
+      
       // Reload step data
-      await loadStepData()
+      loadStepData()
       
       // Update member points (1 point per 100 steps)
       const updatedMember = {
@@ -216,7 +216,7 @@ export const FamilyMemberModal = ({ member, isOpen, onClose, onUpdate }: FamilyM
             <Card className="bg-gradient-to-r from-green-500/5 to-green-500/10 border-green-500/20">
               <CardContent className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Weekly Progress (Sun-Sat)</span>
+                  <span className="text-sm font-medium">Weekly (Sun–Sat)</span>
                   <span className="text-2xl font-bold text-green-600">
                     {weeklySteps.toLocaleString()}
                   </span>

@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Bell, Settings } from "lucide-react"
 import { initializeStorage } from "@/utils/localStorage"
 import { useFamilyMemberStats } from "@/hooks/useFamilyMemberStats"
-import { getTodaySteps, getWeeklySteps } from "@/utils/stepTracking"
+import { getProgress, onStepsUpdated } from "@/lib/progress"
 import { supabase } from "@/integrations/supabase/client"
 
 const MobileIndex = () => {
@@ -83,18 +83,15 @@ const MobileIndex = () => {
     initializeStorage()
   }, [])
 
-  // Fetch daily and weekly steps from Supabase for all members
-  const fetchAllMemberSteps = useCallback(async () => {
+  // Fetch daily and weekly steps using centralized progress lib
+  const fetchAllMemberSteps = useCallback(() => {
     const stepsData: Record<string, { daily: number; weekly: number }> = {}
     
     for (const member of familyMembers) {
       const memberId = member.name?.trim()
       if (memberId) {
-        const [daily, weekly] = await Promise.all([
-          getTodaySteps(memberId),
-          getWeeklySteps(memberId)
-        ])
-        stepsData[member.member_id] = { daily, weekly }
+        const progress = getProgress(memberId)
+        stepsData[member.member_id] = { daily: progress.todaySteps, weekly: progress.weeklySteps }
       }
     }
     
@@ -106,6 +103,12 @@ const MobileIndex = () => {
       fetchAllMemberSteps()
     }
   }, [familyMembers, fetchAllMemberSteps])
+
+  // Listen to steps:updated events from progress lib
+  useEffect(() => {
+    const unsubscribe = onStepsUpdated(fetchAllMemberSteps)
+    return unsubscribe
+  }, [fetchAllMemberSteps])
 
   // Midnight rollover - refresh steps at local midnight
   useEffect(() => {
