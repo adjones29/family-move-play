@@ -28,7 +28,7 @@ export function ActivityStats({
       subtext: "Today"
     },
     {
-      title: "Weekly Steps",
+      title: "Weekly Family Steps",
       value: weeklySteps.toLocaleString(),
       icon: Activity,
       color: "bg-member-2", 
