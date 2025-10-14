@@ -17,7 +17,7 @@ import { useToast } from "@/hooks/use-toast"
 import { Bell, Settings } from "lucide-react"
 import { initializeStorage } from "@/utils/localStorage"
 import { useFamilyMemberStats } from "@/hooks/useFamilyMemberStats"
-import { sumWeeklySteps } from "@/lib/steps"
+import { sumWeeklySteps, sumDailySteps } from "@/lib/steps"
 
 const MobileIndex = () => {
   const { toast } = useToast()
@@ -89,9 +89,10 @@ const MobileIndex = () => {
     return () => window.removeEventListener('steps:changed', handleStepsChange)
   }, [])
 
-  // Compute weekly steps from localStorage for each member
-  const familyMembersWithLocalWeekly = familyMembers.map(member => ({
+  // Compute daily and weekly steps from localStorage for each member
+  const familyMembersWithLocalSteps = familyMembers.map(member => ({
     ...member,
+    dailySteps: sumDailySteps(member.member_id),
     weeklySteps: sumWeeklySteps(member.member_id)
   }))
 
@@ -193,7 +194,7 @@ const MobileIndex = () => {
       <div className="px-4 py-4 bg-white">
         <section>
           <FamilyMembersStore 
-            familyMembers={familyMembersWithLocalWeekly}
+            familyMembers={familyMembersWithLocalSteps}
             onMemberClick={handleFamilyMemberClick}
             onSeeAll={() => toast({ title: "Family Overview", description: "Navigate to detailed family stats page" })}
           />

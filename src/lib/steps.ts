@@ -53,6 +53,40 @@ export function readStepEntries(): StepEntry[] {
 }
 
 /**
+ * Get today's date range (00:00:00 to 23:59:59.999 in local time)
+ */
+export function getTodayRange(): { start: Date; end: Date } {
+  const start = new Date();
+  start.setHours(0, 0, 0, 0);
+  
+  const end = new Date();
+  end.setHours(23, 59, 59, 999);
+  
+  return { start, end };
+}
+
+/**
+ * Calculate daily steps for a specific member for today
+ */
+export function sumDailySteps(memberId: string): number {
+  const { start, end } = getTodayRange();
+  const entries = readStepEntries();
+  
+  return entries
+    .filter(entry => {
+      if (entry.memberId !== memberId) return false;
+      
+      try {
+        const entryDate = new Date(entry.dateISO);
+        return entryDate >= start && entryDate <= end;
+      } catch {
+        return false;
+      }
+    })
+    .reduce((sum, entry) => sum + entry.steps, 0);
+}
+
+/**
  * Calculate weekly steps for a specific member within a date range
  */
 export function sumWeeklySteps(
