@@ -4,6 +4,7 @@ import { Activity, Clock, Flame, Target } from "lucide-react"
 
 interface ActivityStatsProps {
   totalSteps: number
+  weeklySteps: number
   activeMinutes: number
   caloriesBurned: number
   goalsAchieved: number
@@ -12,6 +13,7 @@ interface ActivityStatsProps {
 
 export function ActivityStats({
   totalSteps,
+  weeklySteps,
   activeMinutes,
   caloriesBurned,
   goalsAchieved,
@@ -26,11 +28,11 @@ export function ActivityStats({
       subtext: "Today"
     },
     {
-      title: "Active Time",
-      value: `${activeMinutes}m`,
-      icon: Clock,
+      title: "Weekly Steps",
+      value: weeklySteps.toLocaleString(),
+      icon: Activity,
       color: "bg-member-2", 
-      subtext: "This week"
+      subtext: "Sun - Sat"
     }
   ]
 
