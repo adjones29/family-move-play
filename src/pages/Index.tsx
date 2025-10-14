@@ -37,10 +37,6 @@ const Index = () => {
 
   // Calculate total points from all family members
   const totalFamilyPoints = familyMembers.reduce((sum, member) => sum + member.points, 0)
-  
-  // Calculate family-wide step totals
-  const totalDailySteps = familyMembers.reduce((sum, member) => sum + (member.dailySteps || 0), 0)
-  const totalWeeklySteps = familyMembers.reduce((sum, member) => sum + (member.weeklySteps || 0), 0)
 
   const challenges = [
     {
@@ -204,8 +200,7 @@ const Index = () => {
         {/* Activity Stats */}
         <section>
           <ActivityStats 
-            totalSteps={totalDailySteps}
-            weeklySteps={totalWeeklySteps}
+            totalSteps={31086}
             activeMinutes={127}
             caloriesBurned={1842}
             goalsAchieved={7}
