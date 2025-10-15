@@ -48,7 +48,7 @@ export const useFamilyMemberStats = () => {
       // Fetch fresh step data from Supabase for each member
       const statsWithFreshSteps = await Promise.all(
         (data || []).map(async (stat) => {
-          const memberId = stat.display_name?.trim();
+          const memberId = stat.member_id;
           if (memberId) {
             try {
               const progress = await getProgress(memberId);
@@ -120,6 +120,7 @@ export const useFamilyMemberStats = () => {
 
   // Transform stats to match existing component interface
   const transformedMembers = stats.map((stat, index) => ({
+    id: stat.member_id,  // Include the UUID
     name: stat.display_name || 'Family Member',
     avatar: stat.avatar_url || '',
     dailySteps: stat.daily_steps,

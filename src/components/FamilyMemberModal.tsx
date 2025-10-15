@@ -20,6 +20,7 @@ import {
 import { getProgress, onStepsUpdated, formatInt, emitStepsUpdated } from "@/lib/progress"
 
 interface FamilyMember {
+  id: string  // UUID of the family member
   name: string
   avatar: string
   dailySteps: number
@@ -62,7 +63,7 @@ export const FamilyMemberModal = ({ member, isOpen, onClose, onUpdate }: FamilyM
   const loadStepData = async () => {
     if (!member) return
     
-    const progress = await getProgress(member.name)
+    const progress = await getProgress(member.id)
     setTodaySteps(progress.todaySteps)
     setWeeklySteps(progress.weeklySteps)
   }
@@ -90,7 +91,7 @@ export const FamilyMemberModal = ({ member, isOpen, onClose, onUpdate }: FamilyM
     setIsAddingSteps(true)
     
     try {
-      await upsertStepEntry(member.name, selectedDate, steps)
+      await upsertStepEntry(member.id, selectedDate, steps)
       
       // Emit update event so dashboard refreshes
       emitStepsUpdated()
@@ -98,10 +99,10 @@ export const FamilyMemberModal = ({ member, isOpen, onClose, onUpdate }: FamilyM
       // Reload step data
       loadStepData()
       
-      // Update member points (1 point per 100 steps)
+      // Update member points (1 point per 1,000 steps)
       const updatedMember = {
         ...member,
-        points: member.points + Math.floor(steps / 100)
+        points: member.points + Math.floor(steps / 1000)
       }
       onUpdate(updatedMember)
       

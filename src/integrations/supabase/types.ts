@@ -186,7 +186,29 @@ export type Database = {
           steps?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_step_entries_member"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "family_member_stats"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "fk_step_entries_member"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_step_entries_member"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "my_family_members"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
