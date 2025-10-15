@@ -11,14 +11,14 @@ import { ArrowLeft, Gift } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useCurrentFamily } from "@/hooks/useCurrentFamily"
 import FamilyPointsBadge from "@/components/ui/FamilyPointsBadge"
-import { useFamilyStore } from "@/state/familyStore"
+import { useFamilyMembers } from "@/hooks/useFamilyMembers"
 import { supabase } from "@/integrations/supabase/client"
 
 const Rewards = () => {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { familyId } = useCurrentFamily()
-  const { members: familyMembers } = useFamilyStore()
+  const { members: familyMembers } = useFamilyMembers()
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [selectedTab, setSelectedTab] = useState<'store' | 'earned'>('store')
