@@ -8,9 +8,11 @@ import { Separator } from "@/components/ui/separator"
 import { Gift, Users, User, AlertCircle } from "lucide-react"
 
 interface FamilyMember {
-  name: string
-  points: number
-  memberColor: string
+  id: string
+  display_name: string | null
+  avatar_url?: string | null
+  role?: string
+  points?: number
 }
 
 interface Reward {
@@ -27,7 +29,7 @@ interface RewardRedemptionConfirmModalProps {
   onClose: () => void
   reward: Reward | null
   familyMembers: FamilyMember[]
-  onConfirmRedemption: (rewardId: string, cost: number, selectedMember?: string) => void
+  onConfirmRedemption: (rewardId: string, cost: number, selectedMemberId?: string) => void
 }
 
 export function RewardRedemptionConfirmModal({ 
@@ -45,9 +47,9 @@ export function RewardRedemptionConfirmModal({
   const costPerMember = isFamilyReward ? Math.ceil(reward.cost / familyMembers.length) : reward.cost
   
   const canAfford = isFamilyReward 
-    ? familyMembers.every(member => member.points >= costPerMember)
+    ? familyMembers.every(member => (member.points ?? 0) >= costPerMember)
     : selectedMember 
-      ? familyMembers.find(m => m.name === selectedMember)?.points >= reward.cost
+      ? (familyMembers.find(m => m.id === selectedMember)?.points ?? 0) >= reward.cost
       : false
 
   const handleConfirm = () => {
@@ -96,14 +98,13 @@ export function RewardRedemptionConfirmModal({
               
               <div className="space-y-2">
                 {familyMembers.map((member) => (
-                  <div key={member.name} className="flex items-center justify-between p-2 bg-muted/30 rounded">
+                  <div key={member.id} className="flex items-center justify-between p-2 bg-muted/30 rounded">
                     <div className="flex items-center gap-2">
-                      <div className={`w-3 h-3 rounded-full bg-${member.memberColor}`} />
-                      <span className="text-sm">{member.name}</span>
+                      <span className="text-sm">{member.display_name || 'Unknown'}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm">{member.points} points</span>
-                      {member.points < costPerMember && (
+                      <span className="text-sm">{member.points ?? 0} points</span>
+                      {(member.points ?? 0) < costPerMember && (
                         <AlertCircle className="h-4 w-4 text-destructive" />
                       )}
                     </div>
@@ -123,22 +124,21 @@ export function RewardRedemptionConfirmModal({
               
               <RadioGroup value={selectedMember} onValueChange={setSelectedMember}>
                 {familyMembers.map((member) => (
-                  <div key={member.name} className="flex items-center justify-between p-2 bg-muted/30 rounded">
+                  <div key={member.id} className="flex items-center justify-between p-2 bg-muted/30 rounded">
                     <Label 
-                      htmlFor={member.name} 
-                      className={`flex items-center gap-2 cursor-pointer ${member.points < reward.cost ? 'opacity-50' : ''}`}
+                      htmlFor={member.id} 
+                      className={`flex items-center gap-2 cursor-pointer ${(member.points ?? 0) < reward.cost ? 'opacity-50' : ''}`}
                     >
                       <RadioGroupItem 
-                        value={member.name} 
-                        id={member.name}
-                        disabled={member.points < reward.cost}
-                        className={`text-${member.memberColor}-500`}
+                        value={member.id} 
+                        id={member.id}
+                        disabled={(member.points ?? 0) < reward.cost}
                       />
-                      {member.name}
+                      {member.display_name || 'Unknown'}
                     </Label>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm">{member.points} points</span>
-                      {member.points < reward.cost && (
+                      <span className="text-sm">{member.points ?? 0} points</span>
+                      {(member.points ?? 0) < reward.cost && (
                         <AlertCircle className="h-4 w-4 text-destructive" />
                       )}
                     </div>

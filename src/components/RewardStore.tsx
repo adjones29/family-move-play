@@ -6,13 +6,16 @@ import { getRewards, initializeStorage, type Reward } from "@/utils/localStorage
 import { Gift, Star } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { useFamilyPoints } from "@/lib/points"
+import { useCurrentFamily } from "@/hooks/useCurrentFamily"
 
 interface RewardStoreProps {
-  totalPoints: number
   onRewardRedeem: (rewardId: string) => void
 }
 
-export function RewardStore({ totalPoints, onRewardRedeem }: RewardStoreProps) {
+export function RewardStore({ onRewardRedeem }: RewardStoreProps) {
+  const { familyId } = useCurrentFamily()
+  const { points: totalPoints } = useFamilyPoints(familyId)
   const [selectedCategory, setSelectedCategory] = useState<"Family Rewards" | "Individual Rewards" | "Special Rewards">("Family Rewards")
   const [rewards, setRewards] = useState<Reward[]>([])
 

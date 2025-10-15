@@ -19,10 +19,12 @@ import { initializeStorage } from "@/utils/localStorage"
 import { useFamilyMemberStats } from "@/hooks/useFamilyMemberStats"
 import { onStepsUpdated } from "@/lib/progress"
 import { supabase } from "@/integrations/supabase/client"
+import { useFamilyStore } from "@/state/familyStore"
 
 const MobileIndex = () => {
   const { toast } = useToast()
   const { stats: familyMembers, loading: loadingStats, refetch } = useFamilyMemberStats()
+  const { members: storeFamilyMembers } = useFamilyStore()
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
@@ -263,7 +265,6 @@ const MobileIndex = () => {
         {/* Reward Store */}
         <section>
           <RewardStore 
-            totalPoints={totalFamilyPoints}
             onRewardRedeem={handleRewardSelect}
           />
         </section>
@@ -281,7 +282,10 @@ const MobileIndex = () => {
         isOpen={showRedemptionConfirmModal}
         onClose={() => setShowRedemptionConfirmModal(false)}
         reward={selectedRewardForRedemption}
-        familyMembers={familyMembers}
+        familyMembers={storeFamilyMembers.map(m => ({
+          ...m,
+          points: familyMembers.find(fm => fm.member_id === m.id)?.points ?? 0
+        }))}
         onConfirmRedemption={handleRewardRedemption}
       />
       

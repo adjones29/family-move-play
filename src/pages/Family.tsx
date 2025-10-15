@@ -16,12 +16,32 @@ import { useFamilyMembers, FamilyMember } from "@/hooks/useFamilyMembers";
 import { useFamily } from "@/hooks/useFamily";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { useFamilyStore } from "@/state/familyStore";
 const Family = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
   const { members, loading: membersLoading } = useFamilyMembers();
   const { currentFamily, createFamily } = useFamily();
+  const { setFamily, setMembers } = useFamilyStore();
+
+  // Sync to global store
+  useEffect(() => {
+    if (currentFamily?.id) {
+      setFamily(currentFamily.id);
+    }
+  }, [currentFamily?.id, setFamily]);
+
+  useEffect(() => {
+    if (members.length > 0) {
+      setMembers(members.map(m => ({
+        id: m.id,
+        display_name: m.display_name,
+        avatar_url: m.avatar_url,
+        role: m.role
+      })));
+    }
+  }, [members, setMembers]);
   
   const [showAddForm, setShowAddForm] = useState(false);
   const [showCreateFamily, setShowCreateFamily] = useState(false);

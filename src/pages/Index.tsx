@@ -27,12 +27,14 @@ import { onStepsUpdated } from "@/lib/progress"
 import { supabase } from "@/integrations/supabase/client"
 import { useCurrentFamily } from "@/hooks/useCurrentFamily"
 import FamilyPointsBadge from "@/components/ui/FamilyPointsBadge"
+import { useFamilyStore } from "@/state/familyStore"
 
 const Index = () => {
   const { toast } = useToast()
   const { user, signOut } = useAuth()
   const { stats: familyMembers, loading: loadingStats, refetch } = useFamilyMemberStats()
   const { familyId } = useCurrentFamily()
+  const { members: storeFamilyMembers } = useFamilyStore()
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
@@ -317,7 +319,10 @@ const Index = () => {
         isOpen={showRedemptionConfirmModal}
         onClose={() => setShowRedemptionConfirmModal(false)}
         reward={selectedRewardForRedemption}
-        familyMembers={familyMembers}
+        familyMembers={storeFamilyMembers.map(m => ({
+          ...m,
+          points: familyMembers.find(fm => fm.member_id === m.id)?.points ?? 0
+        }))}
         onConfirmRedemption={handleRewardRedemption}
       />
       

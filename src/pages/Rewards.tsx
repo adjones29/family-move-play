@@ -11,24 +11,16 @@ import { ArrowLeft, Gift } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useCurrentFamily } from "@/hooks/useCurrentFamily"
 import FamilyPointsBadge from "@/components/ui/FamilyPointsBadge"
+import { useFamilyStore } from "@/state/familyStore"
 
 const Rewards = () => {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { familyId } = useCurrentFamily()
+  const { members: familyMembers } = useFamilyStore()
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [selectedTab, setSelectedTab] = useState<'store' | 'earned'>('store')
-
-  // Mock family members with points
-  const [familyMembers, setFamilyMembers] = useState([
-    { name: "Dad", points: 325, memberColor: "member-1" },
-    { name: "Mom", points: 412, memberColor: "member-2" },
-    { name: "Alex", points: 245, memberColor: "member-3" },
-    { name: "Sam", points: 156, memberColor: "member-4" }
-  ])
-
-  const totalFamilyPoints = familyMembers.reduce((sum, member) => sum + member.points, 0)
 
   type EarnedReward = {
     id: string
@@ -83,31 +75,10 @@ const Rewards = () => {
     }
   }
 
-  const handleRewardRedemption = (rewardId: string, cost: number, selectedMember?: string) => {
+  const handleRewardRedemption = (rewardId: string, cost: number, selectedMemberId?: string) => {
     const rewards = JSON.parse(localStorage.getItem('fitfam-rewards') || '[]')
     const reward = rewards.find((r: any) => r.id === rewardId)
     if (!reward) return
-
-    // Handle point deduction
-    if (reward.category === "Family Rewards") {
-      // Divide cost across all family members
-      const costPerMember = Math.ceil(cost / familyMembers.length)
-      setFamilyMembers(prev => 
-        prev.map(member => ({
-          ...member,
-          points: member.points - costPerMember
-        }))
-      )
-    } else if (selectedMember) {
-      // Deduct from selected member
-      setFamilyMembers(prev => 
-        prev.map(member => 
-          member.name === selectedMember 
-            ? { ...member, points: member.points - cost }
-            : member
-        )
-      )
-    }
 
     // Add to earned rewards
     const newReward: EarnedReward = {
@@ -123,9 +94,10 @@ const Rewards = () => {
 
     setEarnedRewards(prev => [newReward, ...prev])
     
+    const memberName = familyMembers.find(m => m.id === selectedMemberId)?.display_name
     toast({
       title: "Reward Redeemed! 🎉",
-      description: `Successfully redeemed "${reward.title}"${selectedMember ? ` for ${selectedMember}` : ''}`,
+      description: `Successfully redeemed "${reward.title}"${memberName ? ` for ${memberName}` : ''}`,
     })
   }
 
@@ -169,7 +141,6 @@ const Rewards = () => {
 
         {selectedTab === 'store' && (
           <RewardStore 
-            totalPoints={totalFamilyPoints}
             onRewardRedeem={handleRewardSelect}
           />
         )}
