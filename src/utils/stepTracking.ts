@@ -35,9 +35,9 @@ export function formatToLocalDate(date: Date): string {
   return `${year}-${month}-${day}`
 }
 
-// Calculate points earned from steps (1 point per 100 steps)
+// Calculate points earned from steps (1 point per 1,000 steps)
 export function calculatePointsFromSteps(steps: number): number {
-  return Math.floor(steps / 100)
+  return Math.floor(steps / 1000)
 }
 
 // Add or update step entry for a member on a specific date
