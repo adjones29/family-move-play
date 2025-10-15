@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client"
+import { awardPoints } from "@/lib/points"
 
 export interface StepEntry {
   id: string
@@ -34,6 +35,11 @@ export function formatToLocalDate(date: Date): string {
   return `${year}-${month}-${day}`
 }
 
+// Calculate points earned from steps (1 point per 100 steps)
+export function calculatePointsFromSteps(steps: number): number {
+  return Math.floor(steps / 100)
+}
+
 // Add or update step entry for a member on a specific date
 export async function upsertStepEntry(memberId: string, date: Date, steps: number) {
   const dateStr = formatToLocalDate(date)
@@ -51,17 +57,24 @@ export async function upsertStepEntry(memberId: string, date: Date, steps: numbe
       throw selectError
     }
 
+    let result
+    let pointsDelta = 0
+
     if (existingEntry) {
       // Update existing entry by adding steps
+      const newTotalSteps = existingEntry.steps + steps
       const { data, error } = await supabase
         .from('step_entries')
-        .update({ steps: existingEntry.steps + steps })
+        .update({ steps: newTotalSteps })
         .eq('id', existingEntry.id)
         .select()
         .single()
 
       if (error) throw error
-      return data
+      result = data
+      
+      // Award points for the new steps added
+      pointsDelta = calculatePointsFromSteps(steps)
     } else {
       // Insert new entry
       const { data, error } = await supabase
@@ -71,8 +84,23 @@ export async function upsertStepEntry(memberId: string, date: Date, steps: numbe
         .single()
 
       if (error) throw error
-      return data
+      result = data
+      
+      // Award points for all steps in new entry
+      pointsDelta = calculatePointsFromSteps(steps)
     }
+
+    // Award points if any were earned
+    if (pointsDelta > 0) {
+      await awardPoints({
+        memberId,
+        delta: pointsDelta,
+        source: 'steps',
+        meta: { steps, date: dateStr }
+      })
+    }
+
+    return result
   } catch (error) {
     console.error('Error upserting step entry:', error)
     throw error
