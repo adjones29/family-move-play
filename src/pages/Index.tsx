@@ -25,11 +25,14 @@ import { initializeStorage } from "@/utils/localStorage"
 import { useFamilyMemberStats } from "@/hooks/useFamilyMemberStats"
 import { onStepsUpdated } from "@/lib/progress"
 import { supabase } from "@/integrations/supabase/client"
+import { useCurrentFamily } from "@/hooks/useCurrentFamily"
+import FamilyPointsBadge from "@/components/ui/FamilyPointsBadge"
 
 const Index = () => {
   const { toast } = useToast()
   const { user, signOut } = useAuth()
   const { stats: familyMembers, loading: loadingStats, refetch } = useFamilyMemberStats()
+  const { familyId } = useCurrentFamily()
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [showSettingsModal, setShowSettingsModal] = useState(false)
@@ -234,11 +237,9 @@ const Index = () => {
               className="h-10 w-10"
               onClick={() => setShowSettingsModal(true)}
             >
-              <Settings className="h-5 w-5" />
+            <Settings className="h-5 w-5" />
             </Button>
-            <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">
-              {totalFamilyPoints} pts
-            </Badge>
+            <FamilyPointsBadge familyId={familyId} />
           </div>
         </div>
       </header>

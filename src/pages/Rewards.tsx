@@ -9,10 +9,13 @@ import { SegmentedControl } from "@/components/ui/segmented-control"
 import { useToast } from "@/hooks/use-toast"
 import { ArrowLeft, Gift } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { useCurrentFamily } from "@/hooks/useCurrentFamily"
+import FamilyPointsBadge from "@/components/ui/FamilyPointsBadge"
 
 const Rewards = () => {
   const navigate = useNavigate()
   const { toast } = useToast()
+  const { familyId } = useCurrentFamily()
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [selectedTab, setSelectedTab] = useState<'store' | 'earned'>('store')
@@ -149,9 +152,7 @@ const Rewards = () => {
               </div>
             </div>
           </div>
-          <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">
-            {totalFamilyPoints} pts
-          </Badge>
+          <FamilyPointsBadge familyId={familyId} />
         </div>
       </header>
 

@@ -91,6 +91,55 @@ export type Database = {
           },
         ]
       }
+      points_ledger: {
+        Row: {
+          created_at: string
+          delta: number
+          id: string
+          member_id: string
+          meta: Json | null
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          delta: number
+          id?: string
+          member_id: string
+          meta?: Json | null
+          source: string
+        }
+        Update: {
+          created_at?: string
+          delta?: number
+          id?: string
+          member_id?: string
+          meta?: Json | null
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "points_ledger_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "family_member_stats"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "points_ledger_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "points_ledger_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "my_family_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -198,6 +247,50 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_points_balances: {
+        Row: {
+          member_id: string | null
+          points: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "points_ledger_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "family_member_stats"
+            referencedColumns: ["member_id"]
+          },
+          {
+            foreignKeyName: "points_ledger_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "points_ledger_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "my_family_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_points_family_totals: {
+        Row: {
+          family_id: string | null
+          points: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_members_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
             referencedColumns: ["id"]
           },
         ]
