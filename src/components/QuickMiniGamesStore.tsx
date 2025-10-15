@@ -8,9 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { getMiniGames, initializeStorage, type MiniGame } from "@/utils/localStorage"
 import { Gamepad2, Users, Clock, Trophy, Dumbbell, Heart, Zap } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { awardPoints } from "@/lib/points"
 
 interface QuickMiniGamesStoreProps {
-  familyMembers: Array<{ name: string; memberColor: string }>
+  familyMembers: Array<{ id: string; name: string; memberColor: string }>
   onPointsEarned: (points: number) => void
 }
 
@@ -48,20 +49,46 @@ export function QuickMiniGamesStore({ familyMembers, onPointsEarned }: QuickMini
     setShowParticipantModal(true)
   }
 
-  const handleStartGame = () => {
+  const handleStartGame = async () => {
     if (!selectedGame || selectedParticipants.length === 0) return
 
-    const totalPoints = selectedGame.points * selectedParticipants.length
-    onPointsEarned(totalPoints)
-    
-    toast({
-      title: "Game Started! 🎮",
-      description: `${selectedParticipants.join(", ")} can earn ${selectedGame.points} points each by completing "${selectedGame.title}"`,
-    })
+    try {
+      // Award points to each participant
+      await Promise.all(
+        selectedParticipants.map(participantName => {
+          const member = familyMembers.find(m => m.name === participantName)
+          if (member) {
+            return awardPoints({
+              memberId: member.id,
+              delta: selectedGame.points,
+              source: 'mini_game',
+              meta: { 
+                gameId: selectedGame.id,
+                gameTitle: selectedGame.title 
+              }
+            })
+          }
+        })
+      )
 
-    setShowParticipantModal(false)
-    setSelectedGame(null)
-    setSelectedParticipants([])
+      const totalPoints = selectedGame.points * selectedParticipants.length
+      onPointsEarned(totalPoints)
+      
+      toast({
+        title: "Game Completed! 🎮",
+        description: `${selectedParticipants.join(", ")} earned ${selectedGame.points} points each for completing "${selectedGame.title}"`,
+      })
+
+      setShowParticipantModal(false)
+      setSelectedGame(null)
+      setSelectedParticipants([])
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to award points. Please try again.",
+        variant: "destructive"
+      })
+    }
   }
 
   const toggleParticipant = (memberName: string) => {

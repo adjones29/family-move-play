@@ -8,9 +8,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { getChallenges, initializeStorage, type Challenge } from "@/utils/localStorage"
 import { Target, Trophy, Calendar, Users } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { awardPoints } from "@/lib/points"
 
 interface ActiveChallengesStoreProps {
-  familyMembers: Array<{ name: string; memberColor: string }>
+  familyMembers: Array<{ id: string; name: string; memberColor: string }>
   onPointsEarned: (points: number) => void
 }
 
@@ -41,20 +42,46 @@ export function ActiveChallengesStore({ familyMembers, onPointsEarned }: ActiveC
     setShowParticipantModal(true)
   }
 
-  const handleStartChallenge = () => {
+  const handleStartChallenge = async () => {
     if (!selectedChallenge || selectedParticipants.length === 0) return
 
-    const totalPoints = selectedChallenge.points * selectedParticipants.length
-    onPointsEarned(totalPoints)
-    
-    toast({
-      title: "Challenge Started! 🎯",
-      description: `${selectedParticipants.join(", ")} can earn ${selectedChallenge.points} points each by completing "${selectedChallenge.title}"`,
-    })
+    try {
+      // Award points to each participant
+      await Promise.all(
+        selectedParticipants.map(participantName => {
+          const member = familyMembers.find(m => m.name === participantName)
+          if (member) {
+            return awardPoints({
+              memberId: member.id,
+              delta: selectedChallenge.points,
+              source: 'challenge',
+              meta: { 
+                challengeId: selectedChallenge.id,
+                challengeTitle: selectedChallenge.title 
+              }
+            })
+          }
+        })
+      )
 
-    setShowParticipantModal(false)
-    setSelectedChallenge(null)
-    setSelectedParticipants([])
+      const totalPoints = selectedChallenge.points * selectedParticipants.length
+      onPointsEarned(totalPoints)
+      
+      toast({
+        title: "Challenge Completed! 🎯",
+        description: `${selectedParticipants.join(", ")} earned ${selectedChallenge.points} points each for completing "${selectedChallenge.title}"`,
+      })
+
+      setShowParticipantModal(false)
+      setSelectedChallenge(null)
+      setSelectedParticipants([])
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to award points. Please try again.",
+        variant: "destructive"
+      })
+    }
   }
 
   const toggleParticipant = (memberName: string) => {
