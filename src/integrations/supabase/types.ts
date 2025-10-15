@@ -161,6 +161,62 @@ export type Database = {
         }
         Relationships: []
       }
+      redeemed_rewards: {
+        Row: {
+          expires_at: string | null
+          family_id: string
+          id: string
+          meta: Json | null
+          redeemed_at: string
+          redeemed_by_members: string[]
+          reward_category: string
+          reward_cost: number
+          reward_description: string | null
+          reward_id: string
+          reward_rarity: string
+          reward_title: string
+          status: string
+        }
+        Insert: {
+          expires_at?: string | null
+          family_id: string
+          id?: string
+          meta?: Json | null
+          redeemed_at?: string
+          redeemed_by_members: string[]
+          reward_category: string
+          reward_cost: number
+          reward_description?: string | null
+          reward_id: string
+          reward_rarity?: string
+          reward_title: string
+          status?: string
+        }
+        Update: {
+          expires_at?: string | null
+          family_id?: string
+          id?: string
+          meta?: Json | null
+          redeemed_at?: string
+          redeemed_by_members?: string[]
+          reward_category?: string
+          reward_cost?: number
+          reward_description?: string | null
+          reward_id?: string
+          reward_rarity?: string
+          reward_title?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "redeemed_rewards_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       step_entries: {
         Row: {
           created_at: string

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/enhanced-button"
 import { RewardStore } from "@/components/RewardStore"
 import { EarnedRewards } from "@/components/EarnedRewards"
@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom"
 import { useCurrentFamily } from "@/hooks/useCurrentFamily"
 import FamilyPointsBadge from "@/components/ui/FamilyPointsBadge"
 import { useFamilyStore } from "@/state/familyStore"
+import { supabase } from "@/integrations/supabase/client"
 
 const Rewards = () => {
   const navigate = useNavigate()
@@ -31,39 +32,75 @@ const Rewards = () => {
     status: "active" | "used" | "expired"
     category: "family" | "individual" | "special"
     rarity: "common" | "rare" | "epic" | "legendary"
-    icon?: React.ReactNode
   }
 
-  const [earnedRewards, setEarnedRewards] = useState<EarnedReward[]>([
-    {
-      id: "movie-night-1",
-      title: "Family Movie Night",
-      description: "Choose any movie for tonight's family viewing with snacks included!",
-      redeemedAt: new Date(2024, 11, 15),
-      expiresAt: new Date(2024, 11, 22),
-      status: "active",
-      category: "family",
-      rarity: "common"
-    },
-    {
-      id: "extra-screen-time-1",
-      title: "Extra Screen Time",
-      description: "Earn 30 minutes of bonus screen time for games or videos",
-      redeemedAt: new Date(2024, 11, 10),
-      status: "used",
-      category: "individual",
-      rarity: "common"
-    },
-    {
-      id: "pizza-night-1",
-      title: "Pizza Night",
-      description: "Family pizza night with everyone's favorite toppings",
-      redeemedAt: new Date(2024, 11, 5),
-      status: "used",
-      category: "family",
-      rarity: "rare"
+  const [earnedRewards, setEarnedRewards] = useState<EarnedReward[]>([])
+  const [loadingRewards, setLoadingRewards] = useState(true)
+
+  useEffect(() => {
+    if (familyId) {
+      fetchEarnedRewards()
+      
+      // Subscribe to realtime changes
+      const channel = supabase
+        .channel(`redeemed_rewards:${familyId}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'redeemed_rewards',
+            filter: `family_id=eq.${familyId}`
+          },
+          () => {
+            fetchEarnedRewards()
+          }
+        )
+        .subscribe()
+
+      return () => {
+        supabase.removeChannel(channel)
+      }
     }
-  ])
+  }, [familyId])
+
+  const fetchEarnedRewards = async () => {
+    if (!familyId) return
+
+    try {
+      setLoadingRewards(true)
+      const { data, error } = await supabase
+        .from('redeemed_rewards')
+        .select('*')
+        .eq('family_id', familyId)
+        .order('redeemed_at', { ascending: false })
+
+      if (error) throw error
+
+      const formattedRewards: EarnedReward[] = (data || []).map(reward => ({
+        id: reward.id,
+        title: reward.reward_title,
+        description: reward.reward_description || '',
+        redeemedAt: new Date(reward.redeemed_at),
+        expiresAt: reward.expires_at ? new Date(reward.expires_at) : undefined,
+        status: reward.status as "active" | "used" | "expired",
+        category: reward.reward_category === "Family Rewards" ? "family" : 
+                  reward.reward_category === "Individual Rewards" ? "individual" : "special",
+        rarity: reward.reward_rarity as "common" | "rare" | "epic" | "legendary"
+      }))
+
+      setEarnedRewards(formattedRewards)
+    } catch (error: any) {
+      console.error('Error fetching earned rewards:', error)
+      toast({
+        title: "Error",
+        description: "Failed to load earned rewards",
+        variant: "destructive"
+      })
+    } finally {
+      setLoadingRewards(false)
+    }
+  }
 
   const handleRewardSelect = (rewardId: string) => {
     // Find the reward from localStorage
@@ -75,30 +112,9 @@ const Rewards = () => {
     }
   }
 
-  const handleRewardRedemption = (rewardId: string, cost: number, selectedMemberId?: string) => {
-    const rewards = JSON.parse(localStorage.getItem('fitfam-rewards') || '[]')
-    const reward = rewards.find((r: any) => r.id === rewardId)
-    if (!reward) return
-
-    // Add to earned rewards
-    const newReward: EarnedReward = {
-      id: `${rewardId}-${Date.now()}`,
-      title: reward.title,
-      description: reward.description,
-      redeemedAt: new Date(),
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-      status: "active",
-      category: reward.category === "Family Rewards" ? "family" : reward.category === "Individual Rewards" ? "individual" : "special",
-      rarity: reward.rarity
-    }
-
-    setEarnedRewards(prev => [newReward, ...prev])
-    
-    const memberName = familyMembers.find(m => m.id === selectedMemberId)?.display_name
-    toast({
-      title: "Reward Redeemed! 🎉",
-      description: `Successfully redeemed "${reward.title}"${memberName ? ` for ${memberName}` : ''}`,
-    })
+  const handleRewardRedemption = () => {
+    // Refresh the earned rewards after successful redemption
+    fetchEarnedRewards()
   }
 
 
