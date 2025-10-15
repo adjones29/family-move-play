@@ -8,7 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { User, Bell, Shield, Palette, Volume2, Clock, Users } from "lucide-react";
+import { User, Bell, Shield, Palette, Volume2, Clock, Users, LogOut } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -18,6 +20,7 @@ export function SettingsModal({
   onClose
 }: SettingsModalProps) {
   const navigate = useNavigate();
+  const { signOut } = useAuth();
   const [notifications, setNotifications] = useState(true);
   const [soundEffects, setSoundEffects] = useState(true);
   const [dailyReminders, setDailyReminders] = useState(true);
@@ -28,6 +31,11 @@ export function SettingsModal({
   const handleManageFamily = () => {
     onClose();
     navigate('/family');
+  };
+
+  const handleLogout = async () => {
+    await signOut();
+    onClose();
   };
   return <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
@@ -118,6 +126,33 @@ export function SettingsModal({
               <div className="flex items-center justify-between">
                 <Label htmlFor="data-sharing">Data Sharing</Label>
                 <Button variant="outline" size="sm">Manage</Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Account */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-4 w-4" />
+                Account
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label>Sign Out</Label>
+                  <p className="text-sm text-muted-foreground">Log out of your account</p>
+                </div>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleLogout}
+                  className="text-destructive hover:text-destructive"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
               </div>
             </CardContent>
           </Card>

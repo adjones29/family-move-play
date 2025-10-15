@@ -239,15 +239,6 @@ const Index = () => {
             <Badge className="bg-primary/20 text-primary border-primary/30 text-xs">
               {totalFamilyPoints} pts
             </Badge>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              className="h-10 w-10"
-              onClick={signOut}
-              title="Sign Out"
-            >
-              <LogOut className="h-4 w-4" />
-            </Button>
           </div>
         </div>
       </header>
