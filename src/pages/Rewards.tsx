@@ -1,11 +1,7 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/enhanced-button"
-import { RewardStore } from "@/components/RewardStore"
 import { EarnedRewards } from "@/components/EarnedRewards"
-import { RewardRedemptionModal } from "@/components/RewardRedemptionModal"
 import { RewardRedemptionConfirmModal } from "@/components/RewardRedemptionConfirmModal"
-import { Badge } from "@/components/ui/badge"
-import { SegmentedControl } from "@/components/ui/segmented-control"
 import { useToast } from "@/hooks/use-toast"
 import { ArrowLeft, Gift } from "lucide-react"
 import { useNavigate } from "react-router-dom"
@@ -13,6 +9,10 @@ import { useCurrentFamily } from "@/hooks/useCurrentFamily"
 import FamilyPointsBadge from "@/components/ui/FamilyPointsBadge"
 import { useFamilyMembers } from "@/hooks/useFamilyMembers"
 import { supabase } from "@/integrations/supabase/client"
+import { CarouselRow } from "@/components/ui/CarouselRow"
+import { CarouselItem } from "@/components/ui/carousel"
+import { ItemCard } from "@/components/ui/ItemCard"
+import { getRewards, initializeStorage, type Reward } from "@/utils/localStorage"
 
 const Rewards = () => {
   const navigate = useNavigate()
@@ -22,6 +22,17 @@ const Rewards = () => {
   const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
   const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [selectedTab, setSelectedTab] = useState<'store' | 'earned'>('store')
+  const [familyRewards, setFamilyRewards] = useState<Reward[]>([])
+  const [individualRewards, setIndividualRewards] = useState<Reward[]>([])
+  const [specialRewards, setSpecialRewards] = useState<Reward[]>([])
+
+  useEffect(() => {
+    initializeStorage()
+    const allRewards = getRewards()
+    setFamilyRewards(allRewards.filter(r => r.category === 'Family Rewards'))
+    setIndividualRewards(allRewards.filter(r => r.category === 'Individual Rewards'))
+    setSpecialRewards(allRewards.filter(r => r.category === 'Special Rewards'))
+  }, [])
 
   type EarnedReward = {
     id: string
@@ -145,23 +156,80 @@ const Rewards = () => {
       </header>
 
       <div className="px-4 py-4 space-y-4">
-        <SegmentedControl
-          value={selectedTab}
-          onChange={(value) => setSelectedTab(value as 'store' | 'earned')}
-          options={[
-            { label: 'Store', value: 'store' },
-            { label: 'My Rewards', value: 'earned' },
-          ]}
-          ariaLabel="Rewards section"
-        />
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-lg font-semibold">Reward Store</h2>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setSelectedTab(selectedTab === 'store' ? 'earned' : 'store')}
+          >
+            {selectedTab === 'store' ? 'My Rewards' : 'Store'}
+          </Button>
+        </div>
 
-        {selectedTab === 'store' && (
-          <RewardStore 
-            onRewardRedeem={handleRewardSelect}
-          />
-        )}
+        {selectedTab === 'store' ? (
+          <div className="space-y-8 pb-4">
+            <CarouselRow title="Family Rewards">
+              {familyRewards.map((reward) => (
+                <CarouselItem key={reward.id} className="pl-2 md:pl-4 basis-auto">
+                  <ItemCard
+                    title={reward.title}
+                    subtitle={reward.description}
+                    badge={`${reward.cost} pts`}
+                    onClick={() => handleRewardSelect(reward.id)}
+                  />
+                </CarouselItem>
+              ))}
+              {familyRewards.length === 0 && (
+                <CarouselItem className="pl-2 md:pl-4 basis-auto">
+                  <div className="w-[280px] h-[200px] flex items-center justify-center text-muted-foreground">
+                    No family rewards
+                  </div>
+                </CarouselItem>
+              )}
+            </CarouselRow>
 
-        {selectedTab === 'earned' && (
+            <CarouselRow title="Individual Rewards">
+              {individualRewards.map((reward) => (
+                <CarouselItem key={reward.id} className="pl-2 md:pl-4 basis-auto">
+                  <ItemCard
+                    title={reward.title}
+                    subtitle={reward.description}
+                    badge={`${reward.cost} pts`}
+                    onClick={() => handleRewardSelect(reward.id)}
+                  />
+                </CarouselItem>
+              ))}
+              {individualRewards.length === 0 && (
+                <CarouselItem className="pl-2 md:pl-4 basis-auto">
+                  <div className="w-[280px] h-[200px] flex items-center justify-center text-muted-foreground">
+                    No individual rewards
+                  </div>
+                </CarouselItem>
+              )}
+            </CarouselRow>
+
+            <CarouselRow title="Special Rewards">
+              {specialRewards.map((reward) => (
+                <CarouselItem key={reward.id} className="pl-2 md:pl-4 basis-auto">
+                  <ItemCard
+                    title={reward.title}
+                    subtitle={reward.description}
+                    badge={`${reward.cost} pts`}
+                    onClick={() => handleRewardSelect(reward.id)}
+                  />
+                </CarouselItem>
+              ))}
+              {specialRewards.length === 0 && (
+                <CarouselItem className="pl-2 md:pl-4 basis-auto">
+                  <div className="w-[280px] h-[200px] flex items-center justify-center text-muted-foreground">
+                    No special rewards
+                  </div>
+                </CarouselItem>
+              )}
+            </CarouselRow>
+          </div>
+        ) : (
           <EarnedRewards 
             rewards={earnedRewards}
           />

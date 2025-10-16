@@ -1,90 +1,43 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/enhanced-button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { SegmentedControl } from "@/components/ui/segmented-control"
 import { MiniGameModal } from "@/components/MiniGameModal"
 import { CreateMiniGameModal } from "@/components/CreateMiniGameModal"
-import { ArrowLeft, Users, Clock, Trophy, Target, Dumbbell, Zap, Heart, GamepadIcon, Plus } from "lucide-react"
+import { ArrowLeft, GamepadIcon, Plus } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { getMiniGames, addMiniGame, initializeStorage, type MiniGame } from "@/utils/localStorage"
+import { CarouselRow } from "@/components/ui/CarouselRow"
+import { CarouselItem } from "@/components/ui/carousel"
+import { ItemCard } from "@/components/ui/ItemCard"
 
 const Games = () => {
   const navigate = useNavigate()
   const [selectedGame, setSelectedGame] = useState<MiniGame | null>(null)
   const [showGameModal, setShowGameModal] = useState(false)
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [miniGames, setMiniGames] = useState<MiniGame[]>([])
-  const [selectedCategory, setSelectedCategory] = useState<'All' | 'Exercise' | 'Fun' | 'Adventure'>('All')
+  const [exerciseGames, setExerciseGames] = useState<MiniGame[]>([])
+  const [funGames, setFunGames] = useState<MiniGame[]>([])
+  const [adventureGames, setAdventureGames] = useState<MiniGame[]>([])
 
   useEffect(() => {
     initializeStorage()
-    setMiniGames(getMiniGames())
+    const allGames = getMiniGames()
+    setExerciseGames(allGames.filter(g => g.category === 'Exercise'))
+    setFunGames(allGames.filter(g => g.category === 'Fun'))
+    setAdventureGames(allGames.filter(g => g.category === 'Adventure'))
   }, [])
 
   const handleGameCreated = (newGame: Omit<MiniGame, 'id'>) => {
     addMiniGame(newGame)
-    setMiniGames(getMiniGames())
-  }
-
-  const filteredGames = selectedCategory === 'All' 
-    ? miniGames 
-    : miniGames.filter(game => game.category === selectedCategory)
-
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'Exercise':
-        return <Dumbbell className="h-6 w-6" />
-      case 'Fun':
-        return <Heart className="h-6 w-6" />
-      case 'Adventure':
-        return <Zap className="h-6 w-6" />
-      default:
-        return <GamepadIcon className="h-6 w-6" />
-    }
+    const allGames = getMiniGames()
+    setExerciseGames(allGames.filter(g => g.category === 'Exercise'))
+    setFunGames(allGames.filter(g => g.category === 'Fun'))
+    setAdventureGames(allGames.filter(g => g.category === 'Adventure'))
   }
 
   const handleGameClick = (game: MiniGame) => {
     setSelectedGame(game)
     setShowGameModal(true)
   }
-
-  const GameCard = ({ game }: { game: MiniGame }) => (
-    <Card 
-      className="cursor-pointer transition-all duration-300 active:scale-95"
-      onClick={() => handleGameClick(game)}
-    >
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/20 rounded-lg text-primary">
-              {getCategoryIcon(game.category)}
-            </div>
-            <div>
-              <CardTitle className="text-base">{game.title}</CardTitle>
-              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30 text-xs mt-1">
-                {game.category}
-              </Badge>
-            </div>
-          </div>
-        </div>
-      </CardHeader>
-      
-      <CardContent className="space-y-3 pt-0">
-        <p className="text-sm text-muted-foreground line-clamp-2">{game.description}</p>
-        
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Trophy className="h-4 w-4 text-yellow-500" />
-            <span className="font-medium text-sm">{game.points} points</span>
-          </div>
-          <Button variant="energy" size="sm" className="h-8">
-            Play
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
-  )
 
   return (
     <div className="pb-20"> {/* Bottom padding for navigation */}
@@ -119,24 +72,66 @@ const Games = () => {
         </div>
       </header>
 
-      <div className="px-4 py-4 space-y-4">
-        <SegmentedControl
-          value={selectedCategory}
-          onChange={(value) => setSelectedCategory(value as 'All' | 'Exercise' | 'Fun' | 'Adventure')}
-          options={[
-            { label: 'All', value: 'All' },
-            { label: 'Exercise', value: 'Exercise' },
-            { label: 'Fun', value: 'Fun' },
-            { label: 'Adventure', value: 'Adventure' },
-          ]}
-          ariaLabel="Game category filter"
-        />
-
-        <div className="space-y-4">
-          {filteredGames.map((game) => (
-            <GameCard key={game.id} game={game} />
+      <div className="py-6 space-y-8">
+        <CarouselRow title="Exercise">
+          {exerciseGames.map((game) => (
+            <CarouselItem key={game.id} className="pl-2 md:pl-4 basis-auto">
+              <ItemCard
+                title={game.title}
+                subtitle={game.description}
+                badge={`${game.points} pts`}
+                onClick={() => handleGameClick(game)}
+              />
+            </CarouselItem>
           ))}
-        </div>
+          {exerciseGames.length === 0 && (
+            <CarouselItem className="pl-2 md:pl-4 basis-auto">
+              <div className="w-[280px] h-[200px] flex items-center justify-center text-muted-foreground">
+                No exercise games
+              </div>
+            </CarouselItem>
+          )}
+        </CarouselRow>
+
+        <CarouselRow title="Fun">
+          {funGames.map((game) => (
+            <CarouselItem key={game.id} className="pl-2 md:pl-4 basis-auto">
+              <ItemCard
+                title={game.title}
+                subtitle={game.description}
+                badge={`${game.points} pts`}
+                onClick={() => handleGameClick(game)}
+              />
+            </CarouselItem>
+          ))}
+          {funGames.length === 0 && (
+            <CarouselItem className="pl-2 md:pl-4 basis-auto">
+              <div className="w-[280px] h-[200px] flex items-center justify-center text-muted-foreground">
+                No fun games
+              </div>
+            </CarouselItem>
+          )}
+        </CarouselRow>
+
+        <CarouselRow title="Adventure">
+          {adventureGames.map((game) => (
+            <CarouselItem key={game.id} className="pl-2 md:pl-4 basis-auto">
+              <ItemCard
+                title={game.title}
+                subtitle={game.description}
+                badge={`${game.points} pts`}
+                onClick={() => handleGameClick(game)}
+              />
+            </CarouselItem>
+          ))}
+          {adventureGames.length === 0 && (
+            <CarouselItem className="pl-2 md:pl-4 basis-auto">
+              <div className="w-[280px] h-[200px] flex items-center justify-center text-muted-foreground">
+                No adventure games
+              </div>
+            </CarouselItem>
+          )}
+        </CarouselRow>
       </div>
 
       <MiniGameModal
