@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/enhanced-button"
-import { MiniGameModal } from "@/components/MiniGameModal"
 import { CreateMiniGameModal } from "@/components/CreateMiniGameModal"
 import { ArrowLeft, GamepadIcon, Plus } from "lucide-react"
 import { useNavigate } from "react-router-dom"
@@ -8,15 +7,18 @@ import { getMiniGames, addMiniGame, initializeStorage, type MiniGame } from "@/u
 import { CarouselRow } from "@/components/ui/CarouselRow"
 import { CarouselItem } from "@/components/ui/carousel"
 import { ItemCard } from "@/components/ui/ItemCard"
+import ItemOverlay, { type OverlayItem } from "@/components/detail/ItemOverlay"
+import { useToast } from "@/hooks/use-toast"
 
 const Games = () => {
   const navigate = useNavigate()
-  const [selectedGame, setSelectedGame] = useState<MiniGame | null>(null)
-  const [showGameModal, setShowGameModal] = useState(false)
+  const { toast } = useToast()
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [exerciseGames, setExerciseGames] = useState<MiniGame[]>([])
   const [funGames, setFunGames] = useState<MiniGame[]>([])
   const [adventureGames, setAdventureGames] = useState<MiniGame[]>([])
+  const [overlayOpen, setOverlayOpen] = useState(false)
+  const [overlayItem, setOverlayItem] = useState<OverlayItem | null>(null)
 
   useEffect(() => {
     initializeStorage()
@@ -35,8 +37,23 @@ const Games = () => {
   }
 
   const handleGameClick = (game: MiniGame) => {
-    setSelectedGame(game)
-    setShowGameModal(true)
+    setOverlayItem({
+      id: game.id,
+      title: game.title,
+      description: game.description,
+      category: game.category,
+      points: game.points
+    })
+    setOverlayOpen(true)
+  }
+
+  const handlePlay = (item: OverlayItem, memberIds: string[]) => {
+    // Start game logic here
+    toast({
+      title: "Game Started!",
+      description: `${item.title} has been started for ${memberIds.length} member${memberIds.length > 1 ? 's' : ''}.`
+    })
+    setOverlayOpen(false)
   }
 
   return (
@@ -131,16 +148,18 @@ const Games = () => {
         </CarouselRow>
       </div>
 
-      <MiniGameModal
-        isOpen={showGameModal}
-        onClose={() => setShowGameModal(false)}
-        game={selectedGame}
-      />
-
       <CreateMiniGameModal 
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onGameCreated={handleGameCreated}
+      />
+
+      <ItemOverlay
+        kind="game"
+        open={overlayOpen}
+        onClose={() => setOverlayOpen(false)}
+        item={overlayItem}
+        onPlay={handlePlay}
       />
     </div>
   )

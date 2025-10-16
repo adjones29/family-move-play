@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/enhanced-button"
 import { EarnedRewards } from "@/components/EarnedRewards"
-import { RewardRedemptionConfirmModal } from "@/components/RewardRedemptionConfirmModal"
 import { useToast } from "@/hooks/use-toast"
 import { ArrowLeft, Gift } from "lucide-react"
 import { useNavigate } from "react-router-dom"
@@ -13,18 +12,20 @@ import { CarouselRow } from "@/components/ui/CarouselRow"
 import { CarouselItem } from "@/components/ui/carousel"
 import { ItemCard } from "@/components/ui/ItemCard"
 import { getRewards, initializeStorage, type Reward } from "@/utils/localStorage"
+import ItemOverlay, { type OverlayItem } from "@/components/detail/ItemOverlay"
+import { redeemFamilyReward, redeemIndividualReward } from "@/lib/points"
 
 const Rewards = () => {
   const navigate = useNavigate()
   const { toast } = useToast()
   const { familyId } = useCurrentFamily()
   const { members: familyMembers } = useFamilyMembers()
-  const [selectedRewardForRedemption, setSelectedRewardForRedemption] = useState<any>(null)
-  const [showRedemptionConfirmModal, setShowRedemptionConfirmModal] = useState(false)
   const [selectedTab, setSelectedTab] = useState<'store' | 'earned'>('store')
   const [familyRewards, setFamilyRewards] = useState<Reward[]>([])
   const [individualRewards, setIndividualRewards] = useState<Reward[]>([])
   const [specialRewards, setSpecialRewards] = useState<Reward[]>([])
+  const [overlayOpen, setOverlayOpen] = useState(false)
+  const [overlayItem, setOverlayItem] = useState<OverlayItem | null>(null)
 
   useEffect(() => {
     initializeStorage()
@@ -113,19 +114,75 @@ const Rewards = () => {
     }
   }
 
-  const handleRewardSelect = (rewardId: string) => {
-    // Find the reward from localStorage
-    const rewards = JSON.parse(localStorage.getItem('fitfam-rewards') || '[]')
-    const reward = rewards.find((r: any) => r.id === rewardId)
-    if (reward) {
-      setSelectedRewardForRedemption(reward)
-      setShowRedemptionConfirmModal(true)
-    }
+  const handleRewardSelect = (reward: Reward) => {
+    setOverlayItem({
+      id: reward.id,
+      title: reward.title,
+      description: reward.description,
+      type: reward.category as any,
+      cost: reward.cost,
+      rarity: reward.rarity
+    })
+    setOverlayOpen(true)
   }
 
-  const handleRewardRedemption = () => {
-    // Refresh the earned rewards after successful redemption
-    fetchEarnedRewards()
+  const handleRedeem = async (item: OverlayItem, memberIds: string[]) => {
+    if (!familyId) {
+      toast({
+        title: "Error",
+        description: "No family selected",
+        variant: "destructive"
+      })
+      return
+    }
+
+    try {
+      let result
+      if (item.type === 'Individual Rewards') {
+        result = await redeemIndividualReward({
+          familyId,
+          rewardId: item.id,
+          rewardTitle: item.title,
+          rewardDescription: item.description || '',
+          rewardCost: item.cost || 0,
+          rewardCategory: item.type,
+          rewardRarity: (item.rarity as any) || 'common',
+          memberIds
+        })
+      } else {
+        result = await redeemFamilyReward({
+          familyId,
+          rewardId: item.id,
+          rewardTitle: item.title,
+          rewardDescription: item.description || '',
+          rewardCost: item.cost || 0,
+          rewardCategory: item.type || 'Family Rewards',
+          rewardRarity: (item.rarity as any) || 'common'
+        })
+      }
+
+      if (result.success) {
+        toast({
+          title: "Reward Redeemed!",
+          description: result.message
+        })
+        fetchEarnedRewards()
+        setOverlayOpen(false)
+      } else {
+        toast({
+          title: "Redemption Failed",
+          description: result.message,
+          variant: "destructive"
+        })
+      }
+    } catch (error: any) {
+      console.error('Redemption error:', error)
+      toast({
+        title: "Error",
+        description: error.message || "Failed to redeem reward",
+        variant: "destructive"
+      })
+    }
   }
 
 
@@ -175,7 +232,7 @@ const Rewards = () => {
                   <ItemCard
                     title={reward.title}
                     subtitle={`${reward.cost} pts`}
-                    onClick={() => handleRewardSelect(reward.id)}
+                    onClick={() => handleRewardSelect(reward)}
                   />
                 </CarouselItem>
               ))}
@@ -194,7 +251,7 @@ const Rewards = () => {
                   <ItemCard
                     title={reward.title}
                     subtitle={`${reward.cost} pts`}
-                    onClick={() => handleRewardSelect(reward.id)}
+                    onClick={() => handleRewardSelect(reward)}
                   />
                 </CarouselItem>
               ))}
@@ -213,7 +270,7 @@ const Rewards = () => {
                   <ItemCard
                     title={reward.title}
                     subtitle={`${reward.cost} pts`}
-                    onClick={() => handleRewardSelect(reward.id)}
+                    onClick={() => handleRewardSelect(reward)}
                   />
                 </CarouselItem>
               ))}
@@ -233,12 +290,12 @@ const Rewards = () => {
         )}
       </div>
 
-      <RewardRedemptionConfirmModal
-        isOpen={showRedemptionConfirmModal}
-        onClose={() => setShowRedemptionConfirmModal(false)}
-        reward={selectedRewardForRedemption}
-        familyMembers={familyMembers}
-        onConfirmRedemption={handleRewardRedemption}
+      <ItemOverlay
+        kind="reward"
+        open={overlayOpen}
+        onClose={() => setOverlayOpen(false)}
+        item={overlayItem}
+        onRedeem={handleRedeem}
       />
     </div>
   )

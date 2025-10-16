@@ -7,13 +7,18 @@ import { getChallenges, addChallenge, initializeStorage, type Challenge } from "
 import { CarouselRow } from "@/components/ui/CarouselRow"
 import { CarouselItem } from "@/components/ui/carousel"
 import { ItemCard } from "@/components/ui/ItemCard"
+import ItemOverlay, { type OverlayItem } from "@/components/detail/ItemOverlay"
+import { useToast } from "@/hooks/use-toast"
 
 const Challenges = () => {
   const navigate = useNavigate()
+  const { toast } = useToast()
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [easyChallenges, setEasyChallenges] = useState<Challenge[]>([])
   const [mediumChallenges, setMediumChallenges] = useState<Challenge[]>([])
   const [hardChallenges, setHardChallenges] = useState<Challenge[]>([])
+  const [overlayOpen, setOverlayOpen] = useState(false)
+  const [overlayItem, setOverlayItem] = useState<OverlayItem | null>(null)
 
   useEffect(() => {
     initializeStorage()
@@ -31,11 +36,25 @@ const Challenges = () => {
     setHardChallenges(allChallenges.filter(c => c.difficulty === 'Hard'))
   }
 
-  const difficultyColors = {
-    Easy: "secondary",
-    Medium: "default",
-    Hard: "destructive"
-  } as const
+  const handleChallengeClick = (challenge: Challenge) => {
+    setOverlayItem({
+      id: challenge.id,
+      title: challenge.title,
+      description: challenge.description,
+      difficulty: challenge.difficulty,
+      points: challenge.points
+    })
+    setOverlayOpen(true)
+  }
+
+  const handlePlay = (item: OverlayItem, memberIds: string[]) => {
+    // Start challenge logic here
+    toast({
+      title: "Challenge Started!",
+      description: `${item.title} has been started for ${memberIds.length} member${memberIds.length > 1 ? 's' : ''}.`
+    })
+    setOverlayOpen(false)
+  }
 
   return (
     <div className="pb-20"> {/* Bottom padding for navigation */}
@@ -74,6 +93,7 @@ const Challenges = () => {
               <ItemCard
                 title={challenge.title}
                 subtitle={`${challenge.points} pts`}
+                onClick={() => handleChallengeClick(challenge)}
               />
             </CarouselItem>
           ))}
@@ -92,6 +112,7 @@ const Challenges = () => {
               <ItemCard
                 title={challenge.title}
                 subtitle={`${challenge.points} pts`}
+                onClick={() => handleChallengeClick(challenge)}
               />
             </CarouselItem>
           ))}
@@ -110,6 +131,7 @@ const Challenges = () => {
               <ItemCard
                 title={challenge.title}
                 subtitle={`${challenge.points} pts`}
+                onClick={() => handleChallengeClick(challenge)}
               />
             </CarouselItem>
           ))}
@@ -127,6 +149,14 @@ const Challenges = () => {
         isOpen={showCreateModal}
         onClose={() => setShowCreateModal(false)}
         onChallengeCreated={handleChallengeCreated}
+      />
+
+      <ItemOverlay
+        kind="challenge"
+        open={overlayOpen}
+        onClose={() => setOverlayOpen(false)}
+        item={overlayItem}
+        onPlay={handlePlay}
       />
     </div>
   )
