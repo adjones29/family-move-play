@@ -78,8 +78,7 @@ const Games = () => {
             <CarouselItem key={game.id} className="pl-2 md:pl-4 basis-auto">
               <ItemCard
                 title={game.title}
-                subtitle={game.description}
-                badge={`${game.points} pts`}
+                subtitle={`${game.points} pts`}
                 onClick={() => handleGameClick(game)}
               />
             </CarouselItem>
@@ -98,8 +97,7 @@ const Games = () => {
             <CarouselItem key={game.id} className="pl-2 md:pl-4 basis-auto">
               <ItemCard
                 title={game.title}
-                subtitle={game.description}
-                badge={`${game.points} pts`}
+                subtitle={`${game.points} pts`}
                 onClick={() => handleGameClick(game)}
               />
             </CarouselItem>
@@ -118,8 +116,7 @@ const Games = () => {
             <CarouselItem key={game.id} className="pl-2 md:pl-4 basis-auto">
               <ItemCard
                 title={game.title}
-                subtitle={game.description}
-                badge={`${game.points} pts`}
+                subtitle={`${game.points} pts`}
                 onClick={() => handleGameClick(game)}
               />
             </CarouselItem>

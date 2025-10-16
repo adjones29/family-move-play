@@ -73,9 +73,7 @@ const Challenges = () => {
             <CarouselItem key={challenge.id} className="pl-2 md:pl-4 basis-auto">
               <ItemCard
                 title={challenge.title}
-                subtitle={challenge.description}
-                badge={`${challenge.points} pts`}
-                badgeVariant={difficultyColors[challenge.difficulty]}
+                subtitle={`${challenge.points} pts`}
               />
             </CarouselItem>
           ))}
@@ -93,9 +91,7 @@ const Challenges = () => {
             <CarouselItem key={challenge.id} className="pl-2 md:pl-4 basis-auto">
               <ItemCard
                 title={challenge.title}
-                subtitle={challenge.description}
-                badge={`${challenge.points} pts`}
-                badgeVariant={difficultyColors[challenge.difficulty]}
+                subtitle={`${challenge.points} pts`}
               />
             </CarouselItem>
           ))}
@@ -113,9 +109,7 @@ const Challenges = () => {
             <CarouselItem key={challenge.id} className="pl-2 md:pl-4 basis-auto">
               <ItemCard
                 title={challenge.title}
-                subtitle={challenge.description}
-                badge={`${challenge.points} pts`}
-                badgeVariant={difficultyColors[challenge.difficulty]}
+                subtitle={`${challenge.points} pts`}
               />
             </CarouselItem>
           ))}

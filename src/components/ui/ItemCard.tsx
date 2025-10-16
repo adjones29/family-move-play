@@ -1,13 +1,9 @@
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
 interface ItemCardProps {
   title: string
-  subtitle: string
+  subtitle?: string
   image?: string
-  badge?: string
-  badgeVariant?: "default" | "secondary" | "outline" | "destructive"
   onClick?: () => void
   className?: string
 }
@@ -16,42 +12,37 @@ export function ItemCard({
   title,
   subtitle,
   image,
-  badge,
-  badgeVariant = "default",
   onClick,
   className
 }: ItemCardProps) {
   return (
-    <Card
-      className={cn(
-        "flex-shrink-0 w-[280px] cursor-pointer transition-all hover:scale-105 hover:shadow-lg overflow-hidden",
-        className
-      )}
-      onClick={onClick}
-    >
-      {image && (
-        <div className="relative h-40 bg-gradient-to-br from-primary/20 to-primary/5">
-          <img
-            src={image}
-            alt={title}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              e.currentTarget.style.display = 'none'
-            }}
-          />
-        </div>
-      )}
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="font-semibold text-base line-clamp-1">{title}</h3>
-          {badge && (
-            <Badge variant={badgeVariant} className="flex-shrink-0 text-xs">
-              {badge}
-            </Badge>
+    <div className={cn("snap-start", className)}>
+      <button
+        onClick={onClick}
+        className="block bg-card rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all hover:scale-[1.02] w-[168px] md:w-[196px] lg:w-[224px]"
+      >
+        <div className="aspect-[2/3] bg-muted">
+          {image && (
+            <img
+              src={image}
+              alt={title}
+              loading="lazy"
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none'
+              }}
+            />
           )}
         </div>
-        <p className="text-sm text-muted-foreground line-clamp-2">{subtitle}</p>
-      </CardContent>
-    </Card>
+      </button>
+      <div className="mt-2 w-[168px] md:w-[196px] lg:w-[224px]">
+        <div className="text-sm md:text-base font-semibold text-foreground leading-tight line-clamp-2">
+          {title}
+        </div>
+        {subtitle && (
+          <div className="text-xs text-muted-foreground mt-0.5">{subtitle}</div>
+        )}
+      </div>
+    </div>
   )
 }

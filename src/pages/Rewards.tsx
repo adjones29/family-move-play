@@ -174,8 +174,7 @@ const Rewards = () => {
                 <CarouselItem key={reward.id} className="pl-2 md:pl-4 basis-auto">
                   <ItemCard
                     title={reward.title}
-                    subtitle={reward.description}
-                    badge={`${reward.cost} pts`}
+                    subtitle={`${reward.cost} pts`}
                     onClick={() => handleRewardSelect(reward.id)}
                   />
                 </CarouselItem>
@@ -194,8 +193,7 @@ const Rewards = () => {
                 <CarouselItem key={reward.id} className="pl-2 md:pl-4 basis-auto">
                   <ItemCard
                     title={reward.title}
-                    subtitle={reward.description}
-                    badge={`${reward.cost} pts`}
+                    subtitle={`${reward.cost} pts`}
                     onClick={() => handleRewardSelect(reward.id)}
                   />
                 </CarouselItem>
@@ -214,8 +212,7 @@ const Rewards = () => {
                 <CarouselItem key={reward.id} className="pl-2 md:pl-4 basis-auto">
                   <ItemCard
                     title={reward.title}
-                    subtitle={reward.description}
-                    badge={`${reward.cost} pts`}
+                    subtitle={`${reward.cost} pts`}
                     onClick={() => handleRewardSelect(reward.id)}
                   />
                 </CarouselItem>
