@@ -2,7 +2,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 export async function fetchChallengesByDifficulty(difficulty: 'easy' | 'medium' | 'hard') {
   const { data, error } = await supabase
-    .from('challenges')
+    .from('v_challenges_media')
     .select('*')
     .eq('is_active', true)
     .eq('difficulty', difficulty)
@@ -19,7 +19,7 @@ export async function fetchChallengesByDifficulty(difficulty: 'easy' | 'medium' 
 
 export async function fetchGamesByCategory(category: 'exercise' | 'fun' | 'adventure') {
   const { data, error } = await supabase
-    .from('games')
+    .from('v_games_media')
     .select('*')
     .eq('is_active', true)
     .eq('category', category)
@@ -36,7 +36,7 @@ export async function fetchGamesByCategory(category: 'exercise' | 'fun' | 'adven
 
 export async function fetchRewardsByType(type: 'family' | 'individual' | 'special') {
   const { data, error } = await supabase
-    .from('rewards')
+    .from('v_rewards_media')
     .select('*')
     .eq('is_active', true)
     .eq('type', type)

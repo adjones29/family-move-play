@@ -103,6 +103,7 @@ const Challenges = () => {
               <ItemCard
                 title={challenge.title}
                 subtitle={`${challenge.points} pts`}
+                row={challenge}
                 onClick={() => handleChallengeClick(challenge)}
               />
             </CarouselItem>
@@ -122,6 +123,7 @@ const Challenges = () => {
               <ItemCard
                 title={challenge.title}
                 subtitle={`${challenge.points} pts`}
+                row={challenge}
                 onClick={() => handleChallengeClick(challenge)}
               />
             </CarouselItem>
@@ -141,6 +143,7 @@ const Challenges = () => {
               <ItemCard
                 title={challenge.title}
                 subtitle={`${challenge.points} pts`}
+                row={challenge}
                 onClick={() => handleChallengeClick(challenge)}
               />
             </CarouselItem>

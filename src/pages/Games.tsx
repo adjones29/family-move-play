@@ -104,6 +104,7 @@ const Games = () => {
               <ItemCard
                 title={game.title}
                 subtitle="Exercise"
+                row={game}
                 onClick={() => handleGameClick(game)}
               />
             </CarouselItem>
@@ -123,6 +124,7 @@ const Games = () => {
               <ItemCard
                 title={game.title}
                 subtitle="Fun"
+                row={game}
                 onClick={() => handleGameClick(game)}
               />
             </CarouselItem>
@@ -142,6 +144,7 @@ const Games = () => {
               <ItemCard
                 title={game.title}
                 subtitle="Adventure"
+                row={game}
                 onClick={() => handleGameClick(game)}
               />
             </CarouselItem>

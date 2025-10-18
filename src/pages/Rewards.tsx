@@ -250,6 +250,7 @@ const Rewards = () => {
                   <ItemCard
                     title={reward.title}
                     subtitle={`${reward.cost} pts`}
+                    row={reward}
                     onClick={() => handleRewardSelect(reward)}
                   />
                 </CarouselItem>
@@ -269,6 +270,7 @@ const Rewards = () => {
                   <ItemCard
                     title={reward.title}
                     subtitle={`${reward.cost} pts`}
+                    row={reward}
                     onClick={() => handleRewardSelect(reward)}
                   />
                 </CarouselItem>
@@ -288,6 +290,7 @@ const Rewards = () => {
                   <ItemCard
                     title={reward.title}
                     subtitle={`${reward.cost} pts`}
+                    row={reward}
                     onClick={() => handleRewardSelect(reward)}
                   />
                 </CarouselItem>

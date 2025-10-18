@@ -20,6 +20,9 @@ export type Database = {
           description: string | null
           difficulty: Database["public"]["Enums"]["challenge_difficulty"]
           id: string
+          image_bucket: string | null
+          image_filename: string | null
+          image_folder: string | null
           image_url: string | null
           is_active: boolean
           points: number
@@ -30,6 +33,9 @@ export type Database = {
           description?: string | null
           difficulty: Database["public"]["Enums"]["challenge_difficulty"]
           id?: string
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
           image_url?: string | null
           is_active?: boolean
           points?: number
@@ -40,6 +46,9 @@ export type Database = {
           description?: string | null
           difficulty?: Database["public"]["Enums"]["challenge_difficulty"]
           id?: string
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
           image_url?: string | null
           is_active?: boolean
           points?: number
@@ -130,6 +139,9 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          image_bucket: string | null
+          image_filename: string | null
+          image_folder: string | null
           image_url: string | null
           is_active: boolean
           title: string
@@ -139,6 +151,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
           image_url?: string | null
           is_active?: boolean
           title: string
@@ -148,6 +163,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
           image_url?: string | null
           is_active?: boolean
           title?: string
@@ -286,6 +304,9 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          image_bucket: string | null
+          image_filename: string | null
+          image_folder: string | null
           image_url: string | null
           is_active: boolean
           title: string
@@ -296,6 +317,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
           image_url?: string | null
           is_active?: boolean
           title: string
@@ -306,6 +330,9 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
           image_url?: string | null
           is_active?: boolean
           title?: string
@@ -425,6 +452,97 @@ export type Database = {
           },
         ]
       }
+      v_challenges_media: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          difficulty: Database["public"]["Enums"]["challenge_difficulty"] | null
+          id: string | null
+          image_bucket: string | null
+          image_filename: string | null
+          image_folder: string | null
+          image_url: string | null
+          is_active: boolean | null
+          points: number | null
+          storage_path: string | null
+          title: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          difficulty?:
+            | Database["public"]["Enums"]["challenge_difficulty"]
+            | null
+          id?: string | null
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
+          image_url?: string | null
+          is_active?: boolean | null
+          points?: number | null
+          storage_path?: never
+          title?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          difficulty?:
+            | Database["public"]["Enums"]["challenge_difficulty"]
+            | null
+          id?: string | null
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
+          image_url?: string | null
+          is_active?: boolean | null
+          points?: number | null
+          storage_path?: never
+          title?: string | null
+        }
+        Relationships: []
+      }
+      v_games_media: {
+        Row: {
+          category: Database["public"]["Enums"]["game_category"] | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          image_bucket: string | null
+          image_filename: string | null
+          image_folder: string | null
+          image_url: string | null
+          is_active: boolean | null
+          storage_path: string | null
+          title: string | null
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["game_category"] | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
+          image_url?: string | null
+          is_active?: boolean | null
+          storage_path?: never
+          title?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["game_category"] | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
+          image_url?: string | null
+          is_active?: boolean | null
+          storage_path?: never
+          title?: string | null
+        }
+        Relationships: []
+      }
       v_points_balances: {
         Row: {
           member_id: string | null
@@ -468,6 +586,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      v_rewards_media: {
+        Row: {
+          cost: number | null
+          created_at: string | null
+          description: string | null
+          id: string | null
+          image_bucket: string | null
+          image_filename: string | null
+          image_folder: string | null
+          image_url: string | null
+          is_active: boolean | null
+          storage_path: string | null
+          title: string | null
+          type: Database["public"]["Enums"]["reward_type"] | null
+        }
+        Insert: {
+          cost?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
+          image_url?: string | null
+          is_active?: boolean | null
+          storage_path?: never
+          title?: string | null
+          type?: Database["public"]["Enums"]["reward_type"] | null
+        }
+        Update: {
+          cost?: number | null
+          created_at?: string | null
+          description?: string | null
+          id?: string | null
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
+          image_url?: string | null
+          is_active?: boolean | null
+          storage_path?: never
+          title?: string | null
+          type?: Database["public"]["Enums"]["reward_type"] | null
+        }
+        Relationships: []
       }
     }
     Functions: {

@@ -12,6 +12,7 @@ import Games from "./pages/Games";
 import Family from "./pages/Family";
 import Rewards from "./pages/Rewards";
 import AdminImport from "./pages/AdminImport";
+import AdminAttachMedia from "./pages/AdminAttachMedia";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -64,6 +65,11 @@ const App = () => (
             <Route path="/admin-import" element={
               <ProtectedRoute>
                 <AdminImport />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin-media" element={
+              <ProtectedRoute>
+                <AdminAttachMedia />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
