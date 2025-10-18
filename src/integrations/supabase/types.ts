@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      challenges: {
+        Row: {
+          created_at: string
+          description: string | null
+          difficulty: Database["public"]["Enums"]["challenge_difficulty"]
+          id: string
+          image_url: string | null
+          is_active: boolean
+          points: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          difficulty: Database["public"]["Enums"]["challenge_difficulty"]
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          points?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          difficulty?: Database["public"]["Enums"]["challenge_difficulty"]
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          points?: number
+          title?: string
+        }
+        Relationships: []
+      }
       families: {
         Row: {
           created_at: string | null
@@ -90,6 +123,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      games: {
+        Row: {
+          category: Database["public"]["Enums"]["game_category"]
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          title: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["game_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          title: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["game_category"]
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          title?: string
+        }
+        Relationships: []
       }
       points_ledger: {
         Row: {
@@ -216,6 +279,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      rewards: {
+        Row: {
+          cost: number
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          title: string
+          type: Database["public"]["Enums"]["reward_type"]
+        }
+        Insert: {
+          cost?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          title: string
+          type: Database["public"]["Enums"]["reward_type"]
+        }
+        Update: {
+          cost?: number
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          title?: string
+          type?: Database["public"]["Enums"]["reward_type"]
+        }
+        Relationships: []
       }
       step_entries: {
         Row: {
@@ -392,7 +488,9 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      challenge_difficulty: "easy" | "medium" | "hard"
+      game_category: "exercise" | "fun" | "adventure"
+      reward_type: "family" | "individual" | "special"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -519,6 +617,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      challenge_difficulty: ["easy", "medium", "hard"],
+      game_category: ["exercise", "fun", "adventure"],
+      reward_type: ["family", "individual", "special"],
+    },
   },
 } as const

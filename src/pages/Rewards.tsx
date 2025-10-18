@@ -11,9 +11,18 @@ import { supabase } from "@/integrations/supabase/client"
 import { CarouselRow } from "@/components/ui/CarouselRow"
 import { CarouselItem } from "@/components/ui/carousel"
 import { ItemCard } from "@/components/ui/ItemCard"
-import { getRewards, initializeStorage, type Reward } from "@/utils/localStorage"
+import { fetchRewardsByType } from "@/lib/catalog"
 import ItemOverlay, { type OverlayItem } from "@/components/detail/ItemOverlay"
 import { redeemFamilyReward, redeemIndividualReward } from "@/lib/points"
+
+type Reward = {
+  id: string
+  title: string
+  description?: string
+  image_url?: string
+  type: string
+  cost: number
+}
 
 const Rewards = () => {
   const navigate = useNavigate()
@@ -27,12 +36,17 @@ const Rewards = () => {
   const [overlayOpen, setOverlayOpen] = useState(false)
   const [overlayItem, setOverlayItem] = useState<OverlayItem | null>(null)
 
+  const loadRewards = async () => {
+    const family = await fetchRewardsByType('family')
+    const individual = await fetchRewardsByType('individual')
+    const special = await fetchRewardsByType('special')
+    setFamilyRewards(family)
+    setIndividualRewards(individual)
+    setSpecialRewards(special)
+  }
+
   useEffect(() => {
-    initializeStorage()
-    const allRewards = getRewards()
-    setFamilyRewards(allRewards.filter(r => r.category === 'Family Rewards'))
-    setIndividualRewards(allRewards.filter(r => r.category === 'Individual Rewards'))
-    setSpecialRewards(allRewards.filter(r => r.category === 'Special Rewards'))
+    loadRewards()
   }, [])
 
   type EarnedReward = {
@@ -115,13 +129,17 @@ const Rewards = () => {
   }
 
   const handleRewardSelect = (reward: Reward) => {
+    // Map database type to overlay type format
+    const overlayType = reward.type === 'family' ? 'Family Rewards' :
+                        reward.type === 'individual' ? 'Individual Rewards' :
+                        'Special Rewards'
+    
     setOverlayItem({
       id: reward.id,
       title: reward.title,
-      description: reward.description,
-      type: reward.category as any,
-      cost: reward.cost,
-      rarity: reward.rarity
+      description: reward.description || '',
+      type: overlayType as any,
+      cost: reward.cost
     })
     setOverlayOpen(true)
   }

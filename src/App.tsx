@@ -11,6 +11,7 @@ import Challenges from "./pages/Challenges";
 import Games from "./pages/Games";
 import Family from "./pages/Family";
 import Rewards from "./pages/Rewards";
+import AdminImport from "./pages/AdminImport";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -58,6 +59,11 @@ const App = () => (
                 <MobileLayout>
                   <Rewards />
                 </MobileLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/admin-import" element={
+              <ProtectedRoute>
+                <AdminImport />
               </ProtectedRoute>
             } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

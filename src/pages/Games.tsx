@@ -3,46 +3,54 @@ import { Button } from "@/components/ui/enhanced-button"
 import { CreateMiniGameModal } from "@/components/CreateMiniGameModal"
 import { ArrowLeft, GamepadIcon, Plus } from "lucide-react"
 import { useNavigate } from "react-router-dom"
-import { getMiniGames, addMiniGame, initializeStorage, type MiniGame } from "@/utils/localStorage"
+import { fetchGamesByCategory } from "@/lib/catalog"
 import { CarouselRow } from "@/components/ui/CarouselRow"
 import { CarouselItem } from "@/components/ui/carousel"
 import { ItemCard } from "@/components/ui/ItemCard"
 import ItemOverlay, { type OverlayItem } from "@/components/detail/ItemOverlay"
 import { useToast } from "@/hooks/use-toast"
 
+type Game = {
+  id: string
+  title: string
+  description?: string
+  image_url?: string
+  category: string
+}
+
 const Games = () => {
   const navigate = useNavigate()
   const { toast } = useToast()
   const [showCreateModal, setShowCreateModal] = useState(false)
-  const [exerciseGames, setExerciseGames] = useState<MiniGame[]>([])
-  const [funGames, setFunGames] = useState<MiniGame[]>([])
-  const [adventureGames, setAdventureGames] = useState<MiniGame[]>([])
+  const [exerciseGames, setExerciseGames] = useState<Game[]>([])
+  const [funGames, setFunGames] = useState<Game[]>([])
+  const [adventureGames, setAdventureGames] = useState<Game[]>([])
   const [overlayOpen, setOverlayOpen] = useState(false)
   const [overlayItem, setOverlayItem] = useState<OverlayItem | null>(null)
 
-  useEffect(() => {
-    initializeStorage()
-    const allGames = getMiniGames()
-    setExerciseGames(allGames.filter(g => g.category === 'Exercise'))
-    setFunGames(allGames.filter(g => g.category === 'Fun'))
-    setAdventureGames(allGames.filter(g => g.category === 'Adventure'))
-  }, [])
-
-  const handleGameCreated = (newGame: Omit<MiniGame, 'id'>) => {
-    addMiniGame(newGame)
-    const allGames = getMiniGames()
-    setExerciseGames(allGames.filter(g => g.category === 'Exercise'))
-    setFunGames(allGames.filter(g => g.category === 'Fun'))
-    setAdventureGames(allGames.filter(g => g.category === 'Adventure'))
+  const loadGames = async () => {
+    const exercise = await fetchGamesByCategory('exercise')
+    const fun = await fetchGamesByCategory('fun')
+    const adventure = await fetchGamesByCategory('adventure')
+    setExerciseGames(exercise)
+    setFunGames(fun)
+    setAdventureGames(adventure)
   }
 
-  const handleGameClick = (game: MiniGame) => {
+  useEffect(() => {
+    loadGames()
+  }, [])
+
+  const handleGameCreated = () => {
+    loadGames()
+  }
+
+  const handleGameClick = (game: Game) => {
     setOverlayItem({
       id: game.id,
       title: game.title,
-      description: game.description,
-      category: game.category,
-      points: game.points
+      description: game.description || '',
+      category: game.category
     })
     setOverlayOpen(true)
   }
@@ -95,7 +103,7 @@ const Games = () => {
             <CarouselItem key={game.id} className="pl-2 md:pl-4 basis-auto">
               <ItemCard
                 title={game.title}
-                subtitle={`${game.points} pts`}
+                subtitle="Exercise"
                 onClick={() => handleGameClick(game)}
               />
             </CarouselItem>
@@ -114,7 +122,7 @@ const Games = () => {
             <CarouselItem key={game.id} className="pl-2 md:pl-4 basis-auto">
               <ItemCard
                 title={game.title}
-                subtitle={`${game.points} pts`}
+                subtitle="Fun"
                 onClick={() => handleGameClick(game)}
               />
             </CarouselItem>
@@ -133,7 +141,7 @@ const Games = () => {
             <CarouselItem key={game.id} className="pl-2 md:pl-4 basis-auto">
               <ItemCard
                 title={game.title}
-                subtitle={`${game.points} pts`}
+                subtitle="Adventure"
                 onClick={() => handleGameClick(game)}
               />
             </CarouselItem>

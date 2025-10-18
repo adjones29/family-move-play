@@ -3,12 +3,21 @@ import { Button } from "@/components/ui/enhanced-button"
 import { ArrowLeft, Plus } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { CreateChallengeModal } from "@/components/CreateChallengeModal"
-import { getChallenges, addChallenge, initializeStorage, type Challenge } from "@/utils/localStorage"
+import { fetchChallengesByDifficulty } from "@/lib/catalog"
 import { CarouselRow } from "@/components/ui/CarouselRow"
 import { CarouselItem } from "@/components/ui/carousel"
 import { ItemCard } from "@/components/ui/ItemCard"
 import ItemOverlay, { type OverlayItem } from "@/components/detail/ItemOverlay"
 import { useToast } from "@/hooks/use-toast"
+
+type Challenge = {
+  id: string
+  title: string
+  description?: string
+  image_url?: string
+  difficulty: string
+  points: number
+}
 
 const Challenges = () => {
   const navigate = useNavigate()
@@ -20,27 +29,28 @@ const Challenges = () => {
   const [overlayOpen, setOverlayOpen] = useState(false)
   const [overlayItem, setOverlayItem] = useState<OverlayItem | null>(null)
 
+  const loadChallenges = async () => {
+    const easy = await fetchChallengesByDifficulty('easy')
+    const medium = await fetchChallengesByDifficulty('medium')
+    const hard = await fetchChallengesByDifficulty('hard')
+    setEasyChallenges(easy)
+    setMediumChallenges(medium)
+    setHardChallenges(hard)
+  }
+
   useEffect(() => {
-    initializeStorage()
-    const allChallenges = getChallenges()
-    setEasyChallenges(allChallenges.filter(c => c.difficulty === 'Easy'))
-    setMediumChallenges(allChallenges.filter(c => c.difficulty === 'Medium'))
-    setHardChallenges(allChallenges.filter(c => c.difficulty === 'Hard'))
+    loadChallenges()
   }, [])
 
-  const handleChallengeCreated = (newChallenge: Omit<Challenge, 'id'>) => {
-    addChallenge(newChallenge)
-    const allChallenges = getChallenges()
-    setEasyChallenges(allChallenges.filter(c => c.difficulty === 'Easy'))
-    setMediumChallenges(allChallenges.filter(c => c.difficulty === 'Medium'))
-    setHardChallenges(allChallenges.filter(c => c.difficulty === 'Hard'))
+  const handleChallengeCreated = () => {
+    loadChallenges()
   }
 
   const handleChallengeClick = (challenge: Challenge) => {
     setOverlayItem({
       id: challenge.id,
       title: challenge.title,
-      description: challenge.description,
+      description: challenge.description || '',
       difficulty: challenge.difficulty,
       points: challenge.points
     })
