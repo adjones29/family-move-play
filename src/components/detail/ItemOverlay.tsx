@@ -3,7 +3,9 @@ import ModalOverlay from '@/components/ui/ModalOverlay'
 import MemberPicker from '@/components/family/MemberPicker'
 import { Play, Gift, X } from 'lucide-react'
 import { useFamilyMembers } from '@/hooks/useFamilyMembers'
+import { useAIHeroImage } from '@/hooks/useAIHeroImage'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 export type OverlayKind = 'challenge' | 'game' | 'reward'
 export type OverlayItem = { 
@@ -33,6 +35,14 @@ export default function ItemOverlay({ open, onClose, kind, item, onPlay, onRedee
   const defaultIds = useMemo(() => members.map(m => m.id), [members])
   const [selected, setSelected] = useState<string[]>(defaultIds)
 
+  // AI Hero Image generation
+  const { imageUrl: aiImageUrl, isLoading: isImageLoading } = useAIHeroImage(
+    item?.id || null,
+    kind,
+    item?.title || null,
+    open && !!item
+  )
+
   useEffect(() => {
     if (open && members.length > 0) {
       setSelected(defaultIds)
@@ -45,16 +55,21 @@ export default function ItemOverlay({ open, onClose, kind, item, onPlay, onRedee
     ? item.type === 'Individual Rewards'
     : true
 
-  const primaryText = kind === 'reward' ? 'Redeem' : 'Play'
+  const primaryText = kind === 'reward' ? 'Redeem Reward' : kind === 'game' ? 'Start Game' : 'Start Challenge'
   const primaryIcon = kind === 'reward' ? <Gift size={20} /> : <Play size={20} />
+  const isDisabled = showPicker && selected.length === 0
   
   const onPrimary = () => {
+    if (isDisabled) return
     if (kind === 'reward') {
       onRedeem?.(item, selected)
     } else {
       onPlay?.(item, selected)
     }
   }
+
+  // Use AI image if available, fallback to item image
+  const heroImage = aiImageUrl || item.image
 
   return (
     <ModalOverlay open={open} onClose={onClose}>
@@ -66,65 +81,79 @@ export default function ItemOverlay({ open, onClose, kind, item, onPlay, onRedee
         <X className='h-5 w-5 text-white' />
       </button>
 
-      {/* HERO */}
-      <div className='relative w-full h-[42vh] min-h-[260px] bg-muted'>
-        {item.image ? (
-          <img src={item.image} alt={item.title} className='absolute inset-0 w-full h-full object-cover' />
-        ) : null}
-        <div className='absolute inset-0 bg-gradient-to-t from-background via-background/30 to-background/0' />
+      {/* AI HERO IMAGE */}
+      <div className='relative w-full aspect-video min-h-[200px] max-h-[300px] bg-muted overflow-hidden'>
+        {isImageLoading ? (
+          // Shimmer loading state
+          <div className='absolute inset-0 overflow-hidden'>
+            <div className='absolute inset-0 bg-gradient-to-r from-muted via-muted/50 to-muted animate-pulse' />
+            <div 
+              className='absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent'
+              style={{
+                animation: 'shimmer 2s infinite',
+              }}
+            />
+          </div>
+        ) : heroImage ? (
+          <img 
+            src={heroImage} 
+            alt={item.title} 
+            className='absolute inset-0 w-full h-full object-cover'
+          />
+        ) : (
+          // Fallback gradient background
+          <div className='absolute inset-0 bg-gradient-to-br from-primary/30 via-secondary/20 to-accent/30' />
+        )}
+        {/* Gradient overlay for text readability */}
+        <div className='absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent' />
       </div>
 
       {/* CONTENT */}
-      <div className='px-4 md:px-6 -mt-16 pb-6 relative z-10'>
-        <div className='bg-card/95 backdrop-blur-sm rounded-2xl p-4 md:p-6 border border-border/50'>
+      <div className='px-4 md:px-6 -mt-12 pb-4 relative z-10'>
+        <div className='bg-card/95 backdrop-blur-sm rounded-2xl p-4 md:p-6 border border-border/50 shadow-lg'>
           <h2 className='text-2xl md:text-3xl font-extrabold tracking-tight'>{item.title}</h2>
           
+          {/* Badges */}
           <div className='mt-3 flex flex-wrap items-center gap-2 text-sm'>
-            {kind === 'challenge' && item.difficulty ? (
-              <span className='px-2.5 py-1 rounded-full bg-secondary text-secondary-foreground font-medium'>
-                {item.difficulty}
+            {kind === 'challenge' && item.difficulty && (
+              <span className={cn(
+                'px-2.5 py-1 rounded-full font-medium',
+                item.difficulty === 'easy' && 'bg-green-500/20 text-green-600 dark:text-green-400',
+                item.difficulty === 'medium' && 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400',
+                item.difficulty === 'hard' && 'bg-red-500/20 text-red-600 dark:text-red-400'
+              )}>
+                {item.difficulty.charAt(0).toUpperCase() + item.difficulty.slice(1)}
               </span>
-            ) : null}
-            {kind === 'game' && item.category ? (
-              <span className='px-2.5 py-1 rounded-full bg-secondary text-secondary-foreground font-medium'>
+            )}
+            {kind === 'game' && item.category && (
+              <span className='px-2.5 py-1 rounded-full bg-secondary text-secondary-foreground font-medium capitalize'>
                 {item.category}
               </span>
-            ) : null}
-            {kind === 'reward' && item.type ? (
-              <span className='px-2.5 py-1 rounded-full bg-secondary text-secondary-foreground font-medium capitalize'>
+            )}
+            {kind === 'reward' && item.type && (
+              <span className='px-2.5 py-1 rounded-full bg-secondary text-secondary-foreground font-medium'>
                 {item.type}
               </span>
-            ) : null}
-            {kind !== 'reward' && item.points ? (
+            )}
+            {kind !== 'reward' && item.points && (
               <span className='px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold border border-primary/20'>
-                {item.points} pts
+                +{item.points} pts
               </span>
-            ) : null}
-            {kind === 'reward' && item.cost ? (
-              <span className='px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold border border-primary/20'>
+            )}
+            {kind === 'reward' && item.cost && (
+              <span className='px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400 font-semibold'>
                 {item.cost} pts
               </span>
-            ) : null}
+            )}
           </div>
           
           <p className='mt-4 text-base md:text-lg text-muted-foreground leading-relaxed'>
             {item.description || 'No description available.'}
           </p>
-          
-          <div className='mt-6'>
-            <Button 
-              onClick={onPrimary} 
-              size="lg"
-              className='w-full md:w-auto text-base font-bold px-8 py-6 rounded-xl'
-            >
-              {primaryIcon}
-              <span>{primaryText}</span>
-            </Button>
-          </div>
         </div>
       </div>
 
-      {/* Member Picker (conditional) */}
+      {/* Member Picker */}
       <MemberPicker 
         selected={selected} 
         setSelected={setSelected} 
@@ -132,8 +161,29 @@ export default function ItemOverlay({ open, onClose, kind, item, onPlay, onRedee
         title={kind === 'reward' ? 'Who is redeeming?' : 'Who is participating?'} 
       />
 
-      {/* Bottom spacer */}
-      <div className='h-4' />
+      {/* Sticky CTA Footer */}
+      <div className='sticky bottom-0 p-4 bg-background/95 backdrop-blur-sm border-t border-border'>
+        <Button 
+          onClick={onPrimary} 
+          disabled={isDisabled}
+          size="lg"
+          className={cn(
+            'w-full text-base font-bold py-6 rounded-xl transition-all',
+            isDisabled && 'opacity-50 cursor-not-allowed'
+          )}
+        >
+          {primaryIcon}
+          <span className='ml-2'>{primaryText}</span>
+        </Button>
+        {showPicker && (
+          <p className='text-center text-sm text-muted-foreground mt-2'>
+            {selected.length === 0 
+              ? 'Select at least one participant'
+              : `${selected.length} participant${selected.length > 1 ? 's' : ''} selected`
+            }
+          </p>
+        )}
+      </div>
     </ModalOverlay>
   )
 }

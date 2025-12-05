@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react'
 import { useFamilyMembers } from '@/hooks/useFamilyMembers'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { cn } from '@/lib/utils'
 
 type Props = { 
   selected: string[]
@@ -21,29 +23,46 @@ export default function MemberPicker({ selected, setSelected, title = 'Who is pa
 
   return (
     <section className='px-4 md:px-6 py-4 border-t border-border'>
-      <h4 className='text-sm font-semibold mb-3'>{title}</h4>
-      <div className='flex flex-wrap gap-2'>
-        {members.map(m => (
-          <button 
-            key={m.id} 
-            onClick={() => toggle(m.id)} 
-            className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-              selected.includes(m.id) 
-                ? 'bg-primary text-primary-foreground border-primary' 
-                : 'bg-background text-foreground/80 border-border hover:bg-accent'
-            }`}
-          >
-            {m.display_name}
-          </button>
-        ))}
+      <div className='flex items-center justify-between mb-3'>
+        <h4 className='text-sm font-semibold'>{title}</h4>
         {members.length > 1 && (
           <button 
-            onClick={() => setSelected(allIds)} 
-            className='px-3 py-1.5 rounded-full text-sm font-medium border border-border text-foreground/80 hover:bg-accent transition-colors'
+            onClick={() => setSelected(selected.length === allIds.length ? [] : allIds)} 
+            className='text-xs font-medium text-primary hover:underline transition-colors'
           >
-            All
+            {selected.length === allIds.length ? 'Deselect All' : 'Select All'}
           </button>
         )}
+      </div>
+      <div className='flex flex-wrap gap-2'>
+        {members.map(m => {
+          const isSelected = selected.includes(m.id)
+          const initials = m.display_name?.charAt(0).toUpperCase() || '?'
+          
+          return (
+            <button 
+              key={m.id} 
+              onClick={() => toggle(m.id)} 
+              className={cn(
+                'flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium border transition-all',
+                isSelected 
+                  ? 'bg-primary text-primary-foreground border-primary ring-2 ring-primary/30 shadow-sm' 
+                  : 'bg-background text-foreground/80 border-border hover:bg-accent hover:border-accent'
+              )}
+            >
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={m.avatar_url || undefined} alt={m.display_name || 'Member'} />
+                <AvatarFallback className={cn(
+                  'text-xs font-semibold',
+                  isSelected ? 'bg-primary-foreground/20 text-primary-foreground' : 'bg-muted'
+                )}>
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <span>{m.display_name}</span>
+            </button>
+          )
+        })}
       </div>
     </section>
   )
