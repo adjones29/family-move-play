@@ -183,10 +183,9 @@ export function ActiveChallengesStore({ familyMembers, onPointsEarned }: ActiveC
                 />
                 <label 
                   htmlFor={member.name}
-                  className="flex items-center gap-2 cursor-pointer flex-1"
+                  className="cursor-pointer flex-1"
                 >
-                  <div className={`w-4 h-4 rounded-full bg-${member.memberColor}`} />
-                  <span>{member.name}</span>
+                  {member.name}
                 </label>
               </div>
             ))}
