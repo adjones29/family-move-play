@@ -486,6 +486,45 @@ export type Database = {
         }
         Relationships: []
       }
+      v_games_media: {
+        Row: {
+          category: Database["public"]["Enums"]["game_category"] | null
+          description: string | null
+          id: string | null
+          image_bucket: string | null
+          image_filename: string | null
+          image_folder: string | null
+          image_url: string | null
+          points: number | null
+          storage_path: string | null
+          title: string | null
+        }
+        Insert: {
+          category?: Database["public"]["Enums"]["game_category"] | null
+          description?: string | null
+          id?: string | null
+          image_bucket?: never
+          image_filename?: never
+          image_folder?: never
+          image_url?: never
+          points?: number | null
+          storage_path?: never
+          title?: string | null
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["game_category"] | null
+          description?: string | null
+          id?: string | null
+          image_bucket?: never
+          image_filename?: never
+          image_folder?: never
+          image_url?: never
+          points?: number | null
+          storage_path?: never
+          title?: string | null
+        }
+        Relationships: []
+      }
       v_points_balances: {
         Row: {
           member_id: string | null
