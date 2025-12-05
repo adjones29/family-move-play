@@ -136,39 +136,24 @@ export type Database = {
       games: {
         Row: {
           category: Database["public"]["Enums"]["game_category"]
-          created_at: string
           description: string | null
           id: string
-          image_bucket: string | null
-          image_filename: string | null
-          image_folder: string | null
-          image_url: string | null
-          is_active: boolean
-          title: string
+          points: number | null
+          title: string | null
         }
         Insert: {
           category: Database["public"]["Enums"]["game_category"]
-          created_at?: string
           description?: string | null
-          id?: string
-          image_bucket?: string | null
-          image_filename?: string | null
-          image_folder?: string | null
-          image_url?: string | null
-          is_active?: boolean
-          title: string
+          id: string
+          points?: number | null
+          title?: string | null
         }
         Update: {
           category?: Database["public"]["Enums"]["game_category"]
-          created_at?: string
           description?: string | null
           id?: string
-          image_bucket?: string | null
-          image_filename?: string | null
-          image_folder?: string | null
-          image_url?: string | null
-          is_active?: boolean
-          title?: string
+          points?: number | null
+          title?: string | null
         }
         Relationships: []
       }
@@ -496,48 +481,6 @@ export type Database = {
           image_url?: string | null
           is_active?: boolean | null
           points?: number | null
-          storage_path?: never
-          title?: string | null
-        }
-        Relationships: []
-      }
-      v_games_media: {
-        Row: {
-          category: Database["public"]["Enums"]["game_category"] | null
-          created_at: string | null
-          description: string | null
-          id: string | null
-          image_bucket: string | null
-          image_filename: string | null
-          image_folder: string | null
-          image_url: string | null
-          is_active: boolean | null
-          storage_path: string | null
-          title: string | null
-        }
-        Insert: {
-          category?: Database["public"]["Enums"]["game_category"] | null
-          created_at?: string | null
-          description?: string | null
-          id?: string | null
-          image_bucket?: string | null
-          image_filename?: string | null
-          image_folder?: string | null
-          image_url?: string | null
-          is_active?: boolean | null
-          storage_path?: never
-          title?: string | null
-        }
-        Update: {
-          category?: Database["public"]["Enums"]["game_category"] | null
-          created_at?: string | null
-          description?: string | null
-          id?: string | null
-          image_bucket?: string | null
-          image_filename?: string | null
-          image_folder?: string | null
-          image_url?: string | null
-          is_active?: boolean | null
           storage_path?: never
           title?: string | null
         }
