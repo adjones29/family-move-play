@@ -265,6 +265,7 @@ const MobileIndex = () => {
         {/* Reward Store */}
         <section>
           <RewardStore 
+            familyMembers={familyMembers}
             onRewardRedeem={handleRewardSelect}
           />
         </section>

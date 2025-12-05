@@ -307,7 +307,7 @@ const Index = () => {
         {/* Reward Store */}
         <section>
         <RewardStoreCarousel 
-          totalPoints={totalFamilyPoints}
+          familyMembers={familyMembers}
           onRewardRedeem={handleRewardSelect}
         />
         </section>
