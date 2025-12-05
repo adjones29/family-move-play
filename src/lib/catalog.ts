@@ -4,9 +4,7 @@ export async function fetchChallengesByDifficulty(difficulty: 'easy' | 'medium' 
   const { data, error } = await supabase
     .from('v_challenges_media')
     .select('*')
-    .eq('is_active', true)
     .eq('difficulty', difficulty)
-    .order('created_at', { ascending: false })
     .limit(50);
   
   if (error) {
@@ -21,9 +19,7 @@ export async function fetchGamesByCategory(category: 'exercise' | 'fun' | 'adven
   const { data, error } = await supabase
     .from('v_games_media')
     .select('*')
-    .eq('is_active', true)
     .eq('category', category)
-    .order('created_at', { ascending: false })
     .limit(50);
   
   if (error) {
@@ -38,9 +34,7 @@ export async function fetchRewardsByType(type: 'family' | 'individual' | 'specia
   const { data, error } = await supabase
     .from('v_rewards_media')
     .select('*')
-    .eq('is_active', true)
     .eq('type', type)
-    .order('created_at', { ascending: false })
     .limit(50);
   
   if (error) {

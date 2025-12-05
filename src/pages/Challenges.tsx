@@ -58,7 +58,6 @@ const Challenges = () => {
   }
 
   const handlePlay = (item: OverlayItem, memberIds: string[]) => {
-    // Start challenge logic here
     toast({
       title: "Challenge Started!",
       description: `${item.title} has been started for ${memberIds.length} member${memberIds.length > 1 ? 's' : ''}.`
@@ -67,8 +66,7 @@ const Challenges = () => {
   }
 
   return (
-    <div className="pb-20"> {/* Bottom padding for navigation */}
-      {/* Mobile Header */}
+    <div className="pb-20">
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
@@ -104,6 +102,8 @@ const Challenges = () => {
                 title={challenge.title}
                 subtitle={`${challenge.points} pts`}
                 row={challenge}
+                itemId={challenge.id}
+                itemType="challenge"
                 onClick={() => handleChallengeClick(challenge)}
               />
             </CarouselItem>
@@ -124,6 +124,8 @@ const Challenges = () => {
                 title={challenge.title}
                 subtitle={`${challenge.points} pts`}
                 row={challenge}
+                itemId={challenge.id}
+                itemType="challenge"
                 onClick={() => handleChallengeClick(challenge)}
               />
             </CarouselItem>
@@ -144,6 +146,8 @@ const Challenges = () => {
                 title={challenge.title}
                 subtitle={`${challenge.points} pts`}
                 row={challenge}
+                itemId={challenge.id}
+                itemType="challenge"
                 onClick={() => handleChallengeClick(challenge)}
               />
             </CarouselItem>

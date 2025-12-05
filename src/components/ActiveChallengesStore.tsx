@@ -2,39 +2,44 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { SegmentedControl } from "@/components/ui/segmented-control"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { getChallenges, initializeStorage, type Challenge } from "@/utils/localStorage"
-import { Target, Trophy, Calendar, Users } from "lucide-react"
+import { Target } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { awardPoints } from "@/lib/points"
+import { ItemCard } from "@/components/ui/ItemCard"
+import { fetchChallengesByDifficulty } from "@/lib/catalog"
 
 interface ActiveChallengesStoreProps {
   familyMembers: Array<{ id: string; name: string; memberColor: string }>
   onPointsEarned: (points: number) => void
 }
 
+type Challenge = {
+  id: string
+  title: string
+  description?: string | null
+  points: number
+  difficulty: string
+  image_url?: string | null
+}
+
 export function ActiveChallengesStore({ familyMembers, onPointsEarned }: ActiveChallengesStoreProps) {
-  const [selectedDifficulty, setSelectedDifficulty] = useState<"Easy" | "Medium" | "Hard">("Easy")
+  const [selectedDifficulty, setSelectedDifficulty] = useState<"easy" | "medium" | "hard">("easy")
   const [challenges, setChallenges] = useState<Challenge[]>([])
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null)
   const [showParticipantModal, setShowParticipantModal] = useState(false)
   const [selectedParticipants, setSelectedParticipants] = useState<string[]>([])
   const { toast } = useToast()
 
-  useEffect(() => {
-    initializeStorage()
-    setChallenges(getChallenges())
-  }, [])
-
-  const filteredChallenges = challenges.filter(challenge => challenge.difficulty === selectedDifficulty)
-
-  const difficultyColors = {
-    Easy: "bg-green-500/10 text-green-600 border-green-500/30",
-    Medium: "bg-yellow-500/10 text-yellow-600 border-yellow-500/30", 
-    Hard: "bg-red-500/10 text-red-600 border-red-500/30"
+  const loadChallenges = async () => {
+    const data = await fetchChallengesByDifficulty(selectedDifficulty)
+    setChallenges(data as Challenge[])
   }
+
+  useEffect(() => {
+    loadChallenges()
+  }, [selectedDifficulty])
 
   const handleChallengeSelect = (challenge: Challenge) => {
     setSelectedChallenge(challenge)
@@ -46,7 +51,6 @@ export function ActiveChallengesStore({ familyMembers, onPointsEarned }: ActiveC
     if (!selectedChallenge || selectedParticipants.length === 0) return
 
     try {
-      // Award points to each participant
       await Promise.all(
         selectedParticipants.map(participantName => {
           const member = familyMembers.find(m => m.name === participantName)
@@ -110,51 +114,32 @@ export function ActiveChallengesStore({ familyMembers, onPointsEarned }: ActiveC
         <CardContent className="space-y-4">
           <SegmentedControl
             value={selectedDifficulty}
-            onChange={(value) => setSelectedDifficulty(value as "Easy" | "Medium" | "Hard")}
+            onChange={(value) => setSelectedDifficulty(value as "easy" | "medium" | "hard")}
             options={[
-              { label: 'Easy', value: 'Easy' },
-              { label: 'Medium', value: 'Medium' },
-              { label: 'Hard', value: 'Hard' },
+              { label: 'Easy', value: 'easy' },
+              { label: 'Medium', value: 'medium' },
+              { label: 'Hard', value: 'hard' },
             ]}
             ariaLabel="Challenge difficulty filter"
           />
           
           <div className="space-y-3">
             <div className="flex gap-3 overflow-x-auto scrollbar-hide scroll-smooth pb-2">
-              {filteredChallenges.slice(0, 6).map((challenge) => (
-                <Card 
-                  key={challenge.id} 
-                  className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 flex-shrink-0 w-48"
+              {challenges.slice(0, 6).map((challenge) => (
+                <ItemCard
+                  key={challenge.id}
+                  title={challenge.title}
+                  subtitle={`${challenge.points} pts`}
+                  itemId={challenge.id}
+                  itemType="challenge"
+                  row={challenge}
                   onClick={() => handleChallengeSelect(challenge)}
-                >
-                  <CardContent className="p-3">
-                    <div className="flex items-start justify-between mb-2">
-                      <Badge 
-                        className={difficultyColors[challenge.difficulty]} 
-                        variant="outline"
-                      >
-                        {challenge.difficulty}
-                      </Badge>
-                    </div>
-                    
-                    <h3 className="text-sm font-semibold mb-1 line-clamp-2">{challenge.title}</h3>
-                    <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{challenge.description}</p>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1">
-                        <Trophy className="h-3 w-3 text-yellow-500" />
-                        <span className="text-xs font-medium">{challenge.points} pts</span>
-                      </div>
-                      <Button variant="default" size="sm" className="text-xs px-2 py-1 h-6">
-                        Start
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                  className="flex-shrink-0"
+                />
               ))}
             </div>
             
-            {filteredChallenges.length === 0 && (
+            {challenges.length === 0 && (
               <div className="text-center py-6">
                 <Target className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
                 <p className="text-sm text-muted-foreground">No challenges available</p>

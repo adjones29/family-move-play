@@ -105,6 +105,8 @@ const Games = () => {
                 title={game.title}
                 subtitle="Exercise"
                 row={game}
+                itemId={game.id}
+                itemType="game"
                 onClick={() => handleGameClick(game)}
               />
             </CarouselItem>
@@ -125,6 +127,8 @@ const Games = () => {
                 title={game.title}
                 subtitle="Fun"
                 row={game}
+                itemId={game.id}
+                itemType="game"
                 onClick={() => handleGameClick(game)}
               />
             </CarouselItem>
@@ -145,6 +149,8 @@ const Games = () => {
                 title={game.title}
                 subtitle="Adventure"
                 row={game}
+                itemId={game.id}
+                itemType="game"
                 onClick={() => handleGameClick(game)}
               />
             </CarouselItem>

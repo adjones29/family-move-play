@@ -67,7 +67,6 @@ const Rewards = () => {
     if (familyId) {
       fetchEarnedRewards()
       
-      // Subscribe to realtime changes
       const channel = supabase
         .channel(`redeemed_rewards:${familyId}`)
         .on(
@@ -129,7 +128,6 @@ const Rewards = () => {
   }
 
   const handleRewardSelect = (reward: Reward) => {
-    // Map database type to overlay type format
     const overlayType = reward.type === 'family' ? 'Family Rewards' :
                         reward.type === 'individual' ? 'Individual Rewards' :
                         'Special Rewards'
@@ -205,8 +203,7 @@ const Rewards = () => {
 
 
   return (
-    <div className="pb-20"> {/* Bottom padding for navigation */}
-      {/* Mobile Header */}
+    <div className="pb-20">
       <header className="sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
@@ -251,6 +248,8 @@ const Rewards = () => {
                     title={reward.title}
                     subtitle={`${reward.cost} pts`}
                     row={reward}
+                    itemId={reward.id}
+                    itemType="reward"
                     onClick={() => handleRewardSelect(reward)}
                   />
                 </CarouselItem>
@@ -271,6 +270,8 @@ const Rewards = () => {
                     title={reward.title}
                     subtitle={`${reward.cost} pts`}
                     row={reward}
+                    itemId={reward.id}
+                    itemType="reward"
                     onClick={() => handleRewardSelect(reward)}
                   />
                 </CarouselItem>
@@ -291,6 +292,8 @@ const Rewards = () => {
                     title={reward.title}
                     subtitle={`${reward.cost} pts`}
                     row={reward}
+                    itemId={reward.id}
+                    itemType="reward"
                     onClick={() => handleRewardSelect(reward)}
                   />
                 </CarouselItem>

@@ -136,22 +136,40 @@ export type Database = {
       games: {
         Row: {
           category: Database["public"]["Enums"]["game_category"]
+          created_at: string
           description: string | null
           id: string
+          image_bucket: string | null
+          image_filename: string | null
+          image_folder: string | null
+          image_url: string | null
+          is_active: boolean
           points: number | null
           title: string | null
         }
         Insert: {
           category: Database["public"]["Enums"]["game_category"]
+          created_at?: string
           description?: string | null
           id: string
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
+          image_url?: string | null
+          is_active?: boolean
           points?: number | null
           title?: string | null
         }
         Update: {
           category?: Database["public"]["Enums"]["game_category"]
+          created_at?: string
           description?: string | null
           id?: string
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
+          image_url?: string | null
+          is_active?: boolean
           points?: number | null
           title?: string | null
         }
@@ -503,10 +521,10 @@ export type Database = {
           category?: Database["public"]["Enums"]["game_category"] | null
           description?: string | null
           id?: string | null
-          image_bucket?: never
-          image_filename?: never
-          image_folder?: never
-          image_url?: never
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
+          image_url?: string | null
           points?: number | null
           storage_path?: never
           title?: string | null
@@ -515,10 +533,10 @@ export type Database = {
           category?: Database["public"]["Enums"]["game_category"] | null
           description?: string | null
           id?: string | null
-          image_bucket?: never
-          image_filename?: never
-          image_folder?: never
-          image_url?: never
+          image_bucket?: string | null
+          image_filename?: string | null
+          image_folder?: string | null
+          image_url?: string | null
           points?: number | null
           storage_path?: never
           title?: string | null
